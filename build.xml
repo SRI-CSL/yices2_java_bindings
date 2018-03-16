@@ -1,0 +1,179 @@
+<project name="JYices" default="instructions" basedir=".">
+  <description>
+    yices java bindings
+  </description>
+
+    <target name="instructions"  description="Build instructions">
+    <echo>
+
+      To build the yices jar (dist/lib/yices.jar):
+
+      > ant dist
+
+      To run the junit tests (located in junit):
+
+      > ant test
+
+      To clean up:
+
+      > ant clean
+
+    </echo>
+    </target>
+
+
+  
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="code" location="${src}/com/sri/yices"/>
+  
+  <property name="build" location="build"/>
+  <property name="dist" location="dist"/>
+
+  <property name="junit" location="junit"/>
+  
+  <property name="jnilib" value="/usr/local/lib"/>
+
+
+  <!-- determine the build environment
+  
+  <condition property="isWindows" value="true">
+    <os family="windows" />
+  </condition>
+
+  <condition property="isUnix" value="true">
+    <os family="unix" />
+  </condition>
+
+  <condition property="isDarwin" value="true">
+    <os family="mac" />
+  </condition>
+
+
+  <target name="forUnix" if="isUnix">
+    <echo message="Unix target" />
+  </target>
+
+  <target name="forWindows" if="isWindows">
+    <echo message="Windows target" />
+  </target>
+
+  <target name="forDarwin" if="isDarwin">
+    <echo message="Darwin target" />
+  </target>
+  
+  -->
+  
+  <target name="sanity-check">
+    <property environment="env"/>
+    <fail unless="env.JAVA_HOME" message="COMPUTER SAYS NO!. Please set JAVA_HOME: ${JAVA_HOME}/include/jni.h needs to exist."/>
+  </target>
+
+  
+  <target name="init">
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="sanity-check,init"
+        description="compile the source and generate the headers with new 1.8 magic">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}"
+	   destdir="${build}"
+	   debug="${DEBUG}"
+           deprecation="${DEPRECATION}"
+	   includeantruntime="false"
+	   nativeheaderdir="${code}">
+    </javac>
+  </target>
+  
+  <target name="dist" depends="compile"
+        description="generate the distribution">
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file
+    <jar jarfile="${dist}/lib/yices.jar" basedir="${build}"/>
+    -->
+
+    <tstamp>
+      <format property="TODAY" pattern="yyyy-MM-dd" />
+    </tstamp>
+    
+    <jar compress="false"
+         manifestencoding="UTF8"
+         jarfile="${dist}/lib/yices.jar">
+      
+      <fileset dir="${build}">
+        <include name="**"/>
+      </fileset>
+      
+      <!-- customize manifest -->
+      <manifest>
+        <attribute name="Main-Class" value="com.sri.yices.Yices"/>
+        <section name="yices">
+          <attribute name="Specification-Title" value="Yices Java Bindings"/>
+          <attribute name="Specification-Version" value="1.0"/>
+          <attribute name="Specification-Vendor" value="SRI International"/>
+          <attribute name="Implementation-Title" value="jyices"/>
+          <attribute name="Implementation-Version" value="${TODAY}"/>
+          <attribute name="Implementation-Vendor" value="SRI International"/>
+	  <attribute name="Built-By" value="${user.name}"/>
+        </section>
+      </manifest>
+    </jar>
+    
+    <exec executable="make"
+          dir="${code}"
+          failifexecutionfails="true">
+      <arg line="libyices2java.dylib"/>
+    </exec>
+    
+  </target>
+  
+  <target name="clean"
+        description="clean up">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+
+    <exec executable="make"
+          dir="${code}"
+          failifexecutionfails="true">
+      <arg line="clean"/>
+    </exec>
+
+    
+  </target>
+
+
+  <path id="classpath.test">
+    <pathelement location="${dist}/lib/yices.jar"/>
+    <pathelement location="lib/junit-4.12.jar"/>
+    <pathelement location="lib/hamcrest-core-1.3.jar"/>
+  </path>
+
+  <target name="test-compile">
+    <mkdir dir="${build}"/>
+    <javac srcdir="${junit}" destdir="${build}" includeantruntime="false">
+        <classpath refid="classpath.test"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="dist,test-compile">
+    <junit printsummary="on" haltonfailure="yes" fork="true">
+      <sysproperty key="java.library.path" path="${jnilib}"/>
+      <classpath>
+          <path refid="classpath.test"/>
+          <pathelement location="${build}"/>
+      </classpath>
+      <formatter type="brief" usefile="false" />
+      <batchtest>
+        <fileset dir="${junit}" includes="Test*.java" />
+      </batchtest>
+    </junit>
+  </target>
+
+
+</project>
+
