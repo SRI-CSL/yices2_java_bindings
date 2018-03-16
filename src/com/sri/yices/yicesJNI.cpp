@@ -2971,10 +2971,13 @@ JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_modelFromMap(JNIEnv *env, jclas
 // returns -1 for error, 0 for false, +1 for true
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_getBoolValue(JNIEnv *env, jclass, jlong mdl, jint t) {
   int32_t val = -1;
-  jint err = -1;
+  jint err;
 
   try {
     err = yices_get_bool_value(reinterpret_cast<model_t*>(mdl), t, &val);
+    if (err < 0) {
+      val = -1;
+    }
   } catch (std::bad_alloc &ba) {
     out_of_mem_exception(env);
   }
@@ -3173,6 +3176,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_getScalarValue(JNIEnv *env, jcla
 
   try {
     code = yices_get_scalar_value(reinterpret_cast<model_t*>(mdl), t, &val);
+    if (code < 0) val = -1;
   } catch (std::bad_alloc &ba) {
     out_of_mem_exception(env);
   }

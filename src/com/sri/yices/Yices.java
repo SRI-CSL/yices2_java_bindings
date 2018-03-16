@@ -19,14 +19,15 @@ public final class Yices {
      *
      */
     public static void main(String[] args){
-	StringBuilder sb = new StringBuilder();
-	sb.append("Yices version ").append(version());
-	sb.append("Built for ").append(buildArch());
-	sb.append("Build mode: ").append(buildMode());
-	sb.append("Build date: ").append(buildDate());
-	sb.append("MCSat supported: ").append(hasMcsat());
-	System.out.println(sb);
+       StringBuilder sb = new StringBuilder();
+       sb.append("Yices version ").append(version());
+       sb.append("Built for ").append(buildArch());
+       sb.append("Build mode: ").append(buildMode());
+       sb.append("Build date: ").append(buildDate());
+       sb.append("MCSat supported: ").append(hasMcsat());
+       System.out.println(sb);
     }
+
     
     /*
      * Generic functions in yices.h
@@ -254,6 +255,7 @@ public final class Yices {
 
     // n-ary variants for the most common associative operations
     public static native int bvAdd(int... arg);
+    public static native int bvMul(int ... arg);
     public static native int bvAnd(int... arg);
     public static native int bvOr(int... arg);
     public static native int bvXor(int... arg);
@@ -493,7 +495,6 @@ public final class Yices {
     public static native String modelToString(long mdl);
 
     // public static native int yices_get_algebraic_number_value(model_t *mdl, int t, lp_algebraic_number_t *a);
-    
     // public static native void yices_init_yval_vector(yval_vector_t *v);
     // public static native void yices_delete_yval_vector(yval_vector_t *v);
     // public static native void yices_reset_yval_vector(yval_vector_t *v);

@@ -32,16 +32,20 @@ public class Model implements java.lang.AutoCloseable {
     /*
      * Finalize and close free the Yices internal model
      */
-    protected void finalize() {
+//     protected void finalize() {
+//         if (ptr != 0) {
+//             Yices.freeModel(ptr);
+//             ptr = 0;
+//         }
+//     }
+
+    public void close() {
         if (ptr != 0) {
             Yices.freeModel(ptr);
             ptr = 0;
         }
     }
 
-    public void close() {
-        finalize();
-    }
 
     /*
      * Conversion to string

@@ -17,16 +17,20 @@ public class Parameters implements java.lang.AutoCloseable {
     /*
      * Finalize and close free the record
      */
-    protected void finalize() {
+//     protected void finalize() {
+//         if (ptr != 0) {
+//             Yices.freeParamRecord(ptr);
+//             ptr = 0;
+//         }
+//     }
+
+    public void close() {
         if (ptr != 0) {
             Yices.freeParamRecord(ptr);
             ptr = 0;
         }
     }
 
-    public void close() {
-        finalize();
-    }
 
     protected long getPtr() { return ptr; }
 

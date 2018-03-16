@@ -35,16 +35,20 @@ public class Config implements java.lang.AutoCloseable {
     /*
      * Finalize and close
      */
-    protected void finalize() {
+//     protected void finalize() {
+//         if (ptr != 0) {
+//             Yices.freeConfig(ptr);
+//             ptr = 0;
+//         }
+//     }
+
+    public void close() {
         if (ptr != 0) {
             Yices.freeConfig(ptr);
             ptr = 0;
         }
     }
 
-    public void close() {
-        finalize();
-    }
 
     /*
      * Set a configuration parameter

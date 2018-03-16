@@ -85,15 +85,18 @@ public class Context implements java.lang.AutoCloseable {
     /*
      * Finalize and close: free the Yices data structure
      */
-    protected void finalize() {
-        if (ptr != 0) {
-            Yices.freeModel(ptr);
-            ptr = 0;
-        }
-    }
+    //    protected void finalize() {
+    //        if (ptr != 0) {
+    //            Yices.freeContext(ptr);
+    //            ptr = 0;
+    //        }
+    //    }
 
     public void close() {
-        finalize();
+	    if (ptr != 0) {
+	        Yices.freeContext(ptr);
+	        ptr = 0;
+	    }
     }
 
     /*

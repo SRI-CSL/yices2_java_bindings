@@ -11,12 +11,12 @@ public class Terms {
     /**
      * Short cuts for true/false/zero/one/minus_one
      */
-    static final int NULL_TERM;
-    static final int TRUE;
-    static final int FALSE;
-    static final int ZERO;
-    static final int ONE;
-    static final int MINUS_ONE;
+    static public final int NULL_TERM;
+    static public final int TRUE;
+    static public final int FALSE;
+    static public final int ZERO;
+    static public final int ONE;
+    static public final int MINUS_ONE;
 
     static {
         NULL_TERM = -1;
@@ -297,7 +297,7 @@ public class Terms {
     }
 
     static public int neq(int left, int right) throws YicesException {
-        int t = Yices.eq(left, right);
+        int t = Yices.neq(left, right);
         if (t < 0) throw new YicesException();
         return t;
     }
@@ -927,6 +927,35 @@ public class Terms {
         if (t < 0) throw new YicesException();
         return t;
     }
+
+    // unsigned comparison: (left >= right)
+    static public int bvGe(int left, int right) throws YicesException {
+        int t = Yices.bvGe(left, right);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
+    // (left > right)
+    static public int bvGt(int left, int right) throws YicesException {
+        int t = Yices.bvGt(left, right);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
+    // (left <= right)
+    static public int bvLe(int left, int right) throws YicesException {
+        int t = Yices.bvLe(left, right);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
+    // (left < right)
+    static public int bvLt(int left, int right) throws YicesException {
+        int t = Yices.bvLt(left, right);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
 
     // signed comparison: (left >= right)
     static public int bvSGe(int left, int right) throws YicesException {
