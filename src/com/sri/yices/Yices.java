@@ -14,21 +14,7 @@ public final class Yices {
         init();
     }
 
-    /*
-     * Main entry point. Print the details and exit.
-     *
-     */
-    public static void main(String[] args){
-       StringBuilder sb = new StringBuilder();
-       sb.append("\nYices version ").append(version());
-       sb.append("\nBuilt for ").append(buildArch());
-       sb.append("\nBuild mode: ").append(buildMode());
-       sb.append("\nBuild date: ").append(buildDate());
-       sb.append("\nMCSat supported: ").append(hasMcsat());
-       sb.append("\n");
-       System.out.println(sb);
-    }
-
+   
     
     /*
      * Generic functions in yices.h

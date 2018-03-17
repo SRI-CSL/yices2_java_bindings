@@ -22,18 +22,22 @@
     </target>
 
 
-  
-  <!-- set global properties for this build -->
-  <property name="src" location="src"/>
-  <property name="code" location="${src}/com/sri/yices"/>
-  
-  <property name="build" location="build"/>
-  <property name="dist" location="dist"/>
-
-  <property name="junit" location="junit"/>
-  
-  <property name="jnilib" value="/usr/local/lib"/>
-
+    <!-- most build properties are in build.properties -->
+    <property file="build.properties"/>
+    <!-- except version property -->
+    <property file="version.properties"/>
+    
+    <!-- set global properties for this build -->
+    <property name="src" location="src"/>
+    <property name="code" location="${src}/com/sri/yices"/>
+    
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+    
+    <property name="junit" location="junit"/>
+    
+    <property name="jnilib" value="/usr/local/lib"/>
+    
 
   <!-- determine the build environment
   
@@ -76,7 +80,25 @@
   </target>
 
   <target name="compile" depends="sanity-check,init"
-        description="compile the source and generate the headers with new 1.8 magic">
+          description="compile the source and generate the headers with new 1.8 magic">
+
+        <tstamp/>
+
+        <echo message="Using version number: ${YICES_JAVA_BINDINGS_VERSION} and date: ${TODAY}"/>
+
+
+        <!-- copy templates and update version numbers -->
+        <copy overwrite="true" todir="${src}" >
+            <filterset>
+                <filter token="VERSION_STRING" value="${YICES_JAVA_BINDINGS_VERSION}"/>
+                <filter token="BUILD_DATE" value="${TODAY}"/>
+            </filterset>
+            <fileset dir="${src}">
+                <include name="**/*.template"/>
+            </fileset>
+            <mapper type="glob" from="*.template" to="*.java"/>
+        </copy>
+    
     <!-- Compile the java code from ${src} into ${build} -->
     <javac srcdir="${src}"
 	   destdir="${build}"
@@ -110,7 +132,7 @@
       
       <!-- customize manifest -->
       <manifest>
-        <attribute name="Main-Class" value="com.sri.yices.Yices"/>
+        <attribute name="Main-Class" value="com.sri.yices.Version"/>
         <section name="yices">
           <attribute name="Specification-Title" value="Yices Java Bindings"/>
           <attribute name="Specification-Version" value="1.0"/>
