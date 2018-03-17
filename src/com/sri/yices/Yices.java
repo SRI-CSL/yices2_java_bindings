@@ -20,11 +20,12 @@ public final class Yices {
      */
     public static void main(String[] args){
        StringBuilder sb = new StringBuilder();
-       sb.append("Yices version ").append(version());
-       sb.append("Built for ").append(buildArch());
-       sb.append("Build mode: ").append(buildMode());
-       sb.append("Build date: ").append(buildDate());
-       sb.append("MCSat supported: ").append(hasMcsat());
+       sb.append("\nYices version ").append(version());
+       sb.append("\nBuilt for ").append(buildArch());
+       sb.append("\nBuild mode: ").append(buildMode());
+       sb.append("\nBuild date: ").append(buildDate());
+       sb.append("\nMCSat supported: ").append(hasMcsat());
+       sb.append("\n");
        System.out.println(sb);
     }
 
