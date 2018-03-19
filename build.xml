@@ -10,6 +10,10 @@
 
       > ant dist
 
+      To install the dynamic library libyices2java:
+
+      > ant install
+      
       To run the junit tests (located in junit):
 
       > ant test
@@ -149,6 +153,16 @@
           dir="${code}"
           failifexecutionfails="true">
       <arg line="libyices2java.dylib"/>
+    </exec>
+    
+  </target>
+
+  <target name="install" description="install the jni library" depends="compile">
+
+    <exec executable="make"
+          dir="${code}"
+          failifexecutionfails="true">
+      <arg line="install"/>
     </exec>
     
   </target>
