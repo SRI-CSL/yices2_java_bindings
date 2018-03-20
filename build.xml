@@ -43,14 +43,18 @@
     <property name="jnilib" value="/usr/local/lib"/>
     
 
-  <!-- determine the build environment
+  <!-- determine the build environment   -->
+  
   
   <condition property="isWindows" value="true">
     <os family="windows" />
   </condition>
 
   <condition property="isUnix" value="true">
-    <os family="unix" />
+    <and>
+      <os family="unix" />
+      <not>  <os family="mac" /> </not>
+    </and>
   </condition>
 
   <condition property="isDarwin" value="true">
@@ -59,24 +63,42 @@
 
 
   <target name="forUnix" if="isUnix">
-    <echo message="Unix target" />
+    <property name="OS" value="linux"/>
+    <property name="libraryext" value=".so"/>
   </target>
 
   <target name="forWindows" if="isWindows">
-    <echo message="Windows target" />
+    <property name="OS" value="windows"/>
+    <property name="libraryext" value=".dll"/>
   </target>
 
   <target name="forDarwin" if="isDarwin">
-    <echo message="Darwin target" />
+    <property name="OS" value="darwin"/>
+    <property name="libraryext" value=".dylib"/>
   </target>
   
-  -->
   
-  <target name="sanity-check">
-    <property environment="env"/>
-    <fail unless="env.JAVA_HOME" message="COMPUTER SAYS NO!. Please set JAVA_HOME: ${JAVA_HOME}/include/jni.h needs to exist."/>
-  </target>
+  <target name="sanity-check" > <!-- depends="forUnix, forWindows, forDarwin"> --> 
 
+    <property name="library" value="libyices2java${libraryext}"/>
+
+<!-- 
+    <echo>
+      ${OS}
+      ${JAVA_HOME}
+      ${GLOBAL_LIB_DIR}
+      ${CPPFLAGS}
+      ${CXXFLAGS}
+      ${CXX}
+      ${LIBS}
+      ${library}
+    </echo>
+-->
+
+    <property environment="env"/>
+     <fail unless="env.JAVA_HOME" message="COMPUTER SAYS NO!. Please set JAVA_HOME: ${JAVA_HOME}/include/jni.h needs to exist."/>
+  </target>
+  
   
   <target name="init">
     <!-- Create the build directory structure used by compile -->
@@ -157,7 +179,9 @@
     
   </target>
 
-  <target name="install" description="install the jni library" depends="compile">
+  <target name="install" description="install the jni library" depends="dist">
+
+
 
     <exec executable="make"
           dir="${code}"
@@ -178,8 +202,6 @@
           failifexecutionfails="true">
       <arg line="clean"/>
     </exec>
-
-    
   </target>
 
 

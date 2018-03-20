@@ -1,8 +1,0 @@
-On my mac:
-
-/Library/Java/JavaVirtualMachines/jdk1.8.0_141.jdk/Contents/Home/include/jni.h
-
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_141.jdk/Contents/Home
-
-
-javah is on it's way out; to be replaced by javac's nativeheaderdir
