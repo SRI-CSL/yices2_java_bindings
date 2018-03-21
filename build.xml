@@ -39,6 +39,8 @@
     <property name="dist" location="dist"/>
     
     <property name="junit" location="junit"/>
+
+    <property name="examples" location="examples"/>
     
     <property name="jnilib" value="/usr/local/lib"/>
     
@@ -196,7 +198,10 @@
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
-
+    <delete>
+      <fileset dir="${examples}" includes="*.class"/>
+    </delete>
+    
     <exec executable="make"
           dir="${code}"
           failifexecutionfails="true">
@@ -232,6 +237,33 @@
     </junit>
   </target>
 
+  <path id="classpath.examples">
+    <pathelement location="${dist}/lib/yices.jar"/>
+    <pathelement location="examples"/>
+  </path>
+
+  <target name="examples" depends="dist">
+
+    <javac srcdir="${examples}"
+	   destdir="${examples}"
+	   classpathref="classpath.examples"
+	   debug="${DEBUG}"
+           deprecation="${DEPRECATION}"
+	   includeantruntime="false">
+    </javac>
+
+    
+    <java classname="MCSat"
+	  dir="${examples}"
+	  fork="true"
+	  classpathref="classpath.examples">
+      <arg value="-h"/>
+      <jvmarg value="-Djava.library.path=${jnilib}"/>
+    </java>
+
+
+  </target>
+  
 
 </project>
 

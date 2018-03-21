@@ -28,14 +28,14 @@ public class TestContext {
 
 
     static String boolArray(boolean[] b) {
-        String s = "[";
-        for (int i=0; i<b.length; i++) {
-            if (i > 0) s += " ";
-            char c = b[i] ? 't' : 'f';
-            s += c;
-        }
-        s += "]";
-        return s;
+	StringBuilder sb = new StringBuilder();
+	sb.append('[');
+	for(int i=0; i<b.length; i++) {
+	    if (i > 0) sb.append(' ');
+	    sb.append(b[i] ? 't' : 'f');
+	}
+	sb.append(']');
+	return sb.toString();
     }
 
     static void bitvector_test(int n) throws Exception {
