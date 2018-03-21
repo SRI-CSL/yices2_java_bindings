@@ -20,7 +20,8 @@ public class MCSat {
 	    int realType = Yices.realType();
 	    int x = Terms.newUninterpretedTerm("x", realType);
 	    int p = Terms.parse("(= (* x x) 2)");
-       
+
+	    /* make the mcsat context */
 	    Context c = makeContext();
 
 	    c.assertFormula(p);
