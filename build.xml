@@ -98,7 +98,7 @@
 -->
 
     <property environment="env"/>
-     <fail unless="env.JAVA_HOME" message="COMPUTER SAYS NO!. Please set JAVA_HOME: ${JAVA_HOME}/include/jni.h needs to exist."/>
+     <fail unless="env.JAVA_HOME" message="Please set JAVA_HOME: $$JAVA_HOME/include/jni.h needs to exist."/>
   </target>
   
   
