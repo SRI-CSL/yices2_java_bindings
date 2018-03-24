@@ -48,18 +48,18 @@
   <!-- determine the build environment   -->
   
   
-  <condition property="isWindows" value="true">
+  <condition property="isWindows">
     <os family="windows" />
   </condition>
 
-  <condition property="isUnix" value="true">
+  <condition property="isUnix">
     <and>
       <os family="unix" />
       <not>  <os family="mac" /> </not>
     </and>
   </condition>
 
-  <condition property="isDarwin" value="true">
+  <condition property="isDarwin">
     <os family="mac" />
   </condition>
 
@@ -80,12 +80,12 @@
   </target>
   
   
-  <target name="sanity-check" > <!-- depends="forUnix, forWindows, forDarwin"> --> 
+  <target name="sanity-check" depends="forUnix, forWindows, forDarwin"> 
 
     <property name="library" value="libyices2java${libraryext}"/>
 
-<!-- 
     <echo>
+      ${libraryext}
       ${OS}
       ${JAVA_HOME}
       ${GLOBAL_LIB_DIR}
@@ -95,7 +95,6 @@
       ${LIBS}
       ${library}
     </echo>
--->
 
     <property environment="env"/>
      <fail unless="env.JAVA_HOME" message="Please set JAVA_HOME: $$JAVA_HOME/include/jni.h needs to exist."/>
@@ -176,7 +175,7 @@
     <exec executable="make"
           dir="${code}"
           failifexecutionfails="true">
-      <arg line="libyices2java.dylib"/>
+      <arg line="${library}"/>
     </exec>
     
   </target>
