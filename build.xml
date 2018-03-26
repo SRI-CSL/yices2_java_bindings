@@ -18,6 +18,10 @@
 
       > ant test
 
+      To run the examples (located in examples):
+
+      > ant examples
+
       To clean up:
 
       > ant clean
@@ -242,6 +246,7 @@
     <pathelement location="examples"/>
   </path>
 
+
   <target name="examples" depends="dist">
 
     <javac srcdir="${examples}"
@@ -253,17 +258,28 @@
     </javac>
 
     
-    <java classname="MCSat"
+    <antcall target="example"> <param name = "class" value="LoadYices"/>  </antcall>
+
+    <antcall target="example"> <param name = "class" value="MCSat"/>  </antcall>
+
+  </target>
+
+  <target name="example" depends="dist">
+
+    <!-- run the ${class} -->
+    <echo> Running ${class} </echo>
+    
+    <java classname="${class}"
 	  dir="${examples}"
 	  fork="true"
 	  classpathref="classpath.examples">
-      <arg value="-h"/>
-      <jvmarg value="-Djava.library.path=${jnilib}"/>
+	<arg value="-h"/>
+	<jvmarg value="-Djava.library.path=${jnilib}"/>
     </java>
-
-
+    
+    
   </target>
-  
+
 
 </project>
 

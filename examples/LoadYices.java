@@ -1,4 +1,5 @@
-package com.sri.yices;
+import com.sri.yices.Yices;
+
 
 public class LoadYices {
 

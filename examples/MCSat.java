@@ -11,8 +11,6 @@ import com.sri.yices.Parameters;
 
 public class MCSat {
 
-
-
     public static void main(String[] args){
 
 	try {
