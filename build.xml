@@ -261,6 +261,8 @@
 
     <antcall target="example"> <param name = "class" value="MCSat"/>  </antcall>
 
+    <antcall target="example"> <param name = "class" value="CEx2"/>  </antcall>
+
   </target>
 
   <target name="example" depends="dist">
@@ -272,8 +274,7 @@
 	  dir="${examples}"
 	  fork="true"
 	  classpathref="classpath.examples">
-	<arg value="-h"/>
-	<jvmarg value="-Djava.library.path=${jnilib}"/>
+      <jvmarg value="-Djava.library.path=${jnilib}"/>
     </java>
     
     
