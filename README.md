@@ -3,6 +3,13 @@
 
 ## Installation
 
+You will need an installation of yices2, java (>= 8 or 1.8), and ant (>= 1.10.0) which requires
+installing it from the source
+
+https://ant.apache.org/
+
+on Ubuntu 16.04.
+
 
 ## Examples
 
