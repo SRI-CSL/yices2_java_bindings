@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 /*
  * Class for wrapping yices contexts
  */
-public class Context implements java.lang.AutoCloseable {
+public class Context implements AutoCloseable {
     /*
      * pointer to the context
      */

@@ -5,7 +5,7 @@ import java.math.BigInteger;
 /**
  * Class for Yices models
  */
-public class Model implements java.lang.AutoCloseable {
+public class Model implements AutoCloseable {
     /*
      * This is a pointer to the model
      */

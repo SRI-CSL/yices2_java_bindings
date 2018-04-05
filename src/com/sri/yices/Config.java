@@ -3,7 +3,7 @@ package com.sri.yices;
 /*
  * Context configuration
  */
-public class Config implements java.lang.AutoCloseable {
+public class Config implements AutoCloseable {
     // pointer to the Yices config_t object
     private long ptr;
 

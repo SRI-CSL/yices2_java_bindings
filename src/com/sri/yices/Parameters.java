@@ -3,7 +3,7 @@ package com.sri.yices;
 /*
  * Wrapper around a Yices param_t structure
  */
-public class Parameters implements java.lang.AutoCloseable {
+public class Parameters implements AutoCloseable {
     // pointer to the parameter record
     private long ptr;
 
