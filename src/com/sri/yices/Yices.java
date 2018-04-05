@@ -14,8 +14,6 @@ public final class Yices {
         init();
     }
 
-   
-    
     /*
      * Generic functions in yices.h
      */
@@ -96,6 +94,7 @@ public final class Yices {
     public static native String getTypeName(int tau);
     public static native int getTypeByName(String name);
     public static native void removeTypeName(String name);
+    public static native int clearTypeName(int tau);
 
     // Pretty print as a string.
     public static native String typeToString(int tau);
@@ -357,6 +356,7 @@ public final class Yices {
     public static native String getTermName(int t);
     public static native int getTermByName(String name);
     public static native void removeTermName(String name);
+    public static native int clearTermName(int t);
 
 
     /*
@@ -382,6 +382,30 @@ public final class Yices {
      */
     public static native int substTerm(int t, int[] v, int[] map);
     public static native int substTermArray(int[] a, int[] v, int[] map);
+
+
+    /*
+     * GARBAGE COLLECTION
+     */
+    public static native int yicesNumTerms();
+    public static native int yicesNumTypes();
+
+    public static native int yicesIncrefTerm(int t);
+    public static native int yicesDecrefTerm(int t);
+    public static native int yicesIncrefType(int tau);
+    public static native int yicesDecrefType(int tau);
+    public static native int yicesNumPosrefTerms();
+    public static native int yicesNumPosrefTypes();
+
+    public static native void yicesGarbageCollect(int[] rootTerms, int[] rootTypes, boolean keepNamed);
+
+    public static void yicesGarbageCollect(boolean keepNamed) {
+	yicesGarbageCollect(null, null, keepNamed);
+    }
+
+    public static void yicesGarbageCollect() {
+	yicesGarbageCollect(null, null, false);
+    }
 
     /*
      * CONTEXTS AND SOLVERS
@@ -491,10 +515,10 @@ public final class Yices {
     // public static native int yices_val_is_rational32(model_t *mdl, const yval_t *v);
     // public static native int yices_val_is_rational64(model_t *mdl, const yval_t *v);
     // public static native int yices_val_is_integer(model_t *mdl, const yval_t *v);
-    // public static native uint yices_val_bitsize(model_t *mdl, const yval_t *v);
-    // public static native uint yices_val_tuple_arity(model_t *mdl, const yval_t *v);
-    // public static native uint yices_val_mapping_arity(model_t *mdl, const yval_t *v);
-    // public static native uint yices_val_function_arity(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_bitsize(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_tuple_arity(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_mapping_arity(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_function_arity(model_t *mdl, const yval_t *v);
     // public static native int yices_val_get_bool(model_t *mdl, const yval_t *v, int *val);
     // public static native int yices_val_get_int32(model_t *mdl, const yval_t *v, int *val);
     // public static native int yices_val_get_int64(model_t *mdl, const yval_t *v, int64_t *val);
@@ -510,13 +534,13 @@ public final class Yices {
     // public static native int yices_val_expand_function(model_t *mdl, const yval_t *f, yval_t *def, yval_vector_t *v);
     // public static native int yices_val_expand_mapping(model_t *mdl, const yval_t *m, yval_t tup[], yval_t *val);
     // public static native int yices_term_array_value(model_t *mdl, uint n, const int a[], int b[]);
+
     // public static native int yices_implicant_for_formula(model_t *mdl, int t, term_vector_t *v);
     // public static native int yices_implicant_for_formulas(model_t *mdl, uint n, const int a[], term_vector_t *v);
     // public static native int yices_generalize_model(model_t *mdl, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
     // public static native int yices_generalize_model_array(model_t *mdl, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
     // public static native int yices_pp_model_fd(int fd, model_t *mdl, uint width, uint height, uint offset);
-    // public static native char *yices_type_to_string(type_t tau, uint width, uint height, uint offset);
 
 
 }

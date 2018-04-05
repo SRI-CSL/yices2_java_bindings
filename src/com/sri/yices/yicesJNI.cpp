@@ -817,6 +817,9 @@ JNIEXPORT void JNICALL Java_com_sri_yices_Yices_removeTypeName(JNIEnv *env, jcla
   }
 }
 
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_clearTypeName(JNIEnv *env, jclass, jint tau) {
+  return yices_clear_type_name(tau);
+}
 
 
 /*
@@ -2572,7 +2575,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_setTermName(JNIEnv *env, jclass,
 
 
 /*
- * Remove a term of name s
+ * Remove the mapping from name to a term
  */
 JNIEXPORT void JNICALL Java_com_sri_yices_Yices_removeTermName(JNIEnv *env, jclass, jstring name) {
   const char *s = env->GetStringUTFChars(name, NULL);
@@ -2583,7 +2586,10 @@ JNIEXPORT void JNICALL Java_com_sri_yices_Yices_removeTermName(JNIEnv *env, jcla
     yices_remove_term_name(s);
     env->ReleaseStringUTFChars(name, s);
   }
+}
 
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_clearTermName(JNIEnv *env, jclass, jint t) {
+  return yices_clear_term_name(t);
 }
 
 JNIEXPORT jstring JNICALL Java_com_sri_yices_Yices_getTermName(JNIEnv *env, jclass, jint t) {
@@ -2707,6 +2713,112 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_substTermArray(JNIEnv *env, jcla
 
   return result;
 }
+
+
+/*
+ * GARBAGE COLLECTION
+ */
+
+// number of terms. The result is uint32 but it can be safely converted to int32.
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesNumTerms(JNIEnv *, jclass) {
+  return yices_num_terms();
+}
+
+// number of types.
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesNumTypes(JNIEnv *, jclass) {
+  return yices_num_types();
+}
+
+// increment the reference counter for term t. Yices may allocate memory.
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesIncrefTerm(JNIEnv *env, jclass, jint t) {
+  int result;
+  try {
+    result = yices_incref_term(t);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+} 
+
+// decrement the reference counter: doesn't allocate memory
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesDecrefTerm(JNIEnv *, jclass, jint t) {
+  return yices_decref_term(t);
+}
+
+// increment the reference counter of type tau.
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesIncrefType(JNIEnv *env, jclass, jint tau) {
+  int result;
+  try {
+    result = yices_incref_type(tau);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;  
+}
+
+// decrement the reference counter of type tau.
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesDecrefType(JNIEnv *, jclass, jint tau) {
+  return yices_decref_type(tau);
+}
+
+// number of terms with a positive reference counter.
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesNumPosrefTerms(JNIEnv *, jclass) {
+  return yices_num_posref_terms();
+}
+
+// number of types with a postive reference counter.
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesNumPosrefTypes(JNIEnv *, jclass) {
+  return yices_num_posref_types();
+}
+
+// call the garbage collector
+JNIEXPORT void JNICALL Java_com_sri_yices_Yices_yicesGarbageCollect(JNIEnv *env, jclass,
+								    jintArray rootTerms, jintArray rootTypes, jboolean keepNamed) {
+
+  // rootTerms and rootTypes may be null.
+  // GetArrayLength and GetIntArrayElements seg fault if the array is NULL
+  jsize num_root_terms = 0;
+  int32_t *root_terms = NULL;
+  if (rootTerms != NULL) {
+    num_root_terms = env->GetArrayLength(rootTerms);
+    root_terms = env->GetIntArrayElements(rootTerms, NULL);
+    if (num_root_terms > 0 && root_terms == NULL) {
+      out_of_mem_exception(env);
+      return;
+    }
+  }
+
+  jsize num_root_types = 0;
+  int32_t *root_types = NULL;
+  if (rootTypes != NULL) {
+    num_root_types = env->GetArrayLength(rootTypes);
+    root_types = env->GetIntArrayElements(rootTypes, NULL);
+    if (num_root_types > 0 && root_types == NULL) {
+      out_of_mem_exception(env);
+      return;
+    }
+  }
+
+  try {
+    yices_garbage_collect(root_terms, num_root_terms, root_types, num_root_types, keepNamed);
+  } catch (std::bad_alloc &a) {
+    out_of_mem_exception(env);
+  }
+
+  if (root_types != NULL) {
+    env->ReleaseIntArrayElements(rootTypes, root_types, JNI_ABORT);
+  }
+  if (root_terms != NULL) {
+    env->ReleaseIntArrayElements(rootTerms, root_terms, JNI_ABORT);
+  }
+}
+
+
+
+
+/*
+ * CONTEXTS
+ */
 
 /*
  * Allocate a configuration descriptor:

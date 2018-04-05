@@ -74,7 +74,7 @@ public class TestYices {
         int[] a = new int[0];
         int badTuple = Yices.tupleType(a);
         Assert.assertEquals(badTuple, -1);
-        System.out.println("Failed for badTyple: " + Yices.errorString());
+        System.out.println("Failed for badTuple: " + Yices.errorString());
 
         // Tuple and function type + give them a name
         int tuple = Yices.tupleType(intType, realType);
@@ -153,6 +153,7 @@ public class TestYices {
         int tst_false = Yices.and(v[0], Yices.not(v[0]));
         Assert.assertEquals(tst_false, ff);
         System.out.println("(and A0 (not A0)) is " + Yices.termToString(tst_false));
+        System.out.println();
         inspectTerm(tst_false);
 
         // test 'OR' constructor
@@ -168,6 +169,7 @@ public class TestYices {
         int tst_true = Yices.or(v[0], Yices.not(v[0]));
         Assert.assertEquals(tst_true, tt);
         System.out.println("(or A0 (not A0)) is " + Yices.termToString(tst_true));
+        System.out.println();
         inspectTerm(tst_true);
 
         // test 'XOR' constructor
@@ -691,4 +693,19 @@ public class TestYices {
         Yices.freeContext(ctx);
     }
 
+    @Test
+    public void testGC() {
+        int b = Yices.boolType();
+        int x = Yices.newUninterpretedTerm(b);
+        int y = Yices.newUninterpretedTerm(b);
+        int z = Yices.newUninterpretedTerm(b);
+        System.out.println("Testing the garbage collector");
+        System.out.println(" number of terms: " + Yices.yicesNumTerms());
+        System.out.println(" number of types: " + Yices.yicesNumTypes());
+        Yices.yicesGarbageCollect();
+        System.out.println("After garbage collection");
+        System.out.println(" number of terms: " + Yices.yicesNumTerms());
+        System.out.println(" number of types: " + Yices.yicesNumTypes());
+        System.out.println();
+    }
 }
