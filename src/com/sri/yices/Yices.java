@@ -78,6 +78,7 @@ public final class Yices {
     public static native boolean typeIsFunction(int tau);
 
     public static native boolean isSubtype(int tau, int sigma);
+    public static native boolean areCompatible(int tau, int sigma);
     public static native int bvTypeSize(int tau);
     public static native int scalarTypeCard(int tau);
 

@@ -705,6 +705,19 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_isSubtype(JNIEnv *env, jclas
 }
 
 /*
+ * Check whether sigma and tau are compatible
+ * - this may allocate memory so we check for out-of-memory error here
+ */
+JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_areCompatible(JNIEnv *env, jclass, jint tau, jint sigma) {
+  try {
+    return yices_compatible_types(tau, sigma);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+    return JNI_FALSE;
+  }
+}
+
+/*
  * Number of bits in a bitvector type
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvTypeSize(JNIEnv *, jclass, jint tau) {
