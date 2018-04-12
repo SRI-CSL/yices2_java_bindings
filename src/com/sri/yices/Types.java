@@ -205,6 +205,10 @@ public class Types {
         return Yices.isSubtype(tau, sigma);
     }
 
+    static public boolean areCompatible(int tau, int sigma) {
+	return Yices.areCompatible(tau, sigma);
+    }
+
     static public int bvSize(int tau) throws YicesException {
         int n = Yices.bvTypeSize(tau);
         if (n <= 0) {
