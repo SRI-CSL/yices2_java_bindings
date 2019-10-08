@@ -33,15 +33,8 @@ public class Config implements AutoCloseable {
     protected long getPtr() { return ptr; }
 
     /*
-     * Finalize and close
+     * close
      */
-//     protected void finalize() {
-//         if (ptr != 0) {
-//             Yices.freeConfig(ptr);
-//             ptr = 0;
-//         }
-//     }
-
     public void close() {
         if (ptr != 0) {
             Yices.freeConfig(ptr);

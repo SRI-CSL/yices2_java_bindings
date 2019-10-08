@@ -1,16 +1,13 @@
-# Ian is currently porting much of the functionality here to the ant file:
-#
-# ../../../../build.xml
 #
 # Makefile to build libyices2java.dylib or libyices2java.so
 #
 # Call with
-#    make OS=darwin
+#    make OS=darmin
 # or make OS=linux
 #
 # We assume gmake
-# We also assume that jni.h is installed in ${JAVA_HOME}/include
-# and that jni_md.h is in ${JAVA_HOME}/include/${OS}
+# We also assume that jni.h is installed in ${JAVA_HOME}/include,
+# jni_md.h is in ${JAVA_HOME}/include/${OS}, and that ${YICES_JNI} exists
 #
 
 SHELL=/bin/sh
@@ -54,7 +51,7 @@ endif
 libyices2java := libyices2java.$(EXTENSION)
 
 # install name for darwin
-libyices2java_install_name := /usr/local/lib/libyices2java.dylib
+libyices2java_install_name := $(YICES_JNI)/libyices2java.dylib
 
 # we ignore versions and soname for now
 
@@ -64,9 +61,35 @@ CXXFLAGS := -g -fPIC
 CXX := g++
 LIBS := -lyices -lgmp
 
+# JAVAH to create the include file(s)
+JAVAH := javah
+
+CLASSPATH := ../../../../../../build/classes/java/main
+
+JAVAC := javac
+
+#
+# TheCLASSPATH depends on the build system
+#
+
+# maven
+# CLASSPATH := ../../../../../../target/classes
+
+# gradle
+CLASSPATH := ../../../../../../build/classes/java/main
+
+# IntelliJ with gradle
+# CLASSPATH := ../../../../../../out/production/classes
+
 all: $(libyices2java)
 
-yicesJNI.o: yicesJNI.cpp
+$(CLASSPATH)/com/sri/yices/%.class: %.java
+	$(JAVAC) -d $(CLASSPATH) *.java
+
+com_sri_yices_Yices.h: $(CLASSPATH)/com/sri/yices/Yices.class
+	$(JAVAH) -classpath $(CLASSPATH) com.sri.yices.Yices
+
+yicesJNI.o: yicesJNI.cpp com_sri_yices_Yices.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Wall -c yicesJNI.cpp
 
 libyices2java.dylib: yicesJNI.o
@@ -79,13 +102,15 @@ libyices2java.so: yicesJNI.o
 # crude install to LIBDIR
 # the directory $LIBDIR must exist
 #
-LIBDIR := /usr/local/lib
+#LIBDIR := /usr/local/lib
+LIBDIR := $(YICES_JNI)
+
 
 install: install-$(OS)
 
 install-linux:
 	cp $(libyices2java) $(LIBDIR)
-	ldconfig
+	ldconfig -n $(LIBDIR)
 
 install-darwin:
 	cp $(libyices2java) $(LIBDIR)
@@ -93,7 +118,7 @@ install-darwin:
 #
 #
 clean:
-	rm -f *.o *.so *.dylib com_sri_yices_Yices.h *~
+	rm -f *.o *.so *.dylib com_sri_yices_Yices.h
 
 .PHONY: all clean install install-linux install-darwin 
 

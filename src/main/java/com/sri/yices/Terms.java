@@ -5,7 +5,7 @@ import java.math.BigInteger;
 
 /**
  * Wrappers to access the Yices term constructors.
- * These call the native API and throw an exception if there's an error.
+ * These call the native API and throw a YicesException if there's an error.
  */
 public class Terms {
     /**
@@ -68,14 +68,14 @@ public class Terms {
         return t;
     }
 
-    static public int bvOne(int n) throws Exception {
+    static public int bvOne(int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("negative bitvector size");
         int t = Yices.bvOne(n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvMinusOne(int n) throws Exception {
+    static public int bvMinusOne(int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("negative bitvector size");
         int t = Yices.bvMinusOne(n);
         if (t < 0) throw new YicesException();
@@ -210,11 +210,11 @@ public class Terms {
         return t;
     }
 
-    static public int newUninterpretedFunction(int... a) throws Exception {
+    static public int newUninterpretedFunction(int... a) throws YicesException {
         return newUninterpretedTerm(Types.functionType(a));
     }
 
-    static public int newUninterpretedPredicate(int... a) throws Exception {
+    static public int newUninterpretedPredicate(int... a) throws YicesException {
         return newUninterpretedTerm(Types.predicateType(a));
     }
 
@@ -222,19 +222,19 @@ public class Terms {
      * Fresh uninterpreted term of type tau, and with the associated name.
      * Variants for function and predicates.
      */
-    static public int newUninterpretedTerm(String name, int tau) throws Exception {
+    static public int newUninterpretedTerm(String name, int tau) throws YicesException {
         int t = newUninterpretedTerm(tau);
         Yices.setTermName(t, name);
         return t;
     }
 
-    static public int newUninterpretedFunction(String name, int... a) throws Exception {
+    static public int newUninterpretedFunction(String name, int... a) throws YicesException {
         int t = newUninterpretedFunction(a);
         Yices.setTermName(t, name);
         return t;
     }
 
-    static public int newUninterpretedPredicate(String name, int... a) throws Exception {
+    static public int newUninterpretedPredicate(String name, int... a) throws YicesException {
         int t = newUninterpretedPredicate(a);
         Yices.setTermName(t, name);
         return t;
@@ -244,15 +244,15 @@ public class Terms {
      * Declare a fresh uninterpreted term of type tau and with the associated name
      * + variants for functions and predicates.
      */
-    static public void declareUninterpretedTerm(String name, int tau) throws Exception {
+    static public void declareUninterpretedTerm(String name, int tau) throws YicesException {
         Yices.setTermName(newUninterpretedTerm(tau), name);
     }
 
-    static public void declareUninterpretedFunction(String name, int ... a) throws Exception {
+    static public void declareUninterpretedFunction(String name, int ... a) throws YicesException {
         Yices.setTermName(newUninterpretedFunction(a), name);
     }
 
-    static public void declareUninterpretedPredicate(String name, int... a) throws Exception {
+    static public void declareUninterpretedPredicate(String name, int... a) throws YicesException {
         Yices.setTermName(newUninterpretedPredicate(a), name);
     }
 
@@ -443,7 +443,7 @@ public class Terms {
         return t;
     }
 
-    static public int power(int arg, int exponent) throws Exception {
+    static public int power(int arg, int exponent) throws YicesException {
         if (exponent < 0) throw new IllegalArgumentException("exponent can't be negative");
         int t = Yices.power(arg, exponent);
         if (t < 0) throw new YicesException();
@@ -506,7 +506,7 @@ public class Terms {
     }
 
     // polynomial: sum coeff[i] * t[i]
-    static public int intPoly(long[] coeff, int[] t) throws Exception {
+    static public int intPoly(long[] coeff, int[] t) throws YicesException {
         if (coeff.length != t.length)
             throw new IllegalArgumentException("coeff and term arrays must have the same length");
         int term = Yices.intPoly(coeff, t);
@@ -515,7 +515,7 @@ public class Terms {
     }
 
     // sum of num[i]/den[i] * t[i]
-    static public int rationalPoly(long[] num, long[] den, int[] t) throws Exception {
+    static public int rationalPoly(long[] num, long[] den, int[] t) throws YicesException {
         if (num.length != den.length || num.length != t.length)
             throw new IllegalArgumentException("coeff and term arrays must have the same length");
         int term = Yices.rationalPoly(num, den, t);
@@ -654,7 +654,7 @@ public class Terms {
         return t;
     }
 
-    static public int bvPower(int arg, int exponent) throws Exception {
+    static public int bvPower(int arg, int exponent) throws YicesException {
         if (exponent < 0) throw new IllegalArgumentException("exponent can't be negative");
         int t = Yices.bvPower(arg, exponent);
         if (t < 0) throw new YicesException();
@@ -786,49 +786,49 @@ public class Terms {
     }
 
     // shift by constants: n is a constant shift amount
-    static public int bvShiftLeft0(int arg, int n) throws Exception {
+    static public int bvShiftLeft0(int arg, int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("shift amount can't be negative");
         int t = Yices.bvShiftLeft0(arg, n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvShiftLeft1(int arg, int n) throws Exception {
+    static public int bvShiftLeft1(int arg, int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("shift amount can't be negative");
         int t = Yices.bvShiftLeft1(arg, n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvShiftRight0(int arg, int n) throws Exception {
+    static public int bvShiftRight0(int arg, int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("shift amount can't be negative");
         int t = Yices.bvShiftRight0(arg, n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvShiftRight1(int arg, int n) throws Exception {
+    static public int bvShiftRight1(int arg, int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("shift amount can't be negative");
         int t = Yices.bvShiftRight1(arg, n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvAShiftRight(int arg, int n) throws Exception {
+    static public int bvAShiftRight(int arg, int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("shift amount can't be negative");
         int t = Yices.bvAShiftRight(arg, n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvRotateLeft(int arg, int n) throws Exception {
+    static public int bvRotateLeft(int arg, int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("shift amount can't be negative");
         int t = Yices.bvRotateLeft(arg, n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvRotateRight(int arg, int n) throws Exception {
+    static public int bvRotateRight(int arg, int n) throws YicesException {
         if (n < 0) throw new IllegalArgumentException("shift amount can't be negative");
         int t = Yices.bvRotateRight(arg, n);
         if (t < 0) throw new YicesException();
@@ -836,7 +836,7 @@ public class Terms {
     }
 
     // extract a[i:j] from a[0 .. n-1] where n = size of a
-    static public int bvExtract(int a, int i, int j) throws Exception {
+    static public int bvExtract(int a, int i, int j) throws YicesException {
         if (i < 0 || j < 0) throw new IllegalArgumentException("negative bit-vector index");
         int t = Yices.bvExtract(a, i, j);
         if (t < 0) throw new YicesException();
@@ -844,7 +844,7 @@ public class Terms {
     }
 
     // extract bit i from a[0 ... n-1]: the result is a Boolean term
-    static public int bvExtractBit(int a, int i) throws Exception {
+    static public int bvExtractBit(int a, int i) throws YicesException {
         if (i < 0) throw new IllegalArgumentException("negative bit-vector index");
         int t = Yices.bvExtractBit(a, i);
         if (t < 0) throw new YicesException();
@@ -853,7 +853,7 @@ public class Terms {
 
     // convert an array of boolean terms into a bitvector
     // a[0] = low-order bit of the result, a[n-1] = high-order bit
-    static public int bvFromBoolArray(int... a) throws Exception {
+    static public int bvFromBoolArray(int... a) throws YicesException {
         if (a.length == 0) throw new IllegalArgumentException("empty boolean array");
         int t = Yices.bvFromBoolArray(a);
         if (t < 0) throw new YicesException();
@@ -874,7 +874,7 @@ public class Terms {
     }
 
     // n copies of a concatenated
-    static public int bvRepeat(int a, int n) throws Exception {
+    static public int bvRepeat(int a, int n) throws YicesException {
         if (n <= 0) throw new IllegalArgumentException("n must be positive");
         int t = Yices.bvRepeat(a, n);
         if (t < 0) throw new YicesException();
@@ -882,14 +882,14 @@ public class Terms {
     }
 
     // add n bits
-    static public int bvSignExtend(int arg, int n) throws Exception {
+    static public int bvSignExtend(int arg, int n) throws YicesException {
         if (n <= 0) throw new IllegalArgumentException("n must be positive");
         int t = Yices.bvSignExtend(arg, n);
         if (t < 0) throw new YicesException();
         return t;
     }
 
-    static public int bvZeroExtend(int arg, int n) throws Exception {
+    static public int bvZeroExtend(int arg, int n) throws YicesException {
         if (n <= 0) throw new IllegalArgumentException("n must be positive");
         int t = Yices.bvZeroExtend(arg, n);
         if (t < 0) throw new YicesException();
@@ -1102,6 +1102,26 @@ public class Terms {
         return t;
     }
 
+
+    /*
+     * Check whether term x is a constant
+     */
+    static public boolean isBoolConstant(int x) throws YicesException {
+        return constructor(x) == Constructor.BOOL_CONSTANT;
+    }
+
+    static public boolean isArithConstant(int x) throws YicesException {
+        return constructor(x) == Constructor.ARITH_CONSTANT;
+    }
+
+    static public boolean isBvConstant(int x) throws YicesException {
+        return constructor(x) == Constructor.BV_CONSTANT;
+    }
+
+    static public boolean isScalarConstant(int x) throws YicesException {
+        return constructor(x) == Constructor.SCALAR_CONSTANT;
+    }
+
     /*
      * Value of a constant term
      */
@@ -1131,12 +1151,31 @@ public class Terms {
         return r;
     }
 
+    // value of an arithmetic constant, converted to long or int
+    // throws an exception if the conversion looses information
+    static public long arithConstLongValue(int x) throws YicesException {
+        BigRational r = arithConstValue(x);
+        if (!r.fitsLong()) {
+            throw new IllegalArgumentException("Yices constant can't be converted to long");
+        }
+        return r.longValue();
+    }
+
+    static public int arithConstIntValue(int x) throws YicesException {
+        BigRational r = arithConstValue(x);
+        if (!r.fitsInt()) {
+            throw new IllegalArgumentException("Yices constant can't be converted to int");
+        }
+        return r.intValue();
+    }
+
     /*
      * Names
      */
     static public void setName(int t, String name) throws YicesException {
         int code = Yices.setTermName(t, name);
-        if (code < 0) throw new YicesException();
+        if (code < 0)
+            throw new YicesException();
     }
 
     static public String getName(int t) {
@@ -1181,14 +1220,14 @@ public class Terms {
      * substTermArray(a, v, map): apply the substitution to all elements of array a.
      * If there's an error, a is unchanged.
      */
-     static public int subst(int t, int[] v, int[] map) throws Exception {
+     static public int subst(int t, int[] v, int[] map) throws YicesException {
          if (v.length != map.length) throw new IllegalArgumentException("bad substitution");
          int w = Yices.substTerm(t, v, map);
          if (w < 0) throw new YicesException();
          return w;
      }
 
-     static public void substArray(int[] a, int[] v, int[] map) throws Exception {
+     static public void substArray(int[] a, int[] v, int[] map) throws YicesException {
          if (v.length != map.length) throw new IllegalArgumentException("bad substitution");
          int code = Yices.substTermArray(a, v, map);
          if (code < 0) throw new YicesException();

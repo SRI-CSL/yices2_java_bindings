@@ -1,8 +1,9 @@
 package com.sri.yices;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-/*
+/**
  * Class for wrapping yices contexts
  */
 public class Context implements AutoCloseable {
@@ -83,15 +84,8 @@ public class Context implements AutoCloseable {
     protected long getPtr() { return ptr; }
 
     /*
-     * Finalize and close: free the Yices data structure
+     * Close: free the Yices data structure
      */
-    //    protected void finalize() {
-    //        if (ptr != 0) {
-    //            Yices.freeContext(ptr);
-    //            ptr = 0;
-    //        }
-    //    }
-
     public void close() {
 	    if (ptr != 0) {
 	        Yices.freeContext(ptr);
@@ -158,7 +152,12 @@ public class Context implements AutoCloseable {
      */
     public void assertFormula(int f) throws YicesException {
         int code = Yices.assertFormula(ptr, f);
-        if (code < 0) throw new YicesException();
+        if (code < 0) {
+            System.out.println("--- Error in assertFomula ---");
+            System.out.println(Terms.toString(f));
+            System.out.println("---");
+            throw new YicesException();
+        }
     }
 
     /*
@@ -167,6 +166,13 @@ public class Context implements AutoCloseable {
     public void assertFormulas(int[] a) throws YicesException {
         int code = Yices.assertFormulas(ptr, a);
         if (code < 0) throw new YicesException();
+    }
+
+    /*
+     * Assert a list of formulas
+     */
+    public void assertFormulas(Collection<Integer> list) throws YicesException {
+        list.forEach(this::assertFormula);
     }
 
     /*

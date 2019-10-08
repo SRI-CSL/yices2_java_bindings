@@ -15,7 +15,7 @@ public enum Status {
     ERROR(6);
 
     private int index;
-    private Status(int id) { this.index = id; }
+    Status(int id) { this.index = id; }
     public int getIndex() { return index; }
 
     public static final int NUM_STATUSES = 7;

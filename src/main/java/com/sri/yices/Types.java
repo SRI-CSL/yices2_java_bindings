@@ -48,7 +48,7 @@ public class Types {
         return REAL;
     }
 
-    static public int bvType(int nbits) throws Exception {
+    static public int bvType(int nbits) throws RuntimeException {
         if (nbits <= 0) {
             throw new IllegalArgumentException("nbits must be positive");
         }
@@ -63,7 +63,7 @@ public class Types {
      * Scalar and uninterpreted types
      */
     // anonymous scalar type of the given cardinality
-    static public int newScalarType(int card) throws Exception {
+    static public int newScalarType(int card) throws RuntimeException {
         if (card <= 0) {
             throw new IllegalArgumentException("card must be positive");
         }
@@ -75,7 +75,7 @@ public class Types {
     }
 
     // named scalar type
-    static public int newScalarType(String name, int card) throws Exception {
+    static public int newScalarType(String name, int card) throws RuntimeException {
         int tau = newScalarType(card);
         Yices.setTypeName(tau, name);
         return tau;
@@ -101,7 +101,7 @@ public class Types {
         Yices.setTypeName(tau, name);
     }
 
-    static public void declareScalarType(String name, int card) throws Exception {
+    static public void declareScalarType(String name, int card) throws YicesException {
         int tau = newScalarType(card);
         Yices.setTypeName(tau, name);
     }
@@ -109,7 +109,7 @@ public class Types {
     /*
      * Tuple and function types
      */
-    static public int tupleType(int... a) throws Exception {
+    static public int tupleType(int... a) throws YicesException {
         int tau = Yices.tupleType(a);
         if (tau < 0) {
             throw new YicesException();
@@ -120,7 +120,7 @@ public class Types {
     /*
      * Function type: domain a, range sigma
      */
-    static public int functionType(int[] a, int sigma) throws Exception {
+    static public int functionType(int[] a, int sigma) throws RuntimeException {
         if (a == null || a.length == 0) {
             throw new IllegalArgumentException("bad function type: empty domain");
         }
@@ -137,7 +137,7 @@ public class Types {
      *   a[n-1] = range type,
      * where n>=2 = length of the array.
      */
-    static public int functionType(int... a) throws Exception {
+    static public int functionType(int... a) throws RuntimeException {
         if (a == null || a.length < 2) {
             throw new IllegalArgumentException("bad function type");
         }
@@ -153,7 +153,7 @@ public class Types {
     /*
      * Predicate type: domain a[], range BOOL
      */
-    static public int predicateType(int... a) throws Exception {
+    static public int predicateType(int... a) throws YicesException {
         return functionType(a, BOOL);
     }
 

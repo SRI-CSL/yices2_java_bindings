@@ -1,13 +1,19 @@
-import com.sri.yices.BigRational;
+package com.sri.yices;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import static org.junit.Assume.assumeTrue;
+
 public class TestBigRationals {
     @Test
     public void testConstructors() {
+        // JUnit runner treats tests with failing assumptions as ignored
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         BigInteger three = BigInteger.valueOf(3);
         BigInteger minus_one = BigInteger.valueOf(-1);
         BigInteger ten = BigInteger.valueOf(10);

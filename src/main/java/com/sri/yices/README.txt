@@ -1,5 +1,3 @@
-********* DEPRECATED ********************
-
 To build the Yices JNI code. It's a manual process for now.
 
 1) compile all the java files in this directory

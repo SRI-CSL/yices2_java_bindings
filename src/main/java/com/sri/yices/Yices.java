@@ -3,6 +3,8 @@ package com.sri.yices;
 import java.math.BigInteger;
 
 public final class Yices {
+    private static boolean is_ready;
+
     /*
      * Try to load the Yices Library libyices2java.
      *
@@ -10,8 +12,23 @@ public final class Yices {
      * and print a generic message.
      */
     static {
-        System.loadLibrary("yices2java");
-        init();
+        try {
+            System.loadLibrary("yices2java");
+            init();
+            is_ready = true;
+        } catch (LinkageError e) {
+            is_ready = false;
+            throw e;
+        }
+    }
+
+    /*
+     * Check whether the library is loaded.
+     * @throws LinkageError if one of the required runtime library is not found
+     * (or can't be loaded for some reason).
+     */
+    public static boolean isReady() {
+        return is_ready;
     }
 
     /*
@@ -405,7 +422,7 @@ public final class Yices {
     }
 
     public static void yicesGarbageCollect() {
-	yicesGarbageCollect(null, null, false);
+	    yicesGarbageCollect(null, null, false);
     }
 
     /*

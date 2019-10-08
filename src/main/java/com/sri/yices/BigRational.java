@@ -97,6 +97,42 @@ public class BigRational {
         return numerator;
     }
 
+    public boolean isInteger() {
+        return denominator.compareTo(BigInteger.ONE) == 0;
+    }
+
+    public boolean fitsLong() {
+        return isInteger() && numerator.bitLength() <= 63;
+    }
+
+    public boolean fitsInt() {
+        boolean temp1 = isInteger();
+        int temp2 = numerator.bitLength();
+        boolean temp3 = (temp2 <= 31 );
+        return isInteger() && numerator.bitLength() <= 31;
+    }
+
+    /**
+     * Round num/den to a BigInteger
+     */
+    public BigInteger toInteger()  {
+        return numerator.divide(denominator);
+    }
+
+    public long longValue() {
+        return numerator.longValueExact();
+    }
+
+    public int intValue() {
+        return numerator.intValueExact();
+    }
+
+    public double doubleValue() {
+        // could use something better here.
+        return numerator.doubleValue()/denominator.doubleValue();
+    }
+
+
     /**
      * Get numerator and denominator as arrays of bytes
      */

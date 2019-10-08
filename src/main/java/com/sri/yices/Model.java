@@ -30,15 +30,8 @@ public class Model implements AutoCloseable {
     }
 
     /*
-     * Finalize and close free the Yices internal model
+     * Close: free the Yices internal model
      */
-//     protected void finalize() {
-//         if (ptr != 0) {
-//             Yices.freeModel(ptr);
-//             ptr = 0;
-//         }
-//     }
-
     public void close() {
         if (ptr != 0) {
             Yices.freeModel(ptr);

@@ -1,10 +1,16 @@
-import com.sri.yices.Constructor;
+package com.sri.yices;
+
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assume.assumeTrue;
 
 public class TestConstructor {
     @Test
     public void testConstructors() {
+        // JUnit runner treats tests with failing assumptions as ignored
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         for (int i = 0; i<Constructor.NUM_CONSTRUCTORS; i++) {
             Constructor c = Constructor.idToConstructor(i);
             Assert.assertEquals(c.getIndex(), i);

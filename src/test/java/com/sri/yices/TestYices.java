@@ -1,15 +1,18 @@
-import com.sri.yices.OutOfMemory;
-import com.sri.yices.BigRational;
-import com.sri.yices.Yices;
+package com.sri.yices;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigInteger;
 
+import static org.junit.Assume.assumeTrue;
+
 public class TestYices {
     @Test
     public void testLoad() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         System.out.println("Loaded Yices version " + Yices.version());
         System.out.println("Built for " + Yices.buildArch());
         System.out.println("Build mode: " + Yices.buildMode());
@@ -28,6 +31,8 @@ public class TestYices {
 
     @Test
     public void TestTypeConstructors() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         int boolType = Yices.boolType();
         int intType = Yices.intType();
         int realType = Yices.realType();
@@ -133,6 +138,8 @@ public class TestYices {
 
     @Test
     public void testBoolTerms() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         // declare 20 variables of type bool
         int b = Yices.boolType();
         Assert.assertTrue(b >= 0);
@@ -298,6 +305,8 @@ public class TestYices {
 
     @Test
     public void testGeneral() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         /*
          * U, I: uninterpreted types
          * F: function from I to U
@@ -380,6 +389,8 @@ public class TestYices {
 
     @Test
     public void testBigInt() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         System.out.println("Bigint: 0");
         int tst = Yices.mkIntConstant(new BigInteger("0"));
         Assert.assertTrue(tst >= 0);
@@ -428,6 +439,8 @@ public class TestYices {
 
     @Test
     public void testBitvectors() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         inspectTerm(Yices.bvZero(10));
         inspectTerm(Yices.bvZero(32));
         inspectTerm(Yices.bvZero(64));
@@ -485,6 +498,8 @@ public class TestYices {
 
     @Test
     public void testConfig() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         // Configs
         long cfg = Yices.newConfig();
         // setConfig
@@ -510,6 +525,8 @@ public class TestYices {
 
     @Test
     public void testContext() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         // Contexts
         long ctx = Yices.newContext(0);
         // contextStatus
@@ -551,6 +568,8 @@ public class TestYices {
         
     @Test
     public void testAssert() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         long ctx = Yices.newContext(0);
         // assertFormula a
         int bool = Yices.boolType();
@@ -621,6 +640,8 @@ public class TestYices {
 
     @Test
     public void testModels() {
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         long ctx = Yices.newContext(0);
 
         int ybool = Yices.boolType();
@@ -693,7 +714,11 @@ public class TestYices {
         Yices.freeContext(ctx);
     }
 
+    /*
+     * This is flaky & needs to be fixed.
+     */
     @Test
+    @Ignore
     public void testGC() {
         int b = Yices.boolType();
         int x = Yices.newUninterpretedTerm(b);

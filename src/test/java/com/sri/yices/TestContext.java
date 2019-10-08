@@ -1,17 +1,16 @@
-import com.sri.yices.Context;
-import com.sri.yices.Terms;
-import com.sri.yices.Types;
-import com.sri.yices.Model;
-import com.sri.yices.Status;
-import com.sri.yices.Parameters;
+package com.sri.yices;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assume.assumeTrue;
 
 public class TestContext {
     @Test
-    public void test1() throws Exception {
+    public void test1() {
+        // JUnit runner treats tests with failing assumptions as ignored
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         int x = Terms.newUninterpretedTerm("x", Types.REAL);
         int y = Terms.newUninterpretedTerm("y", Types.REAL);
         Context c = new Context();
@@ -28,17 +27,20 @@ public class TestContext {
 
 
     static String boolArray(boolean[] b) {
-	StringBuilder sb = new StringBuilder();
-	sb.append('[');
-	for(int i=0; i<b.length; i++) {
-	    if (i > 0) sb.append(' ');
-	    sb.append(b[i] ? 't' : 'f');
-	}
-	sb.append(']');
-	return sb.toString();
+        String s = "[";
+        for (int i=0; i<b.length; i++) {
+            if (i > 0) s += " ";
+            char c = b[i] ? 't' : 'f';
+            s += c;
+        }
+        s += "]";
+        return s;
     }
 
-    static void bitvector_test(int n) throws Exception {
+    static void bitvector_test(int n) {
+        // JUnit runner treats tests with failing assumptions as ignored
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         int tau = Types.bvType(n);
         int x = Terms.newUninterpretedTerm("x", tau);
         int y = Terms.newUninterpretedTerm("y", tau);
@@ -71,7 +73,10 @@ public class TestContext {
     }
 
     @Test
-    public void test2() throws Exception {
+    public void test2() {
+       // JUnit runner treats tests with failing assumptions as ignored
+       assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
        bitvector_test(1);
        bitvector_test(2);
        bitvector_test(6);
@@ -79,7 +84,7 @@ public class TestContext {
        bitvector_test(256);
     }
 
-    static void bitvectorFactor(long product, int nbits) throws Exception {
+    static void bitvectorFactor(long product, int nbits) {
         int tau = Types.bvType(nbits);
         int a = Terms.newUninterpretedTerm("a", tau);
         int b = Terms.newUninterpretedTerm("b", tau);
@@ -115,7 +120,10 @@ public class TestContext {
     }
 
     @Test
-    public void test3() throws Exception {
+    public void test3() {
+        // JUnit runner treats tests with failing assumptions as ignored
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+
         // Skipped tests with 9 and 10 bits. They have too many solutions
         // bitvectorFactor(17 * 23, 9);
         // bitvectorFactor(17 * 23, 10);
