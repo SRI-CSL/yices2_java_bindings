@@ -1,0 +1,4 @@
+com_sri_yices_Yices.h
+*.o
+*.so
+*.dylib

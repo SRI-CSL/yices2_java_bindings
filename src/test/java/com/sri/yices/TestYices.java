@@ -11,7 +11,7 @@ import static org.junit.Assume.assumeTrue;
 public class TestYices {
     @Test
     public void testLoad() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         System.out.println("Loaded Yices version " + Yices.version());
         System.out.println("Built for " + Yices.buildArch());
@@ -31,7 +31,7 @@ public class TestYices {
 
     @Test
     public void TestTypeConstructors() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         int boolType = Yices.boolType();
         int intType = Yices.intType();
@@ -138,7 +138,7 @@ public class TestYices {
 
     @Test
     public void testBoolTerms() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         // declare 20 variables of type bool
         int b = Yices.boolType();
@@ -305,7 +305,7 @@ public class TestYices {
 
     @Test
     public void testGeneral() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         /*
          * U, I: uninterpreted types
@@ -389,7 +389,7 @@ public class TestYices {
 
     @Test
     public void testBigInt() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         System.out.println("Bigint: 0");
         int tst = Yices.mkIntConstant(new BigInteger("0"));
@@ -439,7 +439,7 @@ public class TestYices {
 
     @Test
     public void testBitvectors() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         inspectTerm(Yices.bvZero(10));
         inspectTerm(Yices.bvZero(32));
@@ -498,7 +498,7 @@ public class TestYices {
 
     @Test
     public void testConfig() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         // Configs
         long cfg = Yices.newConfig();
@@ -525,7 +525,7 @@ public class TestYices {
 
     @Test
     public void testContext() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         // Contexts
         long ctx = Yices.newContext(0);
@@ -568,7 +568,7 @@ public class TestYices {
         
     @Test
     public void testAssert() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         long ctx = Yices.newContext(0);
         // assertFormula a
@@ -640,7 +640,7 @@ public class TestYices {
 
     @Test
     public void testModels() {
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         long ctx = Yices.newContext(0);
 

@@ -12,7 +12,7 @@ public class TestBigRationals {
     @Test
     public void testConstructors() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         BigInteger three = BigInteger.valueOf(3);
         BigInteger minus_one = BigInteger.valueOf(-1);

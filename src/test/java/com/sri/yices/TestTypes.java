@@ -10,7 +10,7 @@ public class TestTypes {
     @Test
     public void testBooltype() throws YicesException {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         int b = Types.boolType();
         Assert.assertEquals(b, Types.BOOL);
@@ -28,7 +28,7 @@ public class TestTypes {
     @Test
     public void testArithmeticTypes() throws YicesException {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         int itype = Types.intType();
         int rtype = Types.realType();
@@ -62,7 +62,7 @@ public class TestTypes {
     @Test
     public void testBvTypes() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         for (int i=1; i<70; i += 3) {
             int bv = Types.bvType(i);
@@ -87,7 +87,7 @@ public class TestTypes {
     @Test
     public void testUninterpreted() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         int tau = Types.newUninterpretedType();
         System.out.println("New anonymous uninterpreted type: " + tau);
@@ -111,7 +111,7 @@ public class TestTypes {
     @Test
     public void testScalar() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         int tau = Types.newScalarType(20);
         System.out.println("New anonymous scalar type: " + tau);
@@ -137,7 +137,7 @@ public class TestTypes {
     @Test
     public void testTuple() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         int tau = Types.tupleType(Types.BOOL, Types.BV16, Types.REAL);
         System.out.println("Tuple[bool,bv16,real]: " + tau);
@@ -172,7 +172,7 @@ public class TestTypes {
     @Test
     public void testFunctions() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         int tau = Types.functionType(Types.INT, Types.INT, Types.BOOL);
         System.out.println("[int, int -> bool]: " + tau);
@@ -213,7 +213,7 @@ public class TestTypes {
     @Test
     public void testExceptions() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Assumptions.IS_YICES_INSTALLED);
 
         try {
             int tau = Types.parse("(-> bool)");

@@ -3,8 +3,14 @@
     yices java bindings
   </description>
 
-    <target name="instructions"  description="Build instructions">
+  <property environment="env"/>
+  <property name="yices_jni" value="${env.YICES_JNI}"/>
+  <property name="yices_classpath" value="${env.YICES_CLASSPATH}"/>
+
+  <target name="instructions"  description="Build instructions">
     <echo>
+      YICES_JNI = ${yices_jni}
+      YICES_CLASSPATH= ${yices_classpath}
 
       To build the yices jar (dist/lib/yices.jar):
 
@@ -27,7 +33,7 @@
       > ant clean
 
     </echo>
-    </target>
+  </target>
 
 
     <!-- most build properties are in build.properties -->
@@ -36,17 +42,22 @@
     <property file="version.properties"/>
     
     <!-- set global properties for this build -->
-    <property name="src" location="src"/>
+    <property name="src" location="src/main/java/"/>
     <property name="code" location="${src}/com/sri/yices"/>
     
+    <property name="test" location="src/test/java/"/>
+    <property name="test_code" location="${test}/com/sri/yices"/>
+
     <property name="build" location="build"/>
+    <property name="classes" location="${build}/classes"/>
+    <property name="test_classes" location="${build}/test_classes"/>
     <property name="dist" location="dist"/>
     
-    <property name="junit" location="junit"/>
+    <property name="junit" location="${test}"/>
 
     <property name="examples" location="examples"/>
     
-    <property name="jnilib" value="/usr/local/lib"/>
+    <property name="jnilib" value="${yices_jni}"/>
     
 
   <!-- determine the build environment   -->
@@ -89,15 +100,15 @@
     <property name="library" value="libyices2java${libraryext}"/>
 
     <echo>
-      ${libraryext}
-      ${OS}
-      ${JAVA_HOME}
-      ${GLOBAL_LIB_DIR}
-      ${CPPFLAGS}
-      ${CXXFLAGS}
-      ${CXX}
-      ${LIBS}
-      ${library}
+      Library extention:      ${libraryext}
+      Operating system:       ${OS}
+      JAVA_HOME:              ${JAVA_HOME}
+      GLOBAL_LIB_DIR:         ${GLOBAL_LIB_DIR}
+      CPPFALGS:               ${CPPFLAGS}
+      CXXFLAGS:               ${CXXFLAGS}
+      CXX:                    ${CXX}
+      LIBS:                   ${LIBS}
+      Library:                ${library}
     </echo>
 
     <property environment="env"/>
@@ -108,31 +119,34 @@
   <target name="init">
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
+    <mkdir dir="${classes}"/>
+    <mkdir dir="${test_classes}"/>
   </target>
 
   <target name="compile" depends="sanity-check,init"
           description="compile the source and generate the headers with new 1.8 magic">
 
-        <tstamp/>
+    <tstamp/>
 
-        <echo message="Using version number: ${YICES_JAVA_BINDINGS_VERSION} and date: ${TODAY}"/>
-
-
-        <!-- copy templates and update version numbers -->
-        <copy overwrite="true" todir="${src}" >
-            <filterset>
-                <filter token="VERSION_STRING" value="${YICES_JAVA_BINDINGS_VERSION}"/>
-                <filter token="BUILD_DATE" value="${TODAY}"/>
-            </filterset>
-            <fileset dir="${src}">
-                <include name="**/*.template"/>
-            </fileset>
-            <mapper type="glob" from="*.template" to="*.java"/>
-        </copy>
+    <echo message="Using version number: ${YICES_JAVA_BINDINGS_VERSION} and date: ${TODAY}"/>
+    
+    
+    <!-- copy templates and update version numbers -->
+    <copy overwrite="true" todir="${src}" >
+      <filterset>
+        <filter token="VERSION_STRING" value="${YICES_JAVA_BINDINGS_VERSION}"/>
+        <filter token="BUILD_DATE" value="${TODAY}"/>
+      </filterset>
+      <fileset dir="${src}">
+        <include name="**/*.template"/>
+      </fileset>
+      <mapper type="glob" from="*.template" to="*.java"/>
+    </copy>
+    
     
     <!-- Compile the java code from ${src} into ${build} -->
     <javac srcdir="${src}"
-	   destdir="${build}"
+	   destdir="${classes}"
 	   debug="${DEBUG}"
            deprecation="${DEPRECATION}"
 	   includeantruntime="false"
@@ -157,7 +171,7 @@
          manifestencoding="UTF8"
          jarfile="${dist}/lib/yices.jar">
       
-      <fileset dir="${build}">
+      <fileset dir="${classes}">
         <include name="**"/>
       </fileset>
       
@@ -218,26 +232,58 @@
   </path>
 
   <target name="test-compile">
-    <mkdir dir="${build}"/>
-    <javac srcdir="${junit}" destdir="${build}" includeantruntime="false">
+    <javac srcdir="${junit}" destdir="${test_classes}" includeantruntime="false">
         <classpath refid="classpath.test"/>
     </javac>
   </target>
 
+  <!--
+
   <target name="test" depends="dist,test-compile">
+    <echo> Running tests </echo>
+    <echo> test_classes:  ${test_classes} </echo>
     <junit printsummary="on" haltonfailure="yes" fork="true">
       <sysproperty key="java.library.path" path="${jnilib}"/>
       <classpath>
           <path refid="classpath.test"/>
-          <pathelement location="${build}"/>
+          <pathelement location="${test_classes}"/>
       </classpath>
       <formatter type="brief" usefile="false" />
       <batchtest>
-        <fileset dir="${junit}" includes="Test*.java" />
+        <fileset dir="${test_code}" includes="Test*.java" />
       </batchtest>
     </junit>
   </target>
 
+TestBigRationals.java
+TestConstructor.java
+TestContext.java
+TestStatus.java
+TestTypes.java
+TestYices.java
+      
+    -->
+  
+  <target name="test" depends="dist,test-compile,install">
+    <echo> Running tests </echo>
+    <echo> test_classes:  ${test_classes} </echo>
+    <echo> java.library.path:  ${java.library.path} </echo>
+    <junit printsummary="on" haltonfailure="yes" fork="true">
+      <sysproperty key="java.library.path" path="${jnilib}"/>
+      <classpath>
+        <path refid="classpath.test"/>
+        <pathelement location="${test_classes}"/>
+      </classpath>      
+      <formatter type="brief" usefile="false" />
+      <test name="com.sri.yices.TestBigRationals"/>
+      <test name="com.sri.yices.TestConstructor"/>
+      <test name="com.sri.yices.TestContext"/>
+      <test name="com.sri.yices.TestStatus"/>
+      <test name="com.sri.yices.TestTypes"/>
+      <test name="com.sri.yices.TestYices"/>
+    </junit>
+  </target>
+  
   <path id="classpath.examples">
     <pathelement location="${dist}/lib/yices.jar"/>
     <pathelement location="examples"/>
