@@ -58,36 +58,24 @@ libyices2java_install_name := $(YICES_JNI)/libyices2java.dylib
 # default include directories for jni.h and jni_md.h
 CPPFLAGS := -I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/$(OS)
 CXXFLAGS := -g -fPIC
-CXX := g++
 LIBS := -lyices -lgmp
 
+CXX ?= g++
+
+
 # JAVAH to create the include file(s)
-JAVAH := javah
+JAVAH ?= javah
 
-CLASSPATH := ../../../../../../build/classes/java/main
-
-JAVAC := javac
-
-#
-# TheCLASSPATH depends on the build system
-#
-
-# maven
-# CLASSPATH := ../../../../../../target/classes
-
-# gradle
-CLASSPATH := ../../../../../../build/classes/java/main
-
-# IntelliJ with gradle
-# CLASSPATH := ../../../../../../out/production/classes
+# JAVAC to compile the java
+JAVAC ?= javac
 
 all: $(libyices2java)
 
-$(CLASSPATH)/com/sri/yices/%.class: %.java
-	$(JAVAC) -d $(CLASSPATH) *.java
+$(YICES_CLASSPATH)/com/sri/yices/%.class: %.java
+	$(JAVAC) -d $(YICES_CLASSPATH) *.java
 
-com_sri_yices_Yices.h: $(CLASSPATH)/com/sri/yices/Yices.class
-	$(JAVAH) -classpath $(CLASSPATH) com.sri.yices.Yices
+com_sri_yices_Yices.h: $(YICES_CLASSPATH)/com/sri/yices/Yices.class
+	$(JAVAH) -classpath $(YICES_CLASSPATH) com.sri.yices.Yices
 
 yicesJNI.o: yicesJNI.cpp com_sri_yices_Yices.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Wall -c yicesJNI.cpp
