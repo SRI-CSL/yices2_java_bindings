@@ -3,6 +3,7 @@ package com.sri.yices;
 import java.math.BigInteger;
 
 public final class Yices {
+
     private static boolean is_ready;
 
     /*
@@ -30,6 +31,10 @@ public final class Yices {
     public static boolean isReady() {
         return is_ready;
     }
+
+
+    public static final boolean IS_YICES_INSTALLED = Yices.isReady();
+
 
     /*
      * Generic functions in yices.h

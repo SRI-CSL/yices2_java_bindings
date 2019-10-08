@@ -9,7 +9,7 @@ public class TestConstructor {
     @Test
     public void testConstructors() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(Assumptions.IS_YICES_INSTALLED);
+        assumeTrue(Yices.isReady());
 
         for (int i = 0; i<Constructor.NUM_CONSTRUCTORS; i++) {
             Constructor c = Constructor.idToConstructor(i);

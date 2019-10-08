@@ -9,7 +9,7 @@ public class TestStatus {
     @Test
     public void testStatus() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(Assumptions.IS_YICES_INSTALLED);
+        assumeTrue(Yices.isReady());
 
         for (int i=0; i<Status.NUM_STATUSES; i++) {
             Status s = Status.idToStatus(i);
