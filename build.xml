@@ -3,8 +3,31 @@
     yices java bindings
   </description>
 
+  <!-- most build properties are in build.properties -->
+  <property file="build.properties"/>
+  <!-- except version property -->
+  <property file="version.properties"/>
+  <!-- 
+
+       customization comes from the environment variables YICES_JNI and YICES_CLASSPATH 
+       YICES_JNI should be the path to where you want the library installed
+       YICES_CLASSPATH should be where you want the classes installed.
+
+
+  -->
   <property environment="env"/>
-  <property name="yices_jni" value="${env.YICES_JNI}"/>
+  <property name="pwd" value="${env.PWD}"/>
+
+
+  <condition property="yices_jni" value="${env.YICES_JNI}" else="${pwd}${local_yices_jni}">
+    <isset property="env.YICES_JNI" />
+  </condition>
+
+  <condition property="yices_classpath" value="${env.YICES_CLASSPATH}" else="${pwd}${local_yices_classpath}">
+    <isset property="env.YICES_CLASSPATH" />
+  </condition>
+
+
   <property name="yices_classpath" value="${env.YICES_CLASSPATH}"/>
 
   <target name="instructions"  description="Build instructions">
@@ -36,10 +59,6 @@
   </target>
 
 
-    <!-- most build properties are in build.properties -->
-    <property file="build.properties"/>
-    <!-- except version property -->
-    <property file="version.properties"/>
     
     <!-- set global properties for this build -->
     <property name="src" location="src/main/java/"/>
@@ -99,6 +118,9 @@
 
     <property name="library" value="libyices2java${libraryext}"/>
 
+    <property environment="env"/>
+
+
     <echo>
       Library extention:      ${libraryext}
       Operating system:       ${OS}
@@ -111,10 +133,10 @@
       Library:                ${library}
     </echo>
     
-    <property environment="env"/>
+
+
     <fail unless="env.JAVA_HOME" message="Please set JAVA_HOME: $$JAVA_HOME/include/jni.h needs to exist."/>
-    <fail unless="env.YICES_JNI" message="Please set environment variable YICES_JNI where the libyices2java dynamic library will live."/>
-    <fail unless="env.YICES_CLASSPATH" message="Please set environment variable YICES_CLASSPATH where the yices java classes will live."/>
+
   </target>
   
   
