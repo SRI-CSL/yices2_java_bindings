@@ -110,9 +110,11 @@
       LIBS:                   ${LIBS}
       Library:                ${library}
     </echo>
-
+    
     <property environment="env"/>
-     <fail unless="env.JAVA_HOME" message="Please set JAVA_HOME: $$JAVA_HOME/include/jni.h needs to exist."/>
+    <fail unless="env.JAVA_HOME" message="Please set JAVA_HOME: $$JAVA_HOME/include/jni.h needs to exist."/>
+    <fail unless="env.YICES_JNI" message="Please set environment variable YICES_JNI where the libyices2java dynamic library will live."/>
+    <fail unless="env.YICES_CLASSPATH" message="Please set environment variable YICES_CLASSPATH where the yices java classes will live."/>
   </target>
   
   
