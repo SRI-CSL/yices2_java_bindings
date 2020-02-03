@@ -9,6 +9,24 @@
 
 #include "com_sri_yices_Yices.h"
 
+/*
+ * On Windows, jint and int32_t are not the same type:
+ * int32_t is the same int
+ * jint    is the same as (long int)
+ *
+ * Even though (long int) is 32bit on windows, the compilers
+ * complain when the mix pointers to jint an pointers to int32_t,
+ * term_t, or type_t.
+ *
+ * To stop these warnings, we put explicit coercions in
+ * calls to GetIntArrayElements and ReleaseIntArrayElements.
+ * For example:
+ *
+ *    int32_t *aux = (int32_t *) env->GetIntArrayElements(a, copy);
+ *    ...
+ *    env->ReleaseIntArrayElements(a, (jint*) aux, JNI_ABORT);
+ *
+ */
 
 /*
  * Out-of-memory handler: throws a C++ exception
