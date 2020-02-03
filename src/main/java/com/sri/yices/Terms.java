@@ -3,6 +3,8 @@ package com.sri.yices;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import java.util.List;
+
 /**
  * Wrappers to access the Yices term constructors.
  * These call the native API and throw a YicesException if there's an error.
@@ -54,6 +56,8 @@ public class Terms {
      * - bvConst(n, x): convert x to an n-bit constant
      *   if n < 64, then x is truncated (i.e., only the n lower bits are used).
      *   if n > 64, then x is sign-extended to n bits
+     *
+     *  FIXME: add a bvConst constructor that takes a BigInteger x as value
      */
     static public int bvConst(int n, long x) throws YicesException {
         int t = Yices.bvConst(n, x);
@@ -93,7 +97,11 @@ public class Terms {
         if (t < 0) throw new YicesException();
         return t;
     }
-
+    
+    static public int bvConst(List<Integer> a) throws YicesException {
+        return bvConst(a.stream().mapToInt(Integer::intValue).toArray());
+    }
+    
     /*
      * Convert boolean array a to a bit-vector constant
      * - a[0] = low-order bit
@@ -107,8 +115,8 @@ public class Terms {
         }
         return bvConst(aux);
     }
-
-    /*
+    
+   /*
      * Parse s as a binary constant: i.e. a sequence of '0' and '1'
      * then return the corresponding bitvector constant
      */
@@ -214,8 +222,16 @@ public class Terms {
         return newUninterpretedTerm(Types.functionType(a));
     }
 
+    static public int newUninterpretedFunction(List<Integer> a) throws YicesException {
+        return newUninterpretedFunction(a.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     static public int newUninterpretedPredicate(int... a) throws YicesException {
         return newUninterpretedTerm(Types.predicateType(a));
+    }
+
+    static public int newUninterpretedPredicate(List<Integer> a) throws YicesException {
+        return newUninterpretedPredicate(a.stream().mapToInt(Integer::intValue).toArray());
     }
 
     /**
@@ -234,10 +250,18 @@ public class Terms {
         return t;
     }
 
+    static public int newUninterpretedFunction(String name, List<Integer> a) throws YicesException {
+        return newUninterpretedFunction(name, a.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     static public int newUninterpretedPredicate(String name, int... a) throws YicesException {
         int t = newUninterpretedPredicate(a);
         Yices.setTermName(t, name);
         return t;
+    }
+ 
+    static public int newUninterpretedPredicate(String name, List<Integer> a) throws YicesException {
+        return newUninterpretedPredicate(name, a.stream().mapToInt(Integer::intValue).toArray());
     }
 
     /**
@@ -252,8 +276,16 @@ public class Terms {
         Yices.setTermName(newUninterpretedFunction(a), name);
     }
 
+    static public void declareUninterpretedFunction(String name, List<Integer> a) throws YicesException {
+        declareUninterpretedFunction(name, a.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     static public void declareUninterpretedPredicate(String name, int... a) throws YicesException {
         Yices.setTermName(newUninterpretedPredicate(a), name);
+    }
+
+    static public void declareUninterpretedPredicate(String name, List<Integer> a) throws YicesException {
+        declareUninterpretedPredicate(name, a.stream().mapToInt(Integer::intValue).toArray());
     }
 
     /**
@@ -277,7 +309,7 @@ public class Terms {
     }
 
 
-    /**
+    /*
      * TERM CONSTRUCTORS
      */
 
@@ -308,7 +340,19 @@ public class Terms {
         return t;
     }
 
+    static public int distinct(List<Integer> args) throws YicesException {
+        return distinct(args.stream().mapToInt(Integer::intValue).toArray());
+    }
+    
+
     static public int forall(int[] vars, int body) throws YicesException {
+        int t = Yices.forall(vars, body);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
+    static public int forall(List<Integer> varlist, int body) throws YicesException {
+        int[] vars =  varlist.stream().mapToInt(Integer::intValue).toArray();
         int t = Yices.forall(vars, body);
         if (t < 0) throw new YicesException();
         return t;
@@ -320,7 +364,21 @@ public class Terms {
         return t;
     }
 
+    static public int exists(List<Integer> varlist, int body) throws YicesException {
+        int[] vars =  varlist.stream().mapToInt(Integer::intValue).toArray();
+        int t = Yices.exists(vars, body);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
     static public int lambda(int[] vars, int body) throws YicesException {
+        int t = Yices.lambda(vars, body);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
+    static public int lambda(List<Integer> varlist, int body) throws YicesException {
+        int[] vars =  varlist.stream().mapToInt(Integer::intValue).toArray();
         int t = Yices.lambda(vars, body);
         if (t < 0) throw new YicesException();
         return t;
@@ -333,6 +391,10 @@ public class Terms {
         int t = Yices.tuple(arg);
         if (t < 0) throw new YicesException();
         return t;
+    }
+
+    static public int tuple(List<Integer> arg) throws YicesException {
+        return tuple(arg.stream().mapToInt(Integer::intValue).toArray());
     }
 
     static public int select(int idx, int tuple) throws YicesException {
@@ -356,8 +418,18 @@ public class Terms {
         return t;
     }
 
+    static public int funApplication(int fun, List<Integer> arg) throws YicesException {
+        return funApplication(fun, arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+       
     static public int functionUpdate(int fun, int[] arg, int newval) throws YicesException {
         int t = Yices.functionUpdate(fun, arg, newval);
+        if (t < 0) throw new YicesException();
+        return t;
+    }
+
+    static public int functionUpdate(int fun, List<Integer> arg, int newval) throws YicesException {
+        int t = Yices.functionUpdate(fun, arg.stream().mapToInt(Integer::intValue).toArray(), newval);
         if (t < 0) throw new YicesException();
         return t;
     }
@@ -384,17 +456,31 @@ public class Terms {
         return t;
     }
 
+    static public int and(List<Integer> arg) throws YicesException {
+        return and(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     static public int or(int... arg) throws YicesException {
         int t = Yices.or(arg);
         if (t < 0) throw new YicesException();
         return t;
     }
 
+    static public int or(List<Integer> arg) throws YicesException {
+        return or(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+
+
     static public int xor(int... arg) throws YicesException {
         int t = Yices.xor(arg);
         if (t < 0) throw new YicesException();
         return t;
     }
+
+    static public int xor(List<Integer> arg) throws YicesException {
+        return xor(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+
 
     static public int iff(int left, int right) throws YicesException {
         int t = Yices.iff(left, right);
@@ -457,12 +543,21 @@ public class Terms {
         return t;
     }
 
+    static public int add(List<Integer> arg) throws YicesException {
+        return add(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     // product of all elements of arg
     static public int mul(int... arg) throws YicesException {
         int t = Yices.mul(arg);
         if (t < 0) throw new YicesException();
         return t;
     }
+
+    static public int mul(List<Integer> arg) throws YicesException {
+        return mul(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+
 
     // real division: x/y
     static public int div(int x, int y) throws YicesException {
@@ -514,6 +609,13 @@ public class Terms {
         return term;
     }
 
+    static public int intPoly(List<Long> coeff, List<Integer> t) throws YicesException {
+        long[] acoeff =  coeff.stream().mapToLong(Long::longValue).toArray();
+        int[] at =  t.stream().mapToInt(Integer::intValue).toArray();
+        return intPoly(acoeff, at);
+    }
+
+
     // sum of num[i]/den[i] * t[i]
     static public int rationalPoly(long[] num, long[] den, int[] t) throws YicesException {
         if (num.length != den.length || num.length != t.length)
@@ -521,6 +623,13 @@ public class Terms {
         int term = Yices.rationalPoly(num, den, t);
         if (term < 0) throw new YicesException();
         return term;
+    }
+
+    static public int rationalPoly(List<Long> num, List<Long> den, List<Integer> t) throws YicesException {
+        long[] anum =  num.stream().mapToLong(Long::longValue).toArray();
+        long[] aden =  den.stream().mapToLong(Long::longValue).toArray();
+        int[] at =  t.stream().mapToInt(Integer::intValue).toArray();
+        return rationalPoly(anum, aden, at);
     }
 
     // arithmetic atoms
@@ -764,6 +873,10 @@ public class Terms {
         return t;
     }
 
+    static public int bvAdd(List<Integer> arg) throws YicesException {
+        return bvAdd(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     static public int bvAnd(int... arg) throws YicesException {
         if (arg.length == 0) throw new IllegalArgumentException("empty input");
         int t = Yices.bvAnd(arg);
@@ -771,6 +884,10 @@ public class Terms {
         return t;
     }
 
+    static public int bvAnd(List<Integer> arg) throws YicesException {
+        return bvAnd(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+    
     static public int bvOr(int... arg) throws YicesException {
         if (arg.length == 0) throw new IllegalArgumentException("empty input");
         int t = Yices.bvOr(arg);
@@ -778,11 +895,19 @@ public class Terms {
         return t;
     }
 
+    static public int bvOr(List<Integer> arg) throws YicesException {
+        return bvOr(arg.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     static public int bvXor(int... arg) throws YicesException {
         if (arg.length == 0) throw new IllegalArgumentException("empty input");
         int t = Yices.bvXor(arg);
         if (t < 0) throw new YicesException();
         return t;
+    }
+
+    static public int bvXor(List<Integer> arg) throws YicesException {
+        return bvXor(arg.stream().mapToInt(Integer::intValue).toArray());
     }
 
     // shift by constants: n is a constant shift amount
@@ -860,6 +985,10 @@ public class Terms {
         return t;
     }
 
+    static public int bvFromBoolArray(List<Integer> a) throws YicesException {
+        return bvFromBoolArray(a.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     // concat: high-order bits are from the left
     static public int bvConcat(int left, int right) throws YicesException {
         int t = Yices.bvConcat(left, right);
@@ -871,6 +1000,10 @@ public class Terms {
         int t = Yices.bvConcat(a);
         if (t < 0) throw new YicesException();
         return t;
+    }
+
+    static public int bvConcat(List<Integer> a) throws YicesException {
+        return bvConcat(a.stream().mapToInt(Integer::intValue).toArray());
     }
 
     // n copies of a concatenated
@@ -1122,6 +1255,10 @@ public class Terms {
         return constructor(x) == Constructor.SCALAR_CONSTANT;
     }
 
+    static public boolean isUninterpreted(int x) throws YicesException {
+        return constructor(x) == Constructor.UNINTERPRETED_TERM;
+    }
+
     /*
      * Value of a constant term
      */
@@ -1191,7 +1328,7 @@ public class Terms {
     }
 
     // Pretty print t then convert to a String: use a box of 80 columns and 30 lines
-    static public String toString(int t) throws YicesException{
+    static public String toString(int t) throws YicesException {
         String s = Yices.termToString(t);
         if (s == null) throw new YicesException();
         return s;
@@ -1227,9 +1364,27 @@ public class Terms {
          return w;
      }
 
+     static public int subst(int t, List<Integer> v, List<Integer> map) throws YicesException {
+        int[] av =  v.stream().mapToInt(Integer::intValue).toArray(); 
+        int[] amap =  map.stream().mapToInt(Integer::intValue).toArray();
+        return subst(t, av, amap);
+     }
+
      static public void substArray(int[] a, int[] v, int[] map) throws YicesException {
          if (v.length != map.length) throw new IllegalArgumentException("bad substitution");
          int code = Yices.substTermArray(a, v, map);
          if (code < 0) throw new YicesException();
      }
+
+    static public void substArray(List<Integer> a, List<Integer> v, List<Integer> map) throws YicesException {
+        int[] aa =  a.stream().mapToInt(Integer::intValue).toArray();
+        int[] av =  v.stream().mapToInt(Integer::intValue).toArray(); 
+        int[] amap =  map.stream().mapToInt(Integer::intValue).toArray();
+        substArray(aa, av, amap);
+        // copy the result back out  into the input.
+        for(int i = 0; i < aa.length; i++){
+            a.set(i, aa[i]);
+        }
+    }
 }
+

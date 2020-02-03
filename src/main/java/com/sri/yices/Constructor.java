@@ -65,7 +65,7 @@ public enum Constructor {
     ;
 
     private int index;
-    private Constructor(int id) { this.index = id; }
+    Constructor(int id) { this.index = id; }
     public int getIndex() { return index; }
 
     public static final int NUM_CONSTRUCTORS = 43;

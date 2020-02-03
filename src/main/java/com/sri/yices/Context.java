@@ -153,9 +153,9 @@ public class Context implements AutoCloseable {
     public void assertFormula(int f) throws YicesException {
         int code = Yices.assertFormula(ptr, f);
         if (code < 0) {
-            System.out.println("--- Error in assertFomula ---");
-            System.out.println(Terms.toString(f));
-            System.out.println("---");
+            // System.out.println("--- Error in assertFomula ---");
+            // System.out.println(Terms.toString(f));
+            // System.out.println("---");
             throw new YicesException();
         }
     }
@@ -209,7 +209,7 @@ public class Context implements AutoCloseable {
     /*
      * Simple watchdog to stop the search after a timeout
      */
-    private class WatchDog implements Runnable {
+    private static class WatchDog implements Runnable {
         private long ctx;
         private int timeout; // in seconds
         private volatile boolean stopped;
@@ -245,7 +245,7 @@ public class Context implements AutoCloseable {
 
         public synchronized void start() {
             stopped = false;
-            thread =  new Thread(this::run);
+            thread =  new Thread(this);
             thread.start();
         }
     }

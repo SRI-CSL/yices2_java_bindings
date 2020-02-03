@@ -9,7 +9,7 @@ public class Model implements AutoCloseable {
     /*
      * This is a pointer to the model
      */
-    private long ptr = 0;
+    private long ptr;
 
     protected Model(long p) {
         ptr = p;
@@ -21,7 +21,7 @@ public class Model implements AutoCloseable {
      * - var[i] must be an uninterpreted term
      *   map[i] must be a term of type compatible with the type of var[i]
      */
-    public Model(int[] var, int[] map) throws Exception {
+    public Model(int[] var, int[] map) throws YicesException {
         if (var.length != map.length)
             throw new IllegalArgumentException("var and map must have the same length");
         long p = Yices.modelFromMap(var, map);
@@ -80,7 +80,7 @@ public class Model implements AutoCloseable {
 
     // the numerator is returned in a[0].
     // the denominator is returned in a[1].
-    public void rationalValue(int t, long[] a) throws Exception {
+    public void rationalValue(int t, long[] a) throws YicesException {
         if (a.length < 2) throw new IllegalArgumentException("array too small");
         int code = Yices.getRationalValue(ptr, t, a);
         if (code < 0) throw new YicesException();

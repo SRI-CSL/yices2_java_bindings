@@ -1,6 +1,7 @@
 package com.sri.yices;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Wrappers to access the Yices type constructors.
@@ -117,6 +118,10 @@ public class Types {
         return tau;
     }
 
+    static public int tupleType(List<Integer> a) throws YicesException {
+        return tupleType(a.stream().mapToInt(Integer::intValue).toArray());
+    }
+
     /*
      * Function type: domain a, range sigma
      */
@@ -150,12 +155,22 @@ public class Types {
         return tau;
     }
 
+    static public int functionType(List<Integer> a) throws RuntimeException {
+        return functionType(a.stream().mapToInt(Integer::intValue).toArray());
+    }
+
+
     /*
      * Predicate type: domain a[], range BOOL
      */
     static public int predicateType(int... a) throws YicesException {
         return functionType(a, BOOL);
     }
+
+    static public int predicateType(List<Integer> a) throws YicesException {
+        return predicateType(a.stream().mapToInt(Integer::intValue).toArray());
+    }
+
 
     /*
      * ACCESSORS AND TESTS

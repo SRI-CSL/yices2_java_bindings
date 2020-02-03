@@ -3,7 +3,6 @@ package com.sri.yices;
 import java.math.BigInteger;
 
 public final class Yices {
-
     private static boolean is_ready;
 
     /*
@@ -31,10 +30,6 @@ public final class Yices {
     public static boolean isReady() {
         return is_ready;
     }
-
-
-    public static final boolean IS_YICES_INSTALLED = Yices.isReady();
-
 
     /*
      * Generic functions in yices.h
@@ -478,9 +473,9 @@ public final class Yices {
     //   both den and num fit in 64 bits then den is returned in a[0]
     //   and num is returned in a[1]
     // For getDoubleValue, the value is returned in a[0]
-    public static native int getIntegerValue(long mdl, int t, long a[]);
-    public static native int getRationalValue(long mdl, int t, long a[]);
-    public static native int getDoubleValue(long mdl, int t, double a[]);
+    public static native int getIntegerValue(long mdl, int t, long[] a);
+    public static native int getRationalValue(long mdl, int t, long[] a);
+    public static native int getDoubleValue(long mdl, int t, double[] a);
 
     // These return arrays of bytes suitable for conversion to BigInteger.
     // They return null if there's an error.

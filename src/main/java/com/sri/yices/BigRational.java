@@ -59,7 +59,7 @@ public class BigRational {
             denominator = BigInteger.ONE;
         } else if (i+1 < s.length()) {
             numerator = new BigInteger(s.substring(0,i));
-            denominator = new BigInteger(s.substring(i+1,s.length()));
+            denominator = new BigInteger(s.substring(i+1));
             normalize();
         } else {
             throw new NumberFormatException();
@@ -106,9 +106,6 @@ public class BigRational {
     }
 
     public boolean fitsInt() {
-        boolean temp1 = isInteger();
-        int temp2 = numerator.bitLength();
-        boolean temp3 = (temp2 <= 31 );
         return isInteger() && numerator.bitLength() <= 31;
     }
 
