@@ -1,15 +1,17 @@
-This is a description of what it took to generate a Yices bindings DLL to use with Java on January 30, 2020.
+# Build Instructions for Windows/Mingw
 
-The process works as follows: a Java JNI wrapper for Yices is defined in
+## Background
 
-https://github.com/SRI-CSL/yices2_java_bindings
-(current a private project, so permission must be granted).
+https://github.com/SRI-CSL/yices2_java_bindings defines Java wrappers to the Yices 2 API.
 
-This project works well in Linux, with an ant build file that uses a Makefile for a cpp core for the wrapper.
-However, this does not work so well in Cygwin, generating lots of errors.
-Instead of fixing the errors in the ant/Makefile setup, we decided to first make sure we could build the DLL and wrappers
-manually. We succeeded in doing that, but did not get to the point yet of fixing the ant / Makefile setup for
-working in Cygwin (so it is unclear at the moment if that is possible or feasible).
+The build system for these wrappers use ant and Makefiles. It works well on Linux and MacOS.
+It fails on Windows (or Cygwin or MinGW).
+
+These instructions explain how to build these Java binding by hand using Windows and MinGW.
+
+## Steps
+
+### Compile the Java JNI files
 
 A first step was to compile the Java wrapper files.
 We used a directory build/classes which was located at the root directory of the project,
@@ -34,47 +36,62 @@ then sticking with Cygwin makes sense.
 
 We needed to install the following in Cygwin:
 
+```
 Install mingw64-x86_64-binutils 2.29.1.787c9873-1
 Install mingw64-x86_64-gcc-core 7.4.0-1
 Install mingw64-x86_64-gcc-g++ 7.4.0-1
 Install mingw64-x86_64-headers 7.0.0-1
 Install mingw64-x86_64-runtime 7.0.0-1
+```
 
 Below are the commands for building the DLL. Note that we used quotes around $JAVA_HOME.
 
+```sh
 export CXX=/bin/x86_64-w64-mingw32-g++
 $CXX -I "$JAVA_HOME\include" -I "$JAVA_HOME\include\win32" -I "C:\Users\E26638\Programs\yices-2.6.1-x86_64-pc-mingw32-static-gmp\yices-2.6.1\include" -fpermissive -c yicesJNI.cpp
+```
+to generate ``yicesJNI.o``
 
-to generate yicesJNI.o
 
+The next step is
+```
 $CXX -L"C:\Users\E26638\Programs\yices-2.6.1-x86_64-pc-mingw32-static-gmp\yices-2.6.1\lib" -shared -o libyices2java.dll yicesJNI.o -lyices -lgmp
-
+```
 That generates the DLL.
 
 Note that we used the name libyices2java.dll. This is not ideal because the Java source code for loading the library is
+```java
 System.loadLibrary("yices2java");
+```
 In Linux, Java adds a prefix "lib to the name and the appropriate extension.
 In Windows it does NOT add a prefix "lib" and looks for yices2java, so using the name yices2java.dll makes more sense.
 
+### Finding Dependent DLLs
+
 The DLL requires other DLLs to work. You can inspect it with
 
+```sh
 objdump -p libyices2java.dll | less
+```
 
 to see what those require DLLs are. We saw libgmp-10.dll, libstdc++-6.dll and libgcc_s_seh-1.dll listed as dependencies.
 
 Since objdump does not know the path where to find the required DLLs,
 it was useful to use the following to find them in Cygwin:
 
+```sh
 find / -name 'libgmp-10*'
-
+```
 We identified and copied them to the current directory:
 
+```sh
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libgmp-10.dll .
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libstdc++-6.dll .
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libgcc_s_seh-1.dll .
+```
 
-We also had to copy libyices.dll from the bin directory in the Windows Yices binary (https://yices.csl.sri.com/).
-Careful: there is also a libyices.dll.a in the lib directory of the Windows Yices binary, but that's not the right file.
+We also had to copy ``libyices.dll`` from the bin directory in the Windows Yices binary (https://yices.csl.sri.com/).
+Careful: there is also a ``libyices.dll.a`` in the lib directory of the Windows Yices binary, but that's not the right file.
 
 Note that the DLLs are found to load by Java by looking at the java.library.path system property,
 which is set to the PATH environment variable by default. So the directory in which the DLLs are must be in PATH.
@@ -86,11 +103,13 @@ I used an old Microsoft utility called Dependency Walker, which shows dependenci
 in a recursive fashion (a more modern alternative, which I did not use, is at https://github.com/lucasg/Dependencies).
 I then identified the missing library libwinpthread-1.dll, which I included with:
 
+```sh
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libwinpthread-1.dll .
-
+```
 and the tests worked.
 
-What now?
+
+### What now?
 
 Ideally one can repair the ant/Makefile setup to work directly under Cygwin.
 
