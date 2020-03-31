@@ -9,7 +9,7 @@ compiler:
 before_install:
   - sudo add-apt-repository -y ppa:sri-csl/formal-methods
   - sudo apt-get -y update
-  - sudo apt-get -y install yices2
+  - sudo apt-get -y install yices2-dev
   - sudo apt-get -y install java-common curl
 
 install:
