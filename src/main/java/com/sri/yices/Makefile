@@ -80,7 +80,7 @@ $(YICES_CLASSPATH)/com/sri/yices/%.class: %.java
 	$(JAVAC) -d $(YICES_CLASSPATH) *.java
 
 com_sri_yices_Yices.h: $(YICES_CLASSPATH)/com/sri/yices/Yices.class
-	$(JAVAH) -classpath $(YICES_CLASSPATH) com.sri.yices.Yices
+	$(JAVAH) -verbose -classpath $(YICES_CLASSPATH) com.sri.yices.Yices
 
 yicesJNI.o: yicesJNI.cpp com_sri_yices_Yices.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Wall -c yicesJNI.cpp
