@@ -69,7 +69,7 @@ JAVAH ?= javah
 # JAVAC to compile the java
 JAVAC ?= javac
 
-YICES_CLASSPATH := ../../../../../../build/classes/
+YICES_CLASSPATH?=../../../../../../build/classes/
 
 all: $(libyices2java)
 

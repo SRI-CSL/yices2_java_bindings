@@ -61,10 +61,10 @@
 
 
     <!-- set global properties for this build -->
-    <property name="src" location="src/main/java/com/sri/yices"/>
+    <property name="src" location="src/main/java"/>
     <property name="code" location="${src}/com/sri/yices"/>
 
-    <property name="test" location="src/test/java/com/sri/yices"/>
+    <property name="test" location="src/test/java/"/>
     <property name="test_code" location="${test}/com/sri/yices"/>
 
     <property name="build" location="build"/>
@@ -79,7 +79,7 @@
     <property name="jnilib" value="${yices_jni}"/>
 
 
-  <!-- determine the build environment   -->
+  <!-- determine the build environment -->
 
 
   <condition property="isWindows">
