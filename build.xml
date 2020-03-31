@@ -218,7 +218,7 @@
     <exec executable="make"
           dir="${code}"
           failifexecutionfails="true">
-      <arg line="install"/>
+      <arg line="${library}"/>
     </exec>
 
   </target>

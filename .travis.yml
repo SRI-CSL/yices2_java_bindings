@@ -18,5 +18,5 @@ install:
 
 
 script:
-  - ant -version
+  - ant install
   - ant test
