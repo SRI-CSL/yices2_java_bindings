@@ -5,10 +5,10 @@ compiler:
 
 # command to install dependencies
 before_install:
-  - sudo add-apt-repository ppa:sri-csl/formal-methods
-  - sudo apt-get update
-  - sudo apt-get install yices2
-  - sudo apt-get install java-common curl
+  - sudo add-apt-repository -y ppa:sri-csl/formal-methods
+  - sudo apt-get -y update
+  - sudo apt-get -y install yices2
+  - sudo apt-get -y install java-common curl
 
 install:
   -  curl https://d3pxv6yz143wms.cloudfront.net/8.222.10.1/java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb	> java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb
