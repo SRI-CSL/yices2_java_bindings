@@ -217,6 +217,7 @@
       </manifest>
     </jar>
 
+    <echo> Executing "make ${library}" in ${code} </echo>
     <exec executable="make"
           dir="${code}"
           failifexecutionfails="true">
