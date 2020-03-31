@@ -15,9 +15,6 @@ before_install:
 install:
   -  curl https://d3pxv6yz143wms.cloudfront.net/8.222.10.1/java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb	> java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb
   - sudo dpkg --install java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb
-  - curl https://downloads.apache.org//ant/binaries/apache-ant-1.10.7-bin.tar.gz > apache-ant-1.10.7-bin.tar.gz
-  - tar xvfz apache-ant-1.10.7-bin.tar.gz
-  - sudo apt-get install ant
 
 
 script:
