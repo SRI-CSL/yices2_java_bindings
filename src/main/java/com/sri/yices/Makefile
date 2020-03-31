@@ -69,7 +69,10 @@ JAVAH ?= javah
 # JAVAC to compile the java
 JAVAC ?= javac
 
+# these defaults are for the ant build, and
+# should be overidden when using the build.sh
 YICES_CLASSPATH?=../../../../../../build/classes/
+YICES_JNI?=../../../../../../dist/lib
 
 all: $(libyices2java)
 
