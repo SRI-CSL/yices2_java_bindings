@@ -1,5 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://travis-ci.com/github/SRI-CSL/yices2_java_bindings.svg?branch=master)](https://travis-ci.com/github/SRI-CSL/yices2_java_bindings)
+[![Build Status](https://travis-ci.org/github/SRI-CSL/yices2_java_bindings.svg?branch=master)](https://travis-ci.org/github/SRI-CSL/yices2_java_bindings)
 
 #  Java Bindings for Yices 2
 
