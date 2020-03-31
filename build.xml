@@ -262,33 +262,6 @@
     </javac>
   </target>
 
-  <!--
-
-  <target name="test" depends="dist,test-compile">
-    <echo> Running tests </echo>
-    <echo> test_classes:  ${test_classes} </echo>
-    <junit printsummary="on" haltonfailure="yes" fork="true">
-      <sysproperty key="java.library.path" path="${jnilib}"/>
-      <classpath>
-          <path refid="classpath.test"/>
-          <pathelement location="${test_classes}"/>
-      </classpath>
-      <formatter type="brief" usefile="false" />
-      <batchtest>
-        <fileset dir="${test_code}" includes="Test*.java" />
-      </batchtest>
-    </junit>
-  </target>
-
-TestBigRationals.java
-TestConstructor.java
-TestContext.java
-TestStatus.java
-TestTypes.java
-TestYices.java
-
-    -->
-
   <target name="test" depends="dist,test-compile,install">
     <echo> Running tests </echo>
     <echo> test_classes:  ${test_classes} </echo>
