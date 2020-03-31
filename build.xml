@@ -170,7 +170,9 @@
 
 
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}"
+    <echo message="javac: ${code} ==> ${classes}"/>
+
+    <javac srcdir="${code}"
 	   destdir="${classes}"
 	   debug="${DEBUG}"
        deprecation="${DEPRECATION}"
