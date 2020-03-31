@@ -7,9 +7,9 @@
   <property file="build.properties"/>
   <!-- except version property -->
   <property file="version.properties"/>
-  <!-- 
+  <!--
 
-       customization comes from the environment variables YICES_JNI and YICES_CLASSPATH 
+       customization comes from the environment variables YICES_JNI and YICES_CLASSPATH
        YICES_JNI should be the path to where you want the library installed
        YICES_CLASSPATH should be where you want the classes installed.
 
@@ -42,7 +42,7 @@
       To install the dynamic library libyices2java:
 
       > ant install
-      
+
       To run the junit tests (located in junit):
 
       > ant test
@@ -59,29 +59,29 @@
   </target>
 
 
-    
+
     <!-- set global properties for this build -->
-    <property name="src" location="src/main/java/"/>
+    <property name="src" location="src/main/java/com/sri/yices"/>
     <property name="code" location="${src}/com/sri/yices"/>
-    
-    <property name="test" location="src/test/java/"/>
+
+    <property name="test" location="src/test/java/com/sri/yices"/>
     <property name="test_code" location="${test}/com/sri/yices"/>
 
     <property name="build" location="build"/>
     <property name="classes" location="${build}/classes"/>
     <property name="test_classes" location="${build}/test_classes"/>
     <property name="dist" location="dist"/>
-    
+
     <property name="junit" location="${test}"/>
 
     <property name="examples" location="examples"/>
-    
+
     <property name="jnilib" value="${yices_jni}"/>
-    
+
 
   <!-- determine the build environment   -->
-  
-  
+
+
   <condition property="isWindows">
     <os family="windows" />
   </condition>
@@ -112,9 +112,9 @@
     <property name="OS" value="darwin"/>
     <property name="libraryext" value=".dylib"/>
   </target>
-  
-  
-  <target name="sanity-check" depends="forUnix, forWindows, forDarwin"> 
+
+
+  <target name="sanity-check" depends="forUnix, forWindows, forDarwin">
 
     <property name="library" value="libyices2java${libraryext}"/>
 
@@ -132,14 +132,14 @@
       LIBS:                   ${LIBS}
       Library:                ${library}
     </echo>
-    
+
 
 
     <fail unless="env.JAVA_HOME" message="Please set JAVA_HOME: $$JAVA_HOME/include/jni.h needs to exist."/>
 
   </target>
-  
-  
+
+
   <target name="init">
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
@@ -153,8 +153,8 @@
     <tstamp/>
 
     <echo message="Using version number: ${YICES_JAVA_BINDINGS_VERSION} and date: ${TODAY}"/>
-    
-    
+
+
     <!-- copy templates and update version numbers -->
     <copy overwrite="true" todir="${src}" >
       <filterset>
@@ -166,8 +166,8 @@
       </fileset>
       <mapper type="glob" from="*.template" to="*.java"/>
     </copy>
-    
-    
+
+
     <!-- Compile the java code from ${src} into ${build} -->
     <javac srcdir="${src}"
 	   destdir="${classes}"
@@ -177,7 +177,7 @@
 	   nativeheaderdir="${code}">
     </javac>
   </target>
-  
+
   <target name="dist" depends="compile"
         description="generate the distribution">
     <!-- Create the distribution directory -->
@@ -190,15 +190,15 @@
     <tstamp>
       <format property="TODAY" pattern="yyyy-MM-dd" />
     </tstamp>
-    
+
     <jar compress="false"
          manifestencoding="UTF8"
          jarfile="${dist}/lib/yices.jar">
-      
+
       <fileset dir="${classes}">
         <include name="**"/>
       </fileset>
-      
+
       <!-- customize manifest -->
       <manifest>
         <attribute name="Main-Class" value="com.sri.yices.Version"/>
@@ -213,13 +213,13 @@
         </section>
       </manifest>
     </jar>
-    
+
     <exec executable="make"
           dir="${code}"
           failifexecutionfails="true">
       <arg line="${library}"/>
     </exec>
-    
+
   </target>
 
   <target name="install" description="install the jni library">
@@ -229,9 +229,9 @@
           failifexecutionfails="true">
       <arg line="install"/>
     </exec>
-    
+
   </target>
-  
+
   <target name="clean"
         description="clean up">
     <!-- Delete the ${build} and ${dist} directory trees -->
@@ -240,7 +240,7 @@
     <delete>
       <fileset dir="${examples}" includes="*.class"/>
     </delete>
-    
+
     <exec executable="make"
           dir="${code}"
           failifexecutionfails="true">
@@ -285,9 +285,9 @@ TestContext.java
 TestStatus.java
 TestTypes.java
 TestYices.java
-      
+
     -->
-  
+
   <target name="test" depends="dist,test-compile,install">
     <echo> Running tests </echo>
     <echo> test_classes:  ${test_classes} </echo>
@@ -297,7 +297,7 @@ TestYices.java
       <classpath>
         <path refid="classpath.test"/>
         <pathelement location="${test_classes}"/>
-      </classpath>      
+      </classpath>
       <formatter type="brief" usefile="false" />
       <test name="com.sri.yices.TestBigRationals"/>
       <test name="com.sri.yices.TestConstructor"/>
@@ -307,7 +307,7 @@ TestYices.java
       <test name="com.sri.yices.TestYices"/>
     </junit>
   </target>
-  
+
   <path id="classpath.examples">
     <pathelement location="${dist}/lib/yices.jar"/>
     <pathelement location="examples"/>
@@ -324,7 +324,7 @@ TestYices.java
 	   includeantruntime="false">
     </javac>
 
-    
+
     <antcall target="example"> <param name = "class" value="LoadYices"/>  </antcall>
 
     <antcall target="example"> <param name = "class" value="MCSat"/>  </antcall>
@@ -337,17 +337,16 @@ TestYices.java
 
     <!-- run the ${class} -->
     <echo> Running ${class} </echo>
-    
+
     <java classname="${class}"
 	  dir="${examples}"
 	  fork="true"
 	  classpathref="classpath.examples">
       <jvmarg value="-Djava.library.path=${jnilib}"/>
     </java>
-    
-    
+
+
   </target>
 
 
 </project>
-

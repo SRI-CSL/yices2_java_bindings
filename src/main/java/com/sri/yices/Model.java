@@ -13,7 +13,20 @@ public class Model implements AutoCloseable {
 
     protected Model(long p) {
         ptr = p;
+        population++;
     }
+
+    //<PROFILING>
+    static private long population = 0;
+
+    /**
+     * Returns the count of Model objects that have an unfreed pointer
+     * to a Yices shared library object.
+     */
+    public static long getCensus(){
+        return population;
+    }
+    //</PROFILING>
 
     /*
      * Constructor from a map:
@@ -27,6 +40,7 @@ public class Model implements AutoCloseable {
         long p = Yices.modelFromMap(var, map);
         if (p == 0) throw new YicesException();
         ptr = p;
+        population++;
     }
 
     /*
@@ -36,6 +50,7 @@ public class Model implements AutoCloseable {
         if (ptr != 0) {
             Yices.freeModel(ptr);
             ptr = 0;
+            population--;
         }
     }
 

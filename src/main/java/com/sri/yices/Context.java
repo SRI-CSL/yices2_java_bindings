@@ -12,11 +12,51 @@ public class Context implements AutoCloseable {
      */
     private long ptr;
 
+    //<PROFILING>
+    static private long population = 0;
+    static private long cost = 0;
+
+
+    /**
+     * Returns the count of Context objects that have an unfreed
+     * pointer to a Yices shared library object.
+     */
+    public static long getCensus(){
+        return population;
+    }
+
+    /**
+     * Returns the accumulated time spent in the Yices solver in nanoseconds.
+     */
+    public static final long getCost(boolean reset){
+        long retval = cost;
+        resetCost();
+        return retval;
+    }
+
+    /**
+     * Resets the cost accumulation counter to zero.
+     */
+    public static final void resetCost(){
+        cost = 0;
+    }
+
+    private int checkContextTimed(long ctx, long params){
+        long start = System.nanoTime();
+        int code = Yices.checkContext(ctx, params);
+        long finish = System.nanoTime();
+        cost += (finish - start);
+        return code;
+    }
+    //</PROFILING>
+
     static private final int ERROR_STATUS;
 
     static {
         ERROR_STATUS = Status.ERROR.getIndex();
     }
+
+
 
     /*
      * Default constructor:
@@ -26,6 +66,7 @@ public class Context implements AutoCloseable {
      */
     public Context() {
         ptr = Yices.newContext(0);
+        population++;
     }
 
     /*
@@ -35,6 +76,7 @@ public class Context implements AutoCloseable {
         long p = Yices.newContext(config.getPtr());
         if (p == 0) throw new YicesException();
         ptr = p;
+        population++;
     }
 
     /*
@@ -55,6 +97,7 @@ public class Context implements AutoCloseable {
         }
         Yices.freeConfig(config);
         ptr = p;
+        population++;
     }
 
     /*
@@ -79,6 +122,7 @@ public class Context implements AutoCloseable {
         }
         Yices.freeConfig(config);
         ptr = p;
+        population++;
     }
 
     protected long getPtr() { return ptr; }
@@ -90,6 +134,7 @@ public class Context implements AutoCloseable {
 	    if (ptr != 0) {
 	        Yices.freeContext(ptr);
 	        ptr = 0;
+            population--;
 	    }
     }
 
@@ -153,9 +198,6 @@ public class Context implements AutoCloseable {
     public void assertFormula(int f) throws YicesException {
         int code = Yices.assertFormula(ptr, f);
         if (code < 0) {
-            // System.out.println("--- Error in assertFomula ---");
-            // System.out.println(Terms.toString(f));
-            // System.out.println("---");
             throw new YicesException();
         }
     }
@@ -187,7 +229,7 @@ public class Context implements AutoCloseable {
      * Call the solver, use parameter pointer p
      */
     private Status doCheck(long p) throws YicesException {
-        int code = Yices.checkContext(ptr, p);
+        int code = checkContextTimed(ptr, p);
         if (code == ERROR_STATUS) throw new YicesException();
         return Status.idToStatus(code);
     }
@@ -256,7 +298,7 @@ public class Context implements AutoCloseable {
     private Status doCheckWithTimeout(long p, int timeout) throws YicesException {
         WatchDog watchDog = new WatchDog(ptr, timeout);
         watchDog.start();
-        int code = Yices.checkContext(ptr, p);
+        int code = checkContextTimed(ptr, p);
         watchDog.stop();
         if (code < 0) throw new YicesException();
         return Status.idToStatus(code);

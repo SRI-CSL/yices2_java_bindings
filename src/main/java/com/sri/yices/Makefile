@@ -69,6 +69,8 @@ JAVAH ?= javah
 # JAVAC to compile the java
 JAVAC ?= javac
 
+YICES_CLASSPATH := ../../../../../../build/classes/
+
 all: $(libyices2java)
 
 $(YICES_CLASSPATH)/com/sri/yices/%.class: %.java
@@ -108,6 +110,4 @@ install-darwin:
 clean:
 	rm -f *.o *.so *.dylib com_sri_yices_Yices.h
 
-.PHONY: all clean install install-linux install-darwin 
-
-
+.PHONY: all clean install install-linux install-darwin

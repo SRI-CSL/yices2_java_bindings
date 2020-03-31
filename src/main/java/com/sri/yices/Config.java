@@ -7,11 +7,24 @@ public class Config implements AutoCloseable {
     // pointer to the Yices config_t object
     private long ptr;
 
+    //<PROFILING>
+    static private long population = 0;
+
+    /**
+     * Returns the count of Config objects that have an unfreed
+     * pointer to a Yices shared library object.
+     */
+    public static long getCensus(){
+        return population;
+    }
+    //</PROFILING>
+
     /*
      * Default configuration
      */
     public Config () {
         ptr = Yices.newConfig();
+        population++;
     }
 
     /*
@@ -25,6 +38,7 @@ public class Config implements AutoCloseable {
             throw new YicesException();
         }
         ptr = p;
+        population++;
     }
 
     /*
@@ -39,6 +53,7 @@ public class Config implements AutoCloseable {
         if (ptr != 0) {
             Yices.freeConfig(ptr);
             ptr = 0;
+            population--;
         }
     }
 

@@ -7,11 +7,24 @@ public class Parameters implements AutoCloseable {
     // pointer to the parameter record
     private long ptr;
 
+    //<PROFILING>
+    static private long population = 0;
+
+    /**
+     * Returns the count of Parameters objects that have an unfreed
+     * pointer to a Yices shared library object.
+     */
+    public static long getCensus(){
+        return population;
+    }
+    //</PROFILING>
+
     /*
      * Constructor: all search parameters are set to their defaults
      */
     public Parameters() {
         ptr = Yices.newParamRecord();
+        population++;
     }
 
     /*
@@ -21,6 +34,7 @@ public class Parameters implements AutoCloseable {
         if (ptr != 0) {
             Yices.freeParamRecord(ptr);
             ptr = 0;
+            population--;
         }
     }
 
