@@ -173,7 +173,7 @@
     <javac srcdir="${src}"
 	   destdir="${classes}"
 	   debug="${DEBUG}"
-           deprecation="${DEPRECATION}"
+       deprecation="${DEPRECATION}"
 	   includeantruntime="false"
 	   nativeheaderdir="${code}">
     </javac>
