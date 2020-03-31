@@ -11,7 +11,7 @@ import static org.junit.Assume.assumeTrue;
 public class TestYices {
     @Test
     public void testLoad() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         System.out.println("Loaded Yices version " + Yices.version());
         System.out.println("Built for " + Yices.buildArch());
@@ -31,7 +31,7 @@ public class TestYices {
 
     @Test
     public void TestTypeConstructors() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         int boolType = Yices.boolType();
         int intType = Yices.intType();
@@ -138,7 +138,7 @@ public class TestYices {
 
     @Test
     public void testBoolTerms() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         // declare 20 variables of type bool
         int b = Yices.boolType();
@@ -276,28 +276,28 @@ public class TestYices {
 
     static private void inspectTerm(int t) {
         System.out.println("Term: " + t + ": " + Yices.termToString(t));
-        System.out.println("  type = " + Yices.typeToString(Yices.typeOfTerm(t)));
-        System.out.println("  name = " + Yices.getTermName(t));
-        System.out.println("  constructor = " + Yices.termConstructor(t));
-        System.out.println("  numChildren = " + Yices.termNumChildren(t));
-        System.out.println("  isBool = " + Yices.termIsBool(t));
-        System.out.println("  isInt = " + Yices.termIsInt(t));
-        System.out.println("  isReal = " + Yices.termIsReal(t));
-        System.out.println("  isArithmetic = " + Yices.termIsArithmetic(t));
-        System.out.println("  isBitvector = " + Yices.termIsBitvector(t));
-        System.out.println("  isTuple = " + Yices.termIsTuple(t));
-        System.out.println("  isFunction = " + Yices.termIsFunction(t));
-        System.out.println("  isScalar = " + Yices.termIsScalar(t));
-        System.out.println("  bitsize = " + Yices.termBitSize(t));
-        System.out.println("  isGround = " + Yices.termIsGround(t));
-        System.out.println("  isAtomic = " + Yices.termIsAtomic(t));
-        System.out.println("  isComposite = " + Yices.termIsComposite(t));
-        System.out.println("  isProjection = " + Yices.termIsProjection(t));
-        System.out.println("  isSum = " + Yices.termIsSum(t));
-        System.out.println("  isBvSum = " + Yices.termIsBvSum(t));
-        System.out.println("  isProduct = " + Yices.termIsProduct(t));
+        System.out.println(" type = " + Yices.typeToString(Yices.typeOfTerm(t)));
+        System.out.println(" name = " + Yices.getTermName(t));
+        System.out.println(" constructor = " + Yices.termConstructor(t));
+        System.out.println(" numChildren = " + Yices.termNumChildren(t));
+        System.out.println(" isBool = " + Yices.termIsBool(t));
+        System.out.println(" isInt = " + Yices.termIsInt(t));
+        System.out.println(" isReal = " + Yices.termIsReal(t));
+        System.out.println(" isArithmetic = " + Yices.termIsArithmetic(t));
+        System.out.println(" isBitvector = " + Yices.termIsBitvector(t));
+        System.out.println(" isTuple = " + Yices.termIsTuple(t));
+        System.out.println(" isFunction = " + Yices.termIsFunction(t));
+        System.out.println(" isScalar = " + Yices.termIsScalar(t));
+        System.out.println(" bitsize = " + Yices.termBitSize(t));
+        System.out.println(" isGround = " + Yices.termIsGround(t));
+        System.out.println(" isAtomic = " + Yices.termIsAtomic(t));
+        System.out.println(" isComposite = " + Yices.termIsComposite(t));
+        System.out.println(" isProjection = " + Yices.termIsProjection(t));
+        System.out.println(" isSum = " + Yices.termIsSum(t));
+        System.out.println(" isBvSum = " + Yices.termIsBvSum(t));
+        System.out.println(" isProduct = " + Yices.termIsProduct(t));
         if (Yices.termIsAtomic(t)) {
-            System.out.print("  val = ");
+            System.out.print(" val = ");
             showConstantValue(t);
         }
         System.out.println();
@@ -305,7 +305,7 @@ public class TestYices {
 
     @Test
     public void testGeneral() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         /*
          * U, I: uninterpreted types
@@ -389,7 +389,7 @@ public class TestYices {
 
     @Test
     public void testBigInt() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         System.out.println("Bigint: 0");
         int tst = Yices.mkIntConstant(new BigInteger("0"));
@@ -439,7 +439,7 @@ public class TestYices {
 
     @Test
     public void testBitvectors() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         inspectTerm(Yices.bvZero(10));
         inspectTerm(Yices.bvZero(32));
@@ -498,7 +498,7 @@ public class TestYices {
 
     @Test
     public void testConfig() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         // Configs
         long cfg = Yices.newConfig();
@@ -525,7 +525,7 @@ public class TestYices {
 
     @Test
     public void testContext() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         // Contexts
         long ctx = Yices.newContext(0);
@@ -568,7 +568,7 @@ public class TestYices {
         
     @Test
     public void testAssert() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         long ctx = Yices.newContext(0);
         // assertFormula a
@@ -640,7 +640,7 @@ public class TestYices {
 
     @Test
     public void testModels() {
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         long ctx = Yices.newContext(0);
 
@@ -716,6 +716,7 @@ public class TestYices {
 
     /*
      * This is flaky & needs to be fixed.
+     * testGC fails when run from 'gradle test' because of race conditions.
      */
     @Test
     @Ignore

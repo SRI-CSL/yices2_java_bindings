@@ -9,7 +9,7 @@ public class TestContext {
     @Test
     public void test1() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         int x = Terms.newUninterpretedTerm("x", Types.REAL);
         int y = Terms.newUninterpretedTerm("y", Types.REAL);
@@ -39,7 +39,7 @@ public class TestContext {
 
     static void bitvector_test(int n) {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         int tau = Types.bvType(n);
         int x = Terms.newUninterpretedTerm("x", tau);
@@ -54,7 +54,7 @@ public class TestContext {
         System.out.println("Status: " + stat);
         if (stat == Status.SAT) {
             Model m = c.getModel();
-            System.out.println("model");
+            System.out.println("model: ");
             System.out.println(m);
             boolean[] zval = m.bvValue(z);
             boolean[] xval = m.bvValue(x);
@@ -75,7 +75,7 @@ public class TestContext {
     @Test
     public void test2() {
        // JUnit runner treats tests with failing assumptions as ignored
-       assumeTrue(Yices.isReady());
+       assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
        bitvector_test(1);
        bitvector_test(2);
@@ -122,7 +122,7 @@ public class TestContext {
     @Test
     public void test3() {
         // JUnit runner treats tests with failing assumptions as ignored
-        assumeTrue(Yices.isReady());
+        assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
         // Skipped tests with 9 and 10 bits. They have too many solutions
         // bitvectorFactor(17 * 23, 9);
