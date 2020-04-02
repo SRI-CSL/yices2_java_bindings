@@ -1,9 +1,9 @@
-language: c
+language: java
 
 dist: bionic
 
-compiler:
-  - gcc
+jdk:
+  - openjdk11
 
 # command to install dependencies
 before_install:
@@ -11,10 +11,11 @@ before_install:
   - sudo apt-get -y update
   - sudo apt-get -y install yices2-dev
   - sudo apt-get -y install java-common curl tree
-
-install:
-  - curl https://d3pxv6yz143wms.cloudfront.net/8.222.10.1/java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb	> java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb
-  - sudo dpkg --install java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb
+  - sudo apt-get -y install gcc make
+  
+# install:
+#  - curl https://d3pxv6yz143wms.cloudfront.net/8.222.10.1/java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb	> java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb
+#  - sudo dpkg --install java-1.8.0-amazon-corretto-jdk_8.222.10-1_amd64.deb
 
 script:
   - yices --version
