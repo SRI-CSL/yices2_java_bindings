@@ -63,9 +63,6 @@ LIBS := -lyices -lgmp
 CXX ?= g++
 
 
-# JAVAH to create the include file(s)
-JAVAH ?= javah
-
 # JAVAC to compile the java
 JAVAC ?= javac
 
@@ -80,7 +77,7 @@ $(YICES_CLASSPATH)/com/sri/yices/%.class: %.java
 	$(JAVAC) -d $(YICES_CLASSPATH) *.java
 
 com_sri_yices_Yices.h: $(YICES_CLASSPATH)/com/sri/yices/Yices.class
-	$(JAVAH) -classpath $(YICES_CLASSPATH) com.sri.yices.Yices
+	$(JAVAC) -h . Yices.java
 
 yicesJNI.o: yicesJNI.cpp com_sri_yices_Yices.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Wall -c yicesJNI.cpp
@@ -91,13 +88,7 @@ libyices2java.dylib: yicesJNI.o
 libyices2java.so: yicesJNI.o
 	$(CXX) $(CFLAGS) $(LDFLAGS) -shared -o $@ yicesJNI.o $(LIBS)
 
-#
-# crude install to LIBDIR
-# the directory $LIBDIR must exist
-#
-#LIBDIR := /usr/local/lib
 LIBDIR := $(YICES_JNI)
-
 
 install: install-$(OS)
 
@@ -108,8 +99,6 @@ install-linux:
 install-darwin:
 	cp $(libyices2java) $(LIBDIR)
 
-#
-#
 clean:
 	rm -f *.o *.so *.dylib com_sri_yices_Yices.h
 

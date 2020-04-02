@@ -12,8 +12,8 @@ package com.sri.yices;
 public final class Version {
 
 
-    public static final String versionString = "1.0.0";
-    public static final String buildDate = "March 31 2020";
+    public static final String versionString = "1.0.1";
+    public static final String buildDate = "April 2 2020";
     
     
     public static void main(String[] args){

@@ -226,7 +226,7 @@
 
   </target>
 
-  <target name="install" description="install the jni library">
+  <target name="install" description="install the jni library" depends="dist">
 
     <exec executable="make"
           dir="${code}"
