@@ -19,8 +19,9 @@ install:
 script:
   - yices --version
   - YICES_JNI=${PWD}/dist/lib YICES_CLASSPATH=${PWD}/build/classes ./build.sh
+  - ant test
 #  - ant compile
 #  - tree build
 #  - ant dist
 #  - ant install
-#  - ant test
+
