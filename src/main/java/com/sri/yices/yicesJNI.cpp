@@ -477,6 +477,8 @@ static inline uint64_t *to_uint64ptr(jlong *x) {
 
 #endif
 
+/* =================== API =================== */
+
 /*
  * VERSION DATA
  */
@@ -502,6 +504,12 @@ JNIEXPORT jstring JNICALL Java_com_sri_yices_Yices_buildDate(JNIEnv *env, jclass
  */
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasMcsat(JNIEnv *env, jclass cls) {
   int32_t x = yices_has_mcsat();
+  assert(0 == x || 1 == x);
+  return (jboolean) x;
+}
+
+JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_isThreadSafe(JNIEnv *env, jclass cls) {
+  int32_t x = yices_is_thread_safe();
   assert(0 == x || 1 == x);
   return (jboolean) x;
 }
@@ -2460,6 +2468,30 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_termNumChildren(JNIEnv *env, jcl
 
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_termChild(JNIEnv *env, jclass, jint x, jint idx) {
   return yices_term_child(x, idx);
+}
+
+/*
+ * Collect all the children of term t
+ * return NULL is t is not a valid term
+ */
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_termChildren(JNIEnv *env, jclass, jint t) {
+  term_vector_t aux;
+  jintArray result = NULL;
+  int32_t code;
+
+  try {
+    yices_init_term_vector(&aux);
+
+    code = yices_term_children(t, &aux);
+    if (code >= 0) {
+      result = convertToIntArray(env, aux.size, aux.data);
+    }
+    yices_delete_term_vector(&aux);
+
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
 }
 
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_termProjIndex(JNIEnv *env, jclass, jint x) {

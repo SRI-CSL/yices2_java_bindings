@@ -42,6 +42,9 @@ public final class Yices {
     // check support for mcsat
     public static native boolean hasMcsat();
 
+    // check whether the library was compiled in THREAD_SAFE mode.
+    public static native boolean isThreadSafe();
+   
     /*
      * Global operations:
      * - init is required and must be performed first
@@ -342,6 +345,9 @@ public final class Yices {
     public static native int termConstructor(int x);
     public static native int termNumChildren(int x);
     public static native int termChild(int x, int idx);
+
+    // all children of x or NULL if x is not a valid term
+    public static native int[] termChildren(int x); 
     public static native int termProjIndex(int x);
     public static native int termProjArg(int x);
 
@@ -489,13 +495,13 @@ public final class Yices {
     }
 
     public static BigRational getRationalValue(long mdl, int t) {
-	    byte[] num = getRationalValueNumAsBytes(mdl, t);
+	byte[] num = getRationalValueNumAsBytes(mdl, t);
         byte[] den = getRationalValueDenAsBytes(mdl, t);
         if (num != null && den != null) {
-	        return new BigRational(num, den);
-	    } else {
-	        return null;
-	    }
+	    return new BigRational(num, den);
+	} else {
+	    return null;
+	}
     }
 
     // Value of a bitvector term: the result is little endian
