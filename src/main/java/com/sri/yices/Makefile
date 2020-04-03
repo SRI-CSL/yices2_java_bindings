@@ -100,6 +100,6 @@ install-darwin:
 	cp $(libyices2java) $(LIBDIR)
 
 clean:
-	rm -f *.o *.so *.dylib com_sri_yices_Yices.h
+	rm -f *.o *.so *.dylib com_sri_yices_Yices.h *.class
 
 .PHONY: all clean install install-linux install-darwin
