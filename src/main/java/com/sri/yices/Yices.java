@@ -529,6 +529,91 @@ public final class Yices {
     public static native String modelToString(long mdl, int numColumns, int numLines);
     public static native String modelToString(long mdl);
 
+
+    /*
+     * Check whether the given delegate is supported
+     * - return false if it's not supported.
+     * - return true if delegate is the name of a supported delegate
+     *
+     * Which delegate is supported depends on how the Yices' dynamic library was compiled.
+     *
+     * Since 2.6.2.
+     */
+    public static native boolean hasDelegate(String delegate);
+
+    /*
+     * Check whether a formula is satisfiable
+     * - f = formula
+     * - logic = SMT name for a logic (or NULL)
+     * - model = resulting model (or NULL if no model is needed)
+     * - delegate = external solver to use or NULL
+     *
+     * This function first checks whether f is trivially sat or trivially unsat.
+     * If not, it constructs a context configured for the specified logic, then
+     * asserts f in this context and checks whether the context is satisfiable.
+     *
+     * The return value is
+     *   STATUS_SAT if f is satisfiable,
+     *   STATUS_UNSAT if f is not satisifiable
+     *   STATUS_ERROR if something goes wrong
+     *
+     */
+    //__YICES_DLLSPEC__ extern smt_status_t yices_check_formula(term_t f, const char *logic, model_t **model, const char *delegate);
+    public static native int checkFormula(int t, String logic, long model, String delegate);
+
+    /*
+     * Check whether n formulas are satisfiable.
+     * - f = array of n Boolean terms
+     * - n = number of elements in f
+     *
+     * This is similar to yices_check_formula except that it checks whether
+     * the conjunction of f[0] ... f[n-1] is satisfiable.
+     */
+    // __YICES_DLLSPEC__ extern smt_status_t yices_check_formulas(const term_t f[], uint32_t n, const char *logic, model_t **model, const char *delegate);
+    public static native int checkFormulas(int[] terms, String logic, long model, String delegate);
+
+    /*
+     * Compute an implicant for t in mdl
+     * - t must be a Boolean term that's true in mdl
+     * - the implicant is a list of Boolean terms a[0] ... a[n-1] such that
+     *    1) a[i] is a literal (atom or negation of an atom)
+     *    2) a[i] is true in mdl
+     *    3) the conjunction a[0] /\ ... /\ a[n-1] implies t
+     *
+     * The implicant is returned in an int array, or null indicating an error.
+     */
+    public static native int[] implicantForFormula(long model, int t);
+
+    /*
+     * Compute an implicant for an array of terms in mdl
+     * - t must be an array of Boolean terms, each being true in mdl
+     * - the implicant is a list of Boolean terms a[0] ... a[n-1] such that
+     *    1) a[i] is a literal (atom or negation of an atom)
+     *    2) a[i] is true in mdl
+     *    3) the conjunction a[0] /\ ... /\ a[n-1] implies (and terms[0] ... terms[m-1]).
+     *
+     * The implicant is returned in an int array, or null indicating an error.
+     */
+    public static native int[] implicantForFormulas(long model, int[] terms);
+
+    // public static native int yices_generalize_model(model_t *mdl, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
+    // public static native int yices_generalize_model_array(model_t *mdl, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
+
+    //int32_t yices_export_formula_to_dimacs(term_t f, const char *filename, int32_t simplify_cnf, smt_status_t *status);
+    //int32_t yices_export_formulas_to_dimacs(const term_t f[], uint32_t n, const char *filename, int32_t simplify_cnf, smt_status_t *status);
+
+    /*
+     * Given a term t and a model mdl, the support of t in mdl is a set of uninterpreted
+     * terms whose values are sufficient to fix the value of t in mdl. For example, if
+     * t is (if x>0 then x+z else y) and x has value 1 in mdl, then the value of t doesn't depend
+     * on the value of y in mdl. In this case, support(t) = [ x, z ].
+     */
+    public static native int[] getSupport(long model, int term);
+    //int32_t yices_model_term_support(model_t *mdl, term_t t, term_vector_t *v);
+
+    //__YICES_DLLSPEC__ extern int32_t yices_model_term_array_support(model_t *mdl, uint32_t n, const term_t a[], term_vector_t *v);
+    public static native int[] getSupport(long model, int[] terms);
+
     // public static native int yices_get_algebraic_number_value(model_t *mdl, int t, lp_algebraic_number_t *a);
     // public static native void yices_init_yval_vector(yval_vector_t *v);
     // public static native void yices_delete_yval_vector(yval_vector_t *v);

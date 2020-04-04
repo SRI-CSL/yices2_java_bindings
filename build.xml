@@ -55,6 +55,9 @@
 
       > ant clean
 
+      To develop (clean then recompile and install):
+      > ant develop
+
     </echo>
   </target>
 
@@ -282,6 +285,7 @@
       <test name="com.sri.yices.TestStatus"/>
       <test name="com.sri.yices.TestTypes"/>
       <test name="com.sri.yices.TestYices"/>
+      <test name="com.sri.yices.TestNewIn2_6_2"/>
     </junit>
   </target>
 
@@ -311,19 +315,18 @@
   </target>
 
   <target name="example" depends="dist">
-
     <!-- run the ${class} -->
     <echo> Running ${class} </echo>
-
     <java classname="${class}"
 	  dir="${examples}"
 	  fork="true"
 	  classpathref="classpath.examples">
       <jvmarg value="-Djava.library.path=${jnilib}"/>
     </java>
-
-
   </target>
 
+  <target name="develop" depends="clean, install">
+    <echo message="Clean rebuild: ${YICES_JAVA_BINDINGS_VERSION} and date: ${TODAY}"/>
+  </target>
 
 </project>

@@ -3385,6 +3385,120 @@ JNIEXPORT jstring JNICALL Java_com_sri_yices_Yices_modelToString__J(JNIEnv *env,
 }
 
 
+JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jclass, jstring delegate){
+  jint code = 0;
+  const char *s = env->GetStringUTFChars(delegate, NULL);
+
+  if (s == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    try {
+      code = yices_has_delegate(s);
+    } catch (std::bad_alloc &ba) {
+      out_of_mem_exception(env);
+    }
+    env->ReleaseStringUTFChars(delegate, s);
+  }
+
+  return (jboolean) code;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    checkFormula
+ * Signature: (ILjava/lang/String;JLjava/lang/String;)I
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula
+  (JNIEnv *, jclass, jint, jstring, jlong, jstring);
+ */
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    checkFormulas
+ * Signature: ([ILjava/lang/String;JLjava/lang/String;)I
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas
+  (JNIEnv *, jclass, jintArray, jstring, jlong, jstring);
+ */
+
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    implicantForFormula
+ * Signature: (JI)[I
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormula
+  (JNIEnv *, jclass, jlong, jint);
+ */
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    implicantForFormulas
+ * Signature: (J[I)[I
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormulas
+  (JNIEnv *, jclass, jlong, jintArray);
+ */
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    getSupport
+ * Signature: (JI)[I
+ */
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__JI(JNIEnv *env, jclass, jlong model, jint term){
+  term_vector_t aux;
+  jintArray result = NULL;
+  int32_t code;
+
+  try {
+    yices_init_term_vector(&aux);
+
+    code = yices_model_term_support(reinterpret_cast<model_t*>(model), term, &aux);
+    if (code >= 0) {
+      result = convertToIntArray(env, aux.size, aux.data);
+    }
+    yices_delete_term_vector(&aux);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    getSupport
+ * Signature: (J[I)[I
+ */
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *env, jclass, jlong model, jintArray terms){
+  term_vector_t aux;
+  jintArray result = NULL;
+  int32_t code;
+
+  jsize n = env->GetArrayLength(terms);
+  if (n == 0) {
+    //BD: shuld we force a yices error here?
+    return result;
+  }
+  assert(n > 0);
+  term_t *tarr = env->GetIntArrayElements(terms, NULL);
+  if (tarr == NULL) {
+    out_of_mem_exception(env);
+    return result;
+  }
+
+  try {
+    yices_init_term_vector(&aux);
+
+    code = yices_model_term_array_support(reinterpret_cast<model_t*>(model), n, tarr, &aux);
+    if (code >= 0) {
+      result = convertToIntArray(env, aux.size, aux.data);
+    }
+    yices_delete_term_vector(&aux);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  env->ReleaseIntArrayElements(terms, tarr, JNI_ABORT); // don't change array a
+  return result;
+}
+
+
+
 
 #if 0
 
