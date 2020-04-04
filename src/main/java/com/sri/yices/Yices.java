@@ -596,11 +596,46 @@ public final class Yices {
      */
     public static native int[] implicantForFormulas(long model, int[] terms);
 
+
+    /*
+     * Compute a generalization of mdl for formula t
+     * - elim[] = variables to eliminate
+     * - each term in elim[i] must be an uninterpreted term of one of the
+     * following types: Boolean, (bitvector k), or Real
+     * - mode defines the generalization algorithm
+     *
+     * returns the array of formulas.
+     *
+     * If mode = GEN_BY_PROJ, then every element of v is guaranteed to be a literal
+     *
+     * Important: t must be true in mdl, otherwise, the returned data may be garbage.
+     *
+     */
+    public static native int[] generalizeModel(long model, int term, int[] elims, GeneralizationMode mode);
     // public static native int yices_generalize_model(model_t *mdl, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
+
+    public static native int[] generalizeModel(long model, int[] terms, int[] elims, GeneralizationMode mode);
     // public static native int yices_generalize_model_array(model_t *mdl, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
+    /*
+     * Bit-blast then export the CNF to a file
+     * - f = a Boolean formula (in the QF_BV theory)
+     * - filename = name of the ouput file
+     * - simplify_cnf = boolean flag
+     *  returns the formula's status, or -1 if there is an error.
+     */
     //int32_t yices_export_formula_to_dimacs(term_t f, const char *filename, int32_t simplify_cnf, smt_status_t *status);
+    public static native int exportToDimacs(int term, String filename, boolean simplify_cnf);
+
+    /*
+     * Bit-blast n formulas then export the CNF to a file
+     * - f = array of n Boolean formula (in the QF_BV theory)
+     * - filename = name of the ouput file
+     * - simplify_cnf = boolean flag
+     *  returns the formula's status, or -1 if there is an error. FIXME: iam: this needs to be clarified, here and in  yices.h
+     */
     //int32_t yices_export_formulas_to_dimacs(const term_t f[], uint32_t n, const char *filename, int32_t simplify_cnf, smt_status_t *status);
+    public static native int exportToDimacs(int[] terms, String filename, boolean simplify_cnf);
 
     /*
      * Given a term t and a model mdl, the support of t in mdl is a set of uninterpreted

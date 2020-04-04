@@ -3438,6 +3438,23 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormulas
 
 /*
  * Class:     com_sri_yices_Yices
+ * Method:    generalizeModel
+ * Signature: (JI[ILcom/sri/yices/GeneralizationMode;)[I
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__JI_3ILcom_sri_yices_GeneralizationMode_2
+  (JNIEnv *, jclass, jlong, jint, jintArray, jobject);
+ */
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    generalizeModel
+ * Signature: (J[I[ILcom/sri/yices/GeneralizationMode;)[I
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3ILcom_sri_yices_GeneralizationMode_2
+  (JNIEnv *, jclass, jlong, jintArray, jintArray, jobject);
+ */
+
+
+/*
+ * Class:     com_sri_yices_Yices
  * Method:    getSupport
  * Signature: (JI)[I
  */
