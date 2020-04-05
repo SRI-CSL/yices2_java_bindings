@@ -3388,7 +3388,6 @@ JNIEXPORT jstring JNICALL Java_com_sri_yices_Yices_modelToString__J(JNIEnv *env,
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jclass, jstring delegate){
   jint code = 0;
   const char *s = env->GetStringUTFChars(delegate, NULL);
-
   if (s == NULL) {
     out_of_mem_exception(env);
   } else {
@@ -3406,18 +3405,128 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jcl
 /*
  * Class:     com_sri_yices_Yices
  * Method:    checkFormula
- * Signature: (ILjava/lang/String;JLjava/lang/String;)I
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula
-  (JNIEnv *, jclass, jint, jstring, jlong, jstring);
+ * Signature: (ILjava/lang/String;Ljava/lang/String;)I
  */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate){
+  jint retval = -1;
+  const char *ds = env->GetStringUTFChars(delegate, NULL);
+  if (ds == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    const char *ls = env->GetStringUTFChars(logic, NULL);
+    if (ls == NULL) {
+      out_of_mem_exception(env);
+    } else {
+      retval = yices_check_formula(formula, ls, NULL, ds);
+      env->ReleaseStringUTFChars(logic, ls);
+    }
+    env->ReleaseStringUTFChars(delegate, ds);
+  }
+  return retval;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    getModelForFormula
+ * Signature: (ILjava/lang/String;Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_getModelForFormula(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate){
+  jlong retval = 0;
+  int32_t code;
+  const char *ds = env->GetStringUTFChars(delegate, NULL);
+  if (ds == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    const char *ls = env->GetStringUTFChars(logic, NULL);
+    if (ls == NULL) {
+      out_of_mem_exception(env);
+    } else {
+      model_t *model = NULL;
+      code = yices_check_formula(formula, ls, &model, ds);
+      if (code == STATUS_SAT) {
+	retval = reinterpret_cast<jlong>(model);
+      }
+      env->ReleaseStringUTFChars(logic, ls);
+    }
+    env->ReleaseStringUTFChars(delegate, ds);
+  }
+  return retval;
+}
 
 /*
  * Class:     com_sri_yices_Yices
  * Method:    checkFormulas
- * Signature: ([ILjava/lang/String;JLjava/lang/String;)I
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas
-  (JNIEnv *, jclass, jintArray, jstring, jlong, jstring);
+ * Signature: ([ILjava/lang/String;Ljava/lang/String;)I
  */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate){
+  jint retval = -1;
+  const char *ds;
+  jsize n = env->GetArrayLength(formulas);
+  if (n == 0) {
+    return retval;
+  }
+  assert(n > 0);
+  term_t *tarr = env->GetIntArrayElements(formulas, NULL);
+  if (tarr == NULL) {
+    out_of_mem_exception(env);
+    return retval;
+  }
+  ds = env->GetStringUTFChars(delegate, NULL);
+  if (ds == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    const char *ls = env->GetStringUTFChars(logic, NULL);
+    if (ls == NULL) {
+      out_of_mem_exception(env);
+    } else {
+      retval = yices_check_formulas(tarr, n, ls, NULL, ds);
+      env->ReleaseStringUTFChars(logic, ls);
+    }
+    env->ReleaseStringUTFChars(delegate, ds);
+  }
+  env->ReleaseIntArrayElements(formulas, tarr, JNI_ABORT);
+  return retval;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    getModelForFormulas
+ * Signature: ([ILjava/lang/String;Ljava/lang/String;)J
+ */
+JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_getModelForFormulas(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate){
+  jlong retval = 0;
+  int32_t code;
+  const char *ds;
+  jsize n = env->GetArrayLength(formulas);
+  if (n == 0) {
+    return retval;
+  }
+  assert(n > 0);
+  term_t *tarr = env->GetIntArrayElements(formulas, NULL);
+  if (tarr == NULL) {
+    out_of_mem_exception(env);
+    return retval;
+  }
+  ds = env->GetStringUTFChars(delegate, NULL);
+  if (ds == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    const char *ls = env->GetStringUTFChars(logic, NULL);
+    if (ls == NULL) {
+      out_of_mem_exception(env);
+    } else {
+      model_t *model = NULL;
+      code = yices_check_formulas(tarr, n, ls, &model, ds);
+      if (code == STATUS_SAT) {
+	retval = reinterpret_cast<jlong>(model);
+      }
+      env->ReleaseStringUTFChars(logic, ls);
+    }
+    env->ReleaseStringUTFChars(delegate, ds);
+  }
+  env->ReleaseIntArrayElements(formulas, tarr, JNI_ABORT);
+  return retval;
+}
 
 
 /*

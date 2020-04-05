@@ -559,7 +559,8 @@ public final class Yices {
      *
      */
     //__YICES_DLLSPEC__ extern smt_status_t yices_check_formula(term_t f, const char *logic, model_t **model, const char *delegate);
-    public static native int checkFormula(int t, String logic, long model, String delegate);
+    public static native int checkFormula(int t, String logic, String delegate);
+    public static native long getModelForFormula(int t, String logic, String delegate);
 
     /*
      * Check whether n formulas are satisfiable.
@@ -570,7 +571,8 @@ public final class Yices {
      * the conjunction of f[0] ... f[n-1] is satisfiable.
      */
     // __YICES_DLLSPEC__ extern smt_status_t yices_check_formulas(const term_t f[], uint32_t n, const char *logic, model_t **model, const char *delegate);
-    public static native int checkFormulas(int[] terms, String logic, long model, String delegate);
+    public static native int checkFormulas(int[] terms, String logic, String delegate);
+    public static native long getModelForFormulas(int[] terms, String logic, String delegate);
 
     /*
      * Compute an implicant for t in mdl
