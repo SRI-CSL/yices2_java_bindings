@@ -672,9 +672,16 @@ public final class Yices {
     // public static native int yices_val_is_integer(model_t *mdl, const yval_t *v);
 
     // public static native int yices_val_bitsize(model_t *mdl, const yval_t *v);
+    public static native int valBitSize(long model, int tag, int id);
+
     // public static native int yices_val_tuple_arity(model_t *mdl, const yval_t *v);
+    public static native int valTupleArity(long model, int tag, int id);
+
     // public static native int yices_val_mapping_arity(model_t *mdl, const yval_t *v);
+    public static native int valMappingArity(long model, int tag, int id);
+
     // public static native int yices_val_function_arity(model_t *mdl, const yval_t *v);
+    public static native int valFunctionArity(long model, int tag, int id);
 
     // public static native int yices_val_get_bool(model_t *mdl, const yval_t *v, int *val);
     // public static native int yices_val_get_int32(model_t *mdl, const yval_t *v, int *val);
