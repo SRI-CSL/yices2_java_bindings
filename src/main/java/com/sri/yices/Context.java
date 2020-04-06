@@ -53,7 +53,7 @@ public class Context implements AutoCloseable {
     static private final int ERROR_STATUS;
 
     static {
-        ERROR_STATUS = Status.ERROR.ordinals();
+        ERROR_STATUS = Status.ERROR.ordinal();
     }
 
 

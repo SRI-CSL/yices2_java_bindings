@@ -684,6 +684,9 @@ public final class Yices {
     public static native int valFunctionArity(long model, int tag, int id);
 
     // public static native int yices_val_get_bool(model_t *mdl, const yval_t *v, int *val);
+    public static native boolean getBooleanValue(long model, int term);
+
+
     // public static native int yices_val_get_int32(model_t *mdl, const yval_t *v, int *val);
     // public static native int yices_val_get_int64(model_t *mdl, const yval_t *v, int64_t *val);
 
