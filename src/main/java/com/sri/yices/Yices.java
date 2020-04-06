@@ -668,7 +668,6 @@ public final class Yices {
 
     // public static native int yices_val_is_rational32(model_t *mdl, const yval_t *v);
     // public static native int yices_val_is_rational64(model_t *mdl, const yval_t *v);
-
     // public static native int yices_val_is_integer(model_t *mdl, const yval_t *v);
 
     // public static native int yices_val_bitsize(model_t *mdl, const yval_t *v);
@@ -697,14 +696,14 @@ public final class Yices {
     // These three methods return -1 for error and 0 otherwise.
     // The value of term t in model mdl is returned in array a.
     //
-    // For getIntValue, a must be an array of one element.
+    // For valGetInteger, a must be an array of one element.
     // - if t has an integer value that fits in 64bits,
     //   this value is returned in a[0]
-    // For getRationalValue, a must be an array of two elements:
+    // For valGetRational, a must be an array of two elements:
     // - if t has a value that can be written den/num where
     //   both den and num fit in 64 bits then den is returned in a[0]
     //   and num is returned in a[1]
-    // For getDoubleValue, the value is returned in a[0]
+    // For valGetDouble, the value is returned in a[0]
     public static native int valGetInteger(long mdl, int tag, int id, long[] a);
     public static native int valGetRational(long mdl, int tag, int id, long[] a);
     public static native int valGetDouble(long mdl, int tag, int id, double[] a);

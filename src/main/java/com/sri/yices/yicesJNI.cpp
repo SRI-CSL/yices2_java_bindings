@@ -3733,7 +3733,6 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *en
 
 
 static jobject makeYVal(JNIEnv *env, yval_t *yval){
-  jobject retval;
   jclass yvalClass;
   jmethodID constructor;
   yvalClass = env->FindClass("com/sri/yices/YVal");
@@ -3741,8 +3740,17 @@ static jobject makeYVal(JNIEnv *env, yval_t *yval){
 
   constructor = env->GetMethodID(yvalClass, "<init>", "II(V)");
   assert(constructor != NULL);
-  retval = env->NewObject(yvalClass, constructor, yval->node_tag, yval->node_id);
-  return retval;
+  return env->NewObject(yvalClass, constructor, yval->node_tag, yval->node_id);
+}
+
+//returns true if tag is OK, and fills in the slots of yval, false otherwise.
+static bool convertToYval(jint tag, jint id, yval_t *yval){
+  if ((tag <  YVAL_UNKNOWN) || (tag > YVAL_MAPPING)){
+    return false;
+  }
+  yval->node_tag = static_cast<yval_tag_t>(tag);
+  yval->node_id = id;
+  return true;
 }
 
 /*
@@ -3752,7 +3760,8 @@ static jobject makeYVal(JNIEnv *env, yval_t *yval){
  */
 JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_getValue(JNIEnv *env, jclass, jlong model, jint term){
   yval_t yval;
-  int32_t code = yices_get_value(reinterpret_cast<model_t*>(model), term, &yval);
+  int32_t code;
+  code = yices_get_value(reinterpret_cast<model_t*>(model), term, &yval);
   if (code == 0) {
     return makeYVal(env, &yval);
   }
@@ -3765,11 +3774,12 @@ JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_getValue(JNIEnv *env, jclass,
  * Signature: (JII)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass, jlong model, jint tag, jint id){
-  if ((tag <  YVAL_UNKNOWN) || (tag > YVAL_MAPPING)){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
     return 0;
   } else {
-    yval_t yval = { id, static_cast<yval_tag_t>(tag) };
-    int32_t code = yices_val_is_int32(reinterpret_cast<model_t*>(model), &yval);
+    code = yices_val_is_int32(reinterpret_cast<model_t*>(model), &yval);
     return (jboolean)code;
   }
 }
@@ -3780,12 +3790,222 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass
  * Signature: (JII)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclass, jlong model, jint tag, jint id){
-  if ((tag <  YVAL_UNKNOWN) || (tag > YVAL_MAPPING)){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
     return 0;
   } else {
-    yval_t yval = { id, static_cast<yval_tag_t>(tag) };
-    int32_t code = yices_val_is_int64(reinterpret_cast<model_t*>(model), &yval);
+    code = yices_val_is_int64(reinterpret_cast<model_t*>(model), &yval);
     return (jboolean)code;
+  }
+}
+
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valBitSize
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
+    return 0;
+  } else {
+    code = yices_val_bitsize(reinterpret_cast<model_t*>(model), &yval);
+    // code is not going to be truncated because of yices' hard coded limits.
+    return (jint)code;
+  }
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valTupleArity
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
+    return 0;
+  } else {
+    code = yices_val_tuple_arity(reinterpret_cast<model_t*>(model), &yval);
+    // code is not going to be truncated because of yices' hard coded limits.
+    return (jint)code;
+  }
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valMappingArity
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valMappingArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
+    return 0;
+  } else {
+    code = yices_val_mapping_arity(reinterpret_cast<model_t*>(model), &yval);
+    // code is not going to be truncated because of yices' hard coded limits.
+    return (jint)code;
+  }
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valFunctionArity
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
+    return 0;
+  } else {
+    code = yices_val_function_arity(reinterpret_cast<model_t*>(model), &yval);
+    // code is not going to be truncated because of yices' hard coded limits.
+    return (jint)code;
+  }
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valGetBool
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t val;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
+    return -1;
+  } else {
+    val = 0;
+    code = yices_val_get_bool(reinterpret_cast<model_t*>(model), &yval, &val);
+    return code == 0 ? (jint)code : val;
+  }
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valGetInteger
+ * Signature: (JII[J)I
+ */
+/*
+ * Value of term t in mdl, stored in a[0]
+ * - returns 0 if this works, -1 for error.
+ *
+ * Possible errors:
+ * - a is an empty array
+ * - t is not valid or doesn't have an integer value small enough to
+ *   fit in 64 bits
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetInteger(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jlongArray a){
+  yval_t yval;
+  jlong  aux;
+  jint result;
+  if (!convertToYval(tag, id, &yval)){
+    return 0;
+  } else {
+    result = -1;
+    if (env->GetArrayLength(a) > 0) {
+      // ugly cast because int64_t is (long long) and jlong is long
+      try {
+        assert(sizeof(int64_t) == sizeof(jlong));
+        result = yices_val_get_int64(reinterpret_cast<model_t*>(mdl), &yval, reinterpret_cast<int64_t*>(&aux));
+        if (result >= 0) {
+          env->SetLongArrayRegion(a, 0, 1, &aux);
+        }
+      } catch (std::bad_alloc &ba) {
+        out_of_mem_exception(env);
+      }
+    }
+    return result;
+  }
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valGetRational
+ * Signature: (JII[J)I
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetRational
+  (JNIEnv *, jclass, jlong, jint, jint, jlongArray);
+ */
+/*
+ * Value of yval in mdl, returned as a rational a[0]/a[1]
+ * - returns 0 if this works, -1, -2, -3 for error
+ *
+ * Possible errors:
+ * - yval is not a rational
+ * - a has length 0 or 1
+ * - any error reported by yices_val_get_rational64
+ * - can also fail if then denominator (of type uint64_t) is too large to be
+ *   converted to jlong (signed 64bits).
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetRational(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jlongArray a){
+  yval_t yval;
+  int64_t num;
+  uint64_t den;
+  jlong aux[2];
+  jint result;
+  if (!convertToYval(tag, id, &yval)){
+    return -1;
+  } else {
+    result = -2;
+    if (env->GetArrayLength(a) >= 2) {
+      try {
+        result = yices_val_get_rational64(reinterpret_cast<model_t*>(mdl), &yval, &num, &den);
+        if (result >= 0) {
+          if (den <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
+            aux[0] = num;
+            aux[1] = (int64_t) den;
+            env->SetLongArrayRegion(a, 0, 2, aux);
+          } else {
+            result = -3;
+          }
+        }
+      } catch (std::bad_alloc &ba) {
+        out_of_mem_exception(env);
+      }
+    }
+    return result;
+  }
+}
+
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valGetDouble
+ * Signature: (JII[D)I
+ */
+/*
+ * Value returned as a double
+ * - returns 0 if this works, -1, or -2 for error.
+ *
+ * Possible errors:
+ * - yval isn't a double
+ * - a is an empty array or error for yices
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetDouble(JNIEnv *env, jclass, jlong model, jint tag, jint id, jdoubleArray a){
+  yval_t yval;
+  double aux;
+  jint result;
+  if (!convertToYval(tag, id, &yval)){
+    return -1;
+  } else {
+    result = -2;
+    if (env->GetArrayLength(a) > 0) {
+      try {
+        result = yices_val_get_double(reinterpret_cast<model_t*>(model), &yval, &aux);
+        if (result >= 0) {
+          env->SetDoubleArrayRegion(a, 0, 1, &aux);
+        }
+      } catch (std::bad_alloc &ba) {
+        out_of_mem_exception(env);
+      }
+    }
+    return result;
   }
 }
 
