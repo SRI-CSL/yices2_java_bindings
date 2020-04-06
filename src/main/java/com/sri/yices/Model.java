@@ -130,4 +130,16 @@ public class Model implements AutoCloseable {
         if (v < 0) throw new YicesException();
         return v;
     }
+
+    /*
+     * Term exploration in a model
+     */
+    public YVal getValue(int t){
+        return Yices.getValue(ptr, t);
+    }
+
+    public boolean isInt(YVal yval){
+        return Yices.valIsInt(ptr, yval.tag.ordinal(), yval.id);
+    }
+
 }

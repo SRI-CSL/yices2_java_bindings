@@ -44,7 +44,7 @@ public final class Yices {
 
     // check whether the library was compiled in THREAD_SAFE mode.
     public static native boolean isThreadSafe();
-   
+
     /*
      * Global operations:
      * - init is required and must be performed first
@@ -106,7 +106,7 @@ public final class Yices {
     public static native int typeChild(int tau, int i);
 
     // all children of tau or NULL if tau is not a valid type
-    public static native int[] typeChildren(int tau); 
+    public static native int[] typeChildren(int tau);
 
     /*
      * Names
@@ -347,7 +347,7 @@ public final class Yices {
     public static native int termChild(int x, int idx);
 
     // all children of x or NULL if x is not a valid term
-    public static native int[] termChildren(int x); 
+    public static native int[] termChildren(int x);
     public static native int termProjIndex(int x);
     public static native int termProjArg(int x);
 
@@ -517,7 +517,7 @@ public final class Yices {
      * - returns -1 if there's an error
      */
     public static native int valueAsTerm(long mdl, int t);
-    
+
     /*
      * Export the model as a String (pretty printing).
      *
@@ -652,22 +652,34 @@ public final class Yices {
     public static native int[] getSupport(long model, int[] terms);
 
     // public static native int yices_get_algebraic_number_value(model_t *mdl, int t, lp_algebraic_number_t *a);
+
     // public static native void yices_init_yval_vector(yval_vector_t *v);
     // public static native void yices_delete_yval_vector(yval_vector_t *v);
     // public static native void yices_reset_yval_vector(yval_vector_t *v);
+
     // public static native int yices_get_value(model_t *mdl, int t, yval_t *val);
+    public static native YVal getValue(long model, int term);
+
     // public static native int yices_val_is_int32(model_t *mdl, const yval_t *v);
+    public static native boolean valIsInt(long model, int tag, int id);
+
     // public static native int yices_val_is_int64(model_t *mdl, const yval_t *v);
+    public static native boolean valIsLong(long model, int tag, int id);
+
     // public static native int yices_val_is_rational32(model_t *mdl, const yval_t *v);
     // public static native int yices_val_is_rational64(model_t *mdl, const yval_t *v);
+
     // public static native int yices_val_is_integer(model_t *mdl, const yval_t *v);
+
     // public static native int yices_val_bitsize(model_t *mdl, const yval_t *v);
     // public static native int yices_val_tuple_arity(model_t *mdl, const yval_t *v);
     // public static native int yices_val_mapping_arity(model_t *mdl, const yval_t *v);
     // public static native int yices_val_function_arity(model_t *mdl, const yval_t *v);
+
     // public static native int yices_val_get_bool(model_t *mdl, const yval_t *v, int *val);
     // public static native int yices_val_get_int32(model_t *mdl, const yval_t *v, int *val);
     // public static native int yices_val_get_int64(model_t *mdl, const yval_t *v, int64_t *val);
+
     // public static native int yices_val_get_rational32(model_t *mdl, const yval_t *v, int *num, uint *den);
     // public static native int yices_val_get_rational64(model_t *mdl, const yval_t *v, int64_t *num, uint64_t *den);
     // public static native int yices_val_get_double(model_t *mdl, const yval_t *v, double *val);
@@ -676,11 +688,13 @@ public final class Yices {
     // public static native int yices_val_get_algebraic_number(model_t *mdl, const yval_t *v, lp_algebraic_number_t *a);
     // public static native int yices_val_get_bv(model_t *mdl, const yval_t *v, int val[]);
     // public static native int yices_val_get_scalar(model_t *mdl, const yval_t *v, int *val, type_t *tau);
+
     // public static native int yices_val_expand_tuple(model_t *mdl, const yval_t *v, yval_t child[]);
     // public static native int yices_val_expand_function(model_t *mdl, const yval_t *f, yval_t *def, yval_vector_t *v);
     // public static native int yices_val_expand_mapping(model_t *mdl, const yval_t *m, yval_t tup[], yval_t *val);
-    // public static native int yices_term_array_value(model_t *mdl, uint n, const int a[], int b[]);
 
+
+    // public static native int yices_term_array_value(model_t *mdl, uint n, const int a[], int b[]);
     // public static native int yices_pp_model_fd(int fd, model_t *mdl, uint width, uint height, uint offset);
 
 

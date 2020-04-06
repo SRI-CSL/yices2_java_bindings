@@ -96,7 +96,7 @@ static jbooleanArray convertToBoolArray(JNIEnv *env, int32_t n, const int32_t *a
       out_of_mem_exception(env);
     } else {
       for (int32_t i = 0; i<n; i++) {
-	aux[i] = (a[i] != 0);
+        aux[i] = (a[i] != 0);
       }
       env->ReleaseBooleanArrayElements(b, aux, 0); // copy back
     }
@@ -123,7 +123,7 @@ static int32_t *cloneIntArray(JNIEnv *env, jintArray a, jboolean *copy) {
     try {
       aux = new int32_t[n];
       for (int32_t i=0; i<n; i++) {
-	aux[i] = b[i];
+        aux[i] = b[i];
       }
     } catch (std::bad_alloc &ba) {
       out_of_mem_exception(env);
@@ -357,7 +357,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bytesToIntConstant(JNIEnv *env, 
     } catch (std::bad_alloc &ba) {
       out_of_mem_exception(env);
     }
-      
+
     env->ReleaseByteArrayElements(a, b, JNI_ABORT); // don't change a
   }
 
@@ -387,9 +387,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bytesToRationalConstant(JNIEnv *
       byte_array_to_mpz(mpq_numref(q), num_bytes, num_size);
       byte_array_to_mpz(mpq_denref(q), den_bytes, den_size);
       if (mpz_sgn(mpq_denref(q)) != 0) {
-	// the denominator is non-zero
-	mpq_canonicalize(q);
-	result = yices_mpq(q);
+        // the denominator is non-zero
+        mpq_canonicalize(q);
+        result = yices_mpq(q);
       }
       mpq_clear(q);
 
@@ -858,7 +858,7 @@ JNIEXPORT jstring JNICALL Java_com_sri_yices_Yices_typeToString(JNIEnv *env, jcl
   } catch (std::bad_alloc &ba) {
     out_of_mem_exception(env);
   }
-  
+
   return result;
 }
 
@@ -1479,9 +1479,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_intPoly(JNIEnv *env, jclass, jlo
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_poly_int64(n, reinterpret_cast<int64_t*>(c), a);
+        result = yices_poly_int64(n, reinterpret_cast<int64_t*>(c), a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
     }
     if (c != NULL) env->ReleaseLongArrayElements(coeff, c, JNI_ABORT);
@@ -1511,9 +1511,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_rationalPoly(JNIEnv *env, jclass
     } else if (all_positive_longs(n, q)) {
       // fail if den[i] < 0 for some i
       try {
-	result = yices_poly_rational64(n, reinterpret_cast<int64_t*>(p), reinterpret_cast<uint64_t*>(q), a);
+        result = yices_poly_rational64(n, reinterpret_cast<int64_t*>(p), reinterpret_cast<uint64_t*>(q), a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
     }
     if (q != NULL) env->ReleaseLongArrayElements(den, q, JNI_ABORT);
@@ -1716,9 +1716,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvConstFromIntArray(JNIEnv *env,
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvconst_from_array(n, a);
+        result = yices_bvconst_from_array(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT); // don't change array a
     }
@@ -1965,9 +1965,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvAdd___3I(JNIEnv *env, jclass, 
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvsum(n, a);
+        result = yices_bvsum(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT);
     }
@@ -1985,9 +1985,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvMul___3I(JNIEnv *env, jclass, 
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvproduct(n, a);
+        result = yices_bvproduct(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT);
     }
@@ -2005,9 +2005,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvAnd___3I(JNIEnv *env, jclass, 
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvand(n, a);
+        result = yices_bvand(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT);
     }
@@ -2025,9 +2025,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvOr___3I(JNIEnv *env, jclass, j
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvor(n, a);
+        result = yices_bvor(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT);
     }
@@ -2045,9 +2045,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvXor___3I(JNIEnv *env, jclass, 
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvxor(n, a);
+        result = yices_bvxor(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT);
     }
@@ -2182,9 +2182,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvFromBoolArray(JNIEnv *env, jcl
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvarray(n, a);
+        result = yices_bvarray(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT);
     }
@@ -2211,9 +2211,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvConcat___3I(JNIEnv *env, jclas
       out_of_mem_exception(env);
     } else {
       try {
-	result = yices_bvconcat(n, a);
+        result = yices_bvconcat(n, a);
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
       env->ReleaseIntArrayElements(arg, a, JNI_ABORT);
     }
@@ -2541,13 +2541,13 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_bvConstValue(JNIEnv *en
 
     } else {
       try {
-	int32_t *tmp =  new int32_t[n];
-	int32_t code = yices_bv_const_value(x, tmp);
-	assert(code >= 0);
-	result = convertToBoolArray(env, n, tmp);
-	delete [] tmp;
+        int32_t *tmp =  new int32_t[n];
+        int32_t code = yices_bv_const_value(x, tmp);
+        assert(code >= 0);
+        result = convertToBoolArray(env, n, tmp);
+        delete [] tmp;
       } catch (std::bad_alloc) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
     }
   }
@@ -2783,7 +2783,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesIncrefTerm(JNIEnv *env, jcl
     out_of_mem_exception(env);
   }
   return result;
-} 
+}
 
 // decrement the reference counter: doesn't allocate memory
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesDecrefTerm(JNIEnv *, jclass, jint t) {
@@ -2798,7 +2798,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesIncrefType(JNIEnv *env, jcl
   } catch (std::bad_alloc &ba) {
     out_of_mem_exception(env);
   }
-  return result;  
+  return result;
 }
 
 // decrement the reference counter of type tau.
@@ -2818,7 +2818,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_yicesNumPosrefTypes(JNIEnv *, jc
 
 // call the garbage collector
 JNIEXPORT void JNICALL Java_com_sri_yices_Yices_yicesGarbageCollect(JNIEnv *env, jclass,
-								    jintArray rootTerms, jintArray rootTypes, jboolean keepNamed) {
+                                                                    jintArray rootTerms, jintArray rootTypes, jboolean keepNamed) {
 
   // rootTerms and rootTypes may be null.
   // GetArrayLength and GetIntArrayElements seg fault if the array is NULL
@@ -3112,9 +3112,9 @@ JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_modelFromMap(JNIEnv *env, jclas
       out_of_mem_exception(env);
     } else {
       try {
-	result = reinterpret_cast<jlong>(yices_model_from_map(vlen, v, m));
+        result = reinterpret_cast<jlong>(yices_model_from_map(vlen, v, m));
       } catch (std::bad_alloc &ba) {
-	out_of_mem_exception(env);
+        out_of_mem_exception(env);
       }
     }
 
@@ -3160,10 +3160,10 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_getIntegerValue(JNIEnv *env, jcl
   if (env->GetArrayLength(a) > 0) {
     // ugly cast because int64_t is (long long) and jlong is long
     try {
-      assert(sizeof(int64_t) == sizeof(jlong));    
+      assert(sizeof(int64_t) == sizeof(jlong));
       result = yices_get_int64_value(reinterpret_cast<model_t*>(mdl), t, reinterpret_cast<int64_t*>(&aux));
       if (result >= 0) {
-	env->SetLongArrayRegion(a, 0, 1, &aux);
+        env->SetLongArrayRegion(a, 0, 1, &aux);
       }
     } catch (std::bad_alloc &ba) {
       out_of_mem_exception(env);
@@ -3194,13 +3194,13 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_getRationalValue(JNIEnv *env, jc
     try {
       result = yices_get_rational64_value(reinterpret_cast<model_t*>(mdl), t, &num, &den);
       if (result >= 0) {
-	if (den <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
-	  aux[0] = num;
-	  aux[1] = (int64_t) den;
-	  env->SetLongArrayRegion(a, 0, 2, aux);
-	} else {
-	  result = -2;
-	}
+        if (den <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
+          aux[0] = num;
+          aux[1] = (int64_t) den;
+          env->SetLongArrayRegion(a, 0, 2, aux);
+        } else {
+          result = -2;
+        }
       }
     } catch (std::bad_alloc &ba) {
       out_of_mem_exception(env);
@@ -3226,7 +3226,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_getDoubleValue(JNIEnv *env, jcla
     try {
       result = yices_get_double_value(reinterpret_cast<model_t*>(mdl), t, &aux);
       if (result >= 0) {
-	env->SetDoubleArrayRegion(a, 0, 1, &aux);
+        env->SetDoubleArrayRegion(a, 0, 1, &aux);
       }
     } catch (std::bad_alloc &ba) {
       out_of_mem_exception(env);
@@ -3255,7 +3255,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_getIntegerValueAsBytes(JNI
   } catch (std::bad_alloc &ba) {
     out_of_mem_exception(env);
   }
-  
+
   return result;
 }
 
@@ -3294,7 +3294,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_getRationalValueDenAsBytes
   } catch (std::bad_alloc &ba) {
     out_of_mem_exception(env);
   }
-  
+
   return result;
 }
 
@@ -3305,24 +3305,24 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_getBvValue(JNIEnv *env,
   if (n > 0) {
     try {
       if (n <= 64) {
-	int32_t a[64];
-	int32_t code = yices_get_bv_value(reinterpret_cast<model_t *>(mdl), t, a);
-	if (code >= 0) {
-	  result = convertToBoolArray(env, n, a);
-	}
+        int32_t a[64];
+        int32_t code = yices_get_bv_value(reinterpret_cast<model_t *>(mdl), t, a);
+        if (code >= 0) {
+          result = convertToBoolArray(env, n, a);
+        }
       } else {
-	int32_t *tmp = new int32_t[n];
-	int32_t code = yices_get_bv_value(reinterpret_cast<model_t *>(mdl), t, tmp);
-	if (code >= 0) {
-	  result = convertToBoolArray(env, n, tmp);
-	}
-	delete[] tmp;
+        int32_t *tmp = new int32_t[n];
+        int32_t code = yices_get_bv_value(reinterpret_cast<model_t *>(mdl), t, tmp);
+        if (code >= 0) {
+          result = convertToBoolArray(env, n, tmp);
+        }
+        delete[] tmp;
       }
     } catch (std::bad_alloc &ba) {
       out_of_mem_exception(env);
     }
   }
-    
+
 
   return result;
 }
@@ -3444,7 +3444,7 @@ JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_getModelForFormula(JNIEnv *env,
       model_t *model = NULL;
       code = yices_check_formula(formula, ls, &model, ds);
       if (code == STATUS_SAT) {
-	retval = reinterpret_cast<jlong>(model);
+        retval = reinterpret_cast<jlong>(model);
       }
       env->ReleaseStringUTFChars(logic, ls);
     }
@@ -3518,7 +3518,7 @@ JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_getModelForFormulas(JNIEnv *env
       model_t *model = NULL;
       code = yices_check_formulas(tarr, n, ls, &model, ds);
       if (code == STATUS_SAT) {
-	retval = reinterpret_cast<jlong>(model);
+        retval = reinterpret_cast<jlong>(model);
       }
       env->ReleaseStringUTFChars(logic, ls);
     }
@@ -3728,6 +3728,65 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *en
   }
   env->ReleaseIntArrayElements(terms, tarr, JNI_ABORT); // don't change array a
   return result;
+}
+
+
+
+static jobject makeYVal(JNIEnv *env, yval_t *yval){
+  jobject retval;
+  jclass yvalClass;
+  jmethodID constructor;
+  yvalClass = env->FindClass("com/sri/yices/YVal");
+  assert(yvalClass != NULL);
+
+  constructor = env->GetMethodID(yvalClass, "<init>", "II(V)");
+  assert(constructor != NULL);
+  retval = env->NewObject(yvalClass, constructor, yval->node_tag, yval->node_id);
+  return retval;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    getValue
+ * Signature: (JI)Lcom/sri/yices/YVal;
+ */
+JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_getValue(JNIEnv *env, jclass, jlong model, jint term){
+  yval_t yval;
+  int32_t code = yices_get_value(reinterpret_cast<model_t*>(model), term, &yval);
+  if (code == 0) {
+    return makeYVal(env, &yval);
+  }
+  return NULL;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valIsInt
+ * Signature: (JII)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  if ((tag <  YVAL_UNKNOWN) || (tag > YVAL_MAPPING)){
+    return 0;
+  } else {
+    yval_t yval = { id, static_cast<yval_tag_t>(tag) };
+    int32_t code = yices_val_is_int32(reinterpret_cast<model_t*>(model), &yval);
+    return (jboolean)code;
+  }
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valIsLong
+ * Signature: (JII)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  if ((tag <  YVAL_UNKNOWN) || (tag > YVAL_MAPPING)){
+    return 0;
+  } else {
+    yval_t yval = { id, static_cast<yval_tag_t>(tag) };
+    int32_t code = yices_val_is_int64(reinterpret_cast<model_t*>(model), &yval);
+    return (jboolean)code;
+  }
 }
 
 
