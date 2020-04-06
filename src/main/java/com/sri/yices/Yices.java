@@ -461,15 +461,15 @@ public final class Yices {
      * MODELS
      */
     public static native long getModel(long ctx, int keep_subst);
-    public static native void freeModel(long mdl);
+    public static native void freeModel(long model);
     public static native long modelFromMap(int [] var, int [] map);
 
-    // getBoolValue returns the value of term t in mdl.
+    // getBoolValue returns the value of term t in model.
     // It returns -1 for error, 0 for false, +1 for true
-    public static native int getBoolValue(long mdl, int t);
+    public static native int getBoolValue(long model, int t);
 
     // These three methods return -1 for error and 0 otherwise.
-    // The value of term t in model mdl is returned in array a.
+    // The value of term t in model 'model' is returned in array a.
     //
     // For getIntValue, a must be an array of one element.
     // - if t has an integer value that fits in 64bits,
@@ -479,44 +479,44 @@ public final class Yices {
     //   both den and num fit in 64 bits then den is returned in a[0]
     //   and num is returned in a[1]
     // For getDoubleValue, the value is returned in a[0]
-    public static native int getIntegerValue(long mdl, int t, long[] a);
-    public static native int getRationalValue(long mdl, int t, long[] a);
-    public static native int getDoubleValue(long mdl, int t, double[] a);
+    public static native int getIntegerValue(long model, int t, long[] a);
+    public static native int getRationalValue(long model, int t, long[] a);
+    public static native int getDoubleValue(long model, int t, double[] a);
 
     // These return arrays of bytes suitable for conversion to BigInteger.
     // They return null if there's an error.
-    private static native byte[] getIntegerValueAsBytes(long mdl, int t);
-    private static native byte[] getRationalValueNumAsBytes(long mdl, int t);
-    private static native byte[] getRationalValueDenAsBytes(long mdl, int t);
+    private static native byte[] getIntegerValueAsBytes(long model, int t);
+    private static native byte[] getRationalValueNumAsBytes(long model, int t);
+    private static native byte[] getRationalValueDenAsBytes(long model, int t);
 
-    public static BigInteger getIntegerValue(long mdl, int t) {
-	    byte[] val = getIntegerValueAsBytes(mdl, t);
+    public static BigInteger getIntegerValue(long model, int t) {
+	    byte[] val = getIntegerValueAsBytes(model, t);
 	    return val != null ? new BigInteger(val) : null;
     }
 
-    public static BigRational getRationalValue(long mdl, int t) {
-	byte[] num = getRationalValueNumAsBytes(mdl, t);
-        byte[] den = getRationalValueDenAsBytes(mdl, t);
+    public static BigRational getRationalValue(long model, int t) {
+        byte[] num = getRationalValueNumAsBytes(model, t);
+        byte[] den = getRationalValueDenAsBytes(model, t);
         if (num != null && den != null) {
-	    return new BigRational(num, den);
-	} else {
-	    return null;
-	}
+            return new BigRational(num, den);
+        } else {
+            return null;
+        }
     }
 
     // Value of a bitvector term: the result is little endian
     // return null if there's an error
-    public static native boolean[] getBvValue(long mdl, int t);
+    public static native boolean[] getBvValue(long model, int t);
 
     // Value (i.e., index) of a scalar or uninterpreted term
     // return -1 if there's an error.
-    public static native int getScalarValue(long mdl, int t);
+    public static native int getScalarValue(long model, int t);
 
     /*
      * Value of t converted to a constant term.
      * - returns -1 if there's an error
      */
-    public static native int valueAsTerm(long mdl, int t);
+    public static native int valueAsTerm(long model, int t);
 
     /*
      * Export the model as a String (pretty printing).
@@ -526,8 +526,8 @@ public final class Yices {
      * The first version prints the model in a box of ncol x nlines
      * The second version uses ncol = 80, nlines = 2^32-1
      */
-    public static native String modelToString(long mdl, int numColumns, int numLines);
-    public static native String modelToString(long mdl);
+    public static native String modelToString(long model, int numColumns, int numLines);
+    public static native String modelToString(long model);
 
 
     /*
@@ -575,11 +575,11 @@ public final class Yices {
     public static native long getModelForFormulas(int[] terms, String logic, String delegate);
 
     /*
-     * Compute an implicant for t in mdl
-     * - t must be a Boolean term that's true in mdl
+     * Compute an implicant for t in model
+     * - t must be a Boolean term that's true in model
      * - the implicant is a list of Boolean terms a[0] ... a[n-1] such that
      *    1) a[i] is a literal (atom or negation of an atom)
-     *    2) a[i] is true in mdl
+     *    2) a[i] is true in model
      *    3) the conjunction a[0] /\ ... /\ a[n-1] implies t
      *
      * The implicant is returned in an int array, or null indicating an error.
@@ -587,11 +587,11 @@ public final class Yices {
     public static native int[] implicantForFormula(long model, int t);
 
     /*
-     * Compute an implicant for an array of terms in mdl
-     * - t must be an array of Boolean terms, each being true in mdl
+     * Compute an implicant for an array of terms in model
+     * - t must be an array of Boolean terms, each being true in model
      * - the implicant is a list of Boolean terms a[0] ... a[n-1] such that
      *    1) a[i] is a literal (atom or negation of an atom)
-     *    2) a[i] is true in mdl
+     *    2) a[i] is true in model
      *    3) the conjunction a[0] /\ ... /\ a[n-1] implies (and terms[0] ... terms[m-1]).
      *
      * The implicant is returned in an int array, or null indicating an error.
@@ -600,7 +600,7 @@ public final class Yices {
 
 
     /*
-     * Compute a generalization of mdl for formula t
+     * Compute a generalization of model for formula t
      * - elim[] = variables to eliminate
      * - each term in elim[i] must be an uninterpreted term of one of the
      * following types: Boolean, (bitvector k), or Real
@@ -610,14 +610,14 @@ public final class Yices {
      *
      * If mode = GEN_BY_PROJ, then every element of v is guaranteed to be a literal
      *
-     * Important: t must be true in mdl, otherwise, the returned data may be garbage.
+     * Important: t must be true in model, otherwise, the returned data may be garbage.
      *
      */
     public static native int[] generalizeModel(long model, int term, int[] elims, int mode);
-    // public static native int yices_generalize_model(model_t *mdl, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
+    // public static native int yices_generalize_model(model_t *model, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
     public static native int[] generalizeModel(long model, int[] terms, int[] elims, int mode);
-    // public static native int yices_generalize_model_array(model_t *mdl, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
+    // public static native int yices_generalize_model_array(model_t *model, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
     /*
      * Bit-blast then export the CNF to a file
@@ -640,61 +640,62 @@ public final class Yices {
     public static native int exportToDimacs(int[] terms, String filename, boolean simplify_cnf);
 
     /*
-     * Given a term t and a model mdl, the support of t in mdl is a set of uninterpreted
-     * terms whose values are sufficient to fix the value of t in mdl. For example, if
-     * t is (if x>0 then x+z else y) and x has value 1 in mdl, then the value of t doesn't depend
-     * on the value of y in mdl. In this case, support(t) = [ x, z ].
+     * Given a term t and a model 'model', the support of t in model is a set of uninterpreted
+     * terms whose values are sufficient to fix the value of t in model. For example, if
+     * t is (if x>0 then x+z else y) and x has value 1 in model, then the value of t doesn't depend
+     * on the value of y in model. In this case, support(t) = [ x, z ].
      */
     public static native int[] getSupport(long model, int term);
-    //int32_t yices_model_term_support(model_t *mdl, term_t t, term_vector_t *v);
+    //int32_t yices_model_term_support(model_t *model, term_t t, term_vector_t *v);
 
-    //__YICES_DLLSPEC__ extern int32_t yices_model_term_array_support(model_t *mdl, uint32_t n, const term_t a[], term_vector_t *v);
+    //__YICES_DLLSPEC__ extern int32_t yices_model_term_array_support(model_t *model, uint32_t n, const term_t a[], term_vector_t *v);
     public static native int[] getSupport(long model, int[] terms);
 
-    // public static native int yices_get_algebraic_number_value(model_t *mdl, int t, lp_algebraic_number_t *a);
+    // public static native int yices_get_algebraic_number_value(model_t *model, int t, lp_algebraic_number_t *a);
 
     // public static native void yices_init_yval_vector(yval_vector_t *v);
     // public static native void yices_delete_yval_vector(yval_vector_t *v);
     // public static native void yices_reset_yval_vector(yval_vector_t *v);
 
-    // public static native int yices_get_value(model_t *mdl, int t, yval_t *val);
+    // public static native int yices_get_value(model_t *model, int t, yval_t *val);
     public static native YVal getValue(long model, int term);
 
-    // public static native int yices_val_is_int32(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_is_rational32(model_t *model, const yval_t *v);
+    // public static native int yices_val_is_rational64(model_t *model, const yval_t *v);
+    // public static native int yices_val_is_integer(model_t *model, const yval_t *v);
+    // public static native int yices_val_is_int32(model_t *model, const yval_t *v);
+    //
     public static native boolean valIsInt(long model, int tag, int id);
-
-    // public static native int yices_val_is_int64(model_t *mdl, const yval_t *v);
+    //
+    // public static native int yices_val_is_int64(model_t *model, const yval_t *v);
     public static native boolean valIsLong(long model, int tag, int id);
 
-    // public static native int yices_val_is_rational32(model_t *mdl, const yval_t *v);
-    // public static native int yices_val_is_rational64(model_t *mdl, const yval_t *v);
-    // public static native int yices_val_is_integer(model_t *mdl, const yval_t *v);
 
-    // public static native int yices_val_bitsize(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_bitsize(model_t *model, const yval_t *v);
     public static native int valBitSize(long model, int tag, int id);
 
-    // public static native int yices_val_tuple_arity(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_tuple_arity(model_t *model, const yval_t *v);
     public static native int valTupleArity(long model, int tag, int id);
 
-    // public static native int yices_val_mapping_arity(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_mapping_arity(model_t *model, const yval_t *v);
     public static native int valMappingArity(long model, int tag, int id);
 
-    // public static native int yices_val_function_arity(model_t *mdl, const yval_t *v);
+    // public static native int yices_val_function_arity(model_t *model, const yval_t *v);
     public static native int valFunctionArity(long model, int tag, int id);
 
-    // public static native int yices_val_get_bool(model_t *mdl, const yval_t *v, int *val);
+    // public static native int yices_val_get_bool(model_t *model, const yval_t *v, int *val);
     //
-    // getBoolValue returns the value of yval { tag, id} in mdl.
+    // getBoolValue returns the value of yval { tag, id} in model.
     // It returns -1 for error, 0 for false, +1 for true
     public static native int valGetBool(long model, int tag, int id);
 
 
-    // public static native int yices_val_get_int32(model_t *mdl, const yval_t *v, int *val);
-    // public static native int yices_val_get_int64(model_t *mdl, const yval_t *v, int64_t *val);
-    // public static native int yices_val_get_double(model_t *mdl, const yval_t *v, double *val);
+    // public static native int yices_val_get_int32(model_t *model, const yval_t *v, int *val);
+    // public static native int yices_val_get_int64(model_t *model, const yval_t *v, int64_t *val);
+    // public static native int yices_val_get_double(model_t *model, const yval_t *v, double *val);
     //
     // These three methods return -1 for error and 0 otherwise.
-    // The value of term t in model mdl is returned in array a.
+    // The value of term t in model 'model' is returned in array a.
     //
     // For valGetInteger, a must be an array of one element.
     // - if t has an integer value that fits in 64bits,
@@ -704,27 +705,64 @@ public final class Yices {
     //   both den and num fit in 64 bits then den is returned in a[0]
     //   and num is returned in a[1]
     // For valGetDouble, the value is returned in a[0]
-    public static native int valGetInteger(long mdl, int tag, int id, long[] a);
-    public static native int valGetRational(long mdl, int tag, int id, long[] a);
-    public static native int valGetDouble(long mdl, int tag, int id, double[] a);
+    public static native int valGetInteger(long model, int tag, int id, long[] a);
+    public static native int valGetRational(long model, int tag, int id, long[] a);
+    public static native int valGetDouble(long model, int tag, int id, double[] a);
 
-    // public static native int yices_val_get_rational32(model_t *mdl, const yval_t *v, int *num, uint *den);
-    // public static native int yices_val_get_rational64(model_t *mdl, const yval_t *v, int64_t *num, uint64_t *den);
-
-
-    // public static native int yices_val_get_mpz(model_t *mdl, const yval_t *v, mpz_t val);
-    // public static native int yices_val_get_mpq(model_t *mdl, const yval_t *v, mpq_t val);
-    // public static native int yices_val_get_algebraic_number(model_t *mdl, const yval_t *v, lp_algebraic_number_t *a);
-    // public static native int yices_val_get_bv(model_t *mdl, const yval_t *v, int val[]);
-    // public static native int yices_val_get_scalar(model_t *mdl, const yval_t *v, int *val, type_t *tau);
-
-    // public static native int yices_val_expand_tuple(model_t *mdl, const yval_t *v, yval_t child[]);
-    // public static native int yices_val_expand_function(model_t *mdl, const yval_t *f, yval_t *def, yval_vector_t *v);
-    // public static native int yices_val_expand_mapping(model_t *mdl, const yval_t *m, yval_t tup[], yval_t *val);
+    // public static native int yices_val_get_rational32(model_t *model, const yval_t *v, int *num, uint *den);
+    // public static native int yices_val_get_rational64(model_t *model, const yval_t *v, int64_t *num, uint64_t *den);
 
 
-    // public static native int yices_term_array_value(model_t *mdl, uint n, const int a[], int b[]);
-    // public static native int yices_pp_model_fd(int fd, model_t *mdl, uint width, uint height, uint offset);
+    // public static native int yices_val_get_bv(model_t *model, const yval_t *v, int val[]);
+    public static native boolean[] valGetBV(long model, int tag, int id);
+
+
+    // public static native int yices_val_get_mpz(model_t *model, const yval_t *v, mpz_t val);
+    // public static native int yices_val_get_mpq(model_t *model, const yval_t *v, mpq_t val);
+
+    // These return arrays of bytes suitable for conversion to BigInteger.
+    // They return null if there's an error.
+    private static native byte[] valGetIntegerAsBytes(long model, int tag, int id);
+    private static native byte[] valGetRationalNumAsBytes(long model, int tag, int id);
+    private static native byte[] valGetRationalDenAsBytes(long model, int tag, int id);
+
+    public static BigInteger valGetInteger(long model, int tag, int id) {
+	    byte[] val = valGetIntegerAsBytes(model, tag, id);
+	    return val != null ? new BigInteger(val) : null;
+    }
+
+    public static BigRational valGetRational(long model, int tag, int id) {
+        byte[] num = valGetRationalNumAsBytes(model, tag, id);
+        byte[] den = valGetRationalDenAsBytes(model, tag, id);
+        if (num != null && den != null) {
+            return new BigRational(num, den);
+        } else {
+            return null;
+        }
+    }
+
+
+    // public static native int yices_val_get_scalar(model_t *model, const yval_t *v, int *val, type_t *tau);
+    // Value (i.e., index) of a scalar or uninterpreted term
+    // return 0 on success. -1 or -2 if there's an error.
+    // -1 if the tag isn't kosher.
+    // -2 if the array a isn't of length 2
+    // -3 if the yval isn't of a scalar
+    // stores the scalar val in a[0] and the type in a[1]
+
+    public static native int valGetScalar(long model, int tag, int id, int[] a);
+
+
+    // public static native int yices_val_expand_tuple(model_t *model, const yval_t *v, yval_t child[]);
+    // public static native int yices_val_expand_function(model_t *model, const yval_t *f, yval_t *def, yval_vector_t *v);
+    // public static native int yices_val_expand_mapping(model_t *model, const yval_t *m, yval_t tup[], yval_t *val);
+
+
+    /* <TooHardBasket> */
+    // public static native int yices_val_get_algebraic_number(model_t *model, const yval_t *v, lp_algebraic_number_t *a);
+    // public static native int yices_term_array_value(model_t *model, uint n, const int a[], int b[]);
+    // public static native int yices_pp_model_fd(int fd, model_t *model, uint width, uint height, uint offset);
+    /* </TooHardBasket> */
 
 
 }

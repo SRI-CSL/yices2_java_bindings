@@ -11,9 +11,9 @@ public class TestStatus {
         // JUnit runner treats tests with failing assumptions as ignored
         assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
 
-        for (int i=0; i<Status.NUM_STATUSES; i++) {
+        for (int i=0; i<Status.values().length; i++) {
             Status s = Status.idToStatus(i);
-            Assert.assertEquals(s.getIndex(), i);
+            Assert.assertEquals(s.ordinal(), i);
             System.out.println("index " + i + ": status = " + s);
         }
         Status error = Status.idToStatus(-100);
