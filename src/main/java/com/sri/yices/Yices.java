@@ -684,15 +684,35 @@ public final class Yices {
     public static native int valFunctionArity(long model, int tag, int id);
 
     // public static native int yices_val_get_bool(model_t *mdl, const yval_t *v, int *val);
-    public static native boolean getBooleanValue(long model, int term);
+    //
+    // getBoolValue returns the value of yval { tag, id} in mdl.
+    // It returns -1 for error, 0 for false, +1 for true
+    public static native int valGetBool(long model, int tag, int id);
 
 
     // public static native int yices_val_get_int32(model_t *mdl, const yval_t *v, int *val);
     // public static native int yices_val_get_int64(model_t *mdl, const yval_t *v, int64_t *val);
+    // public static native int yices_val_get_double(model_t *mdl, const yval_t *v, double *val);
+    //
+    // These three methods return -1 for error and 0 otherwise.
+    // The value of term t in model mdl is returned in array a.
+    //
+    // For getIntValue, a must be an array of one element.
+    // - if t has an integer value that fits in 64bits,
+    //   this value is returned in a[0]
+    // For getRationalValue, a must be an array of two elements:
+    // - if t has a value that can be written den/num where
+    //   both den and num fit in 64 bits then den is returned in a[0]
+    //   and num is returned in a[1]
+    // For getDoubleValue, the value is returned in a[0]
+    public static native int valGetInteger(long mdl, int tag, int id, long[] a);
+    public static native int valGetRational(long mdl, int tag, int id, long[] a);
+    public static native int valGetDouble(long mdl, int tag, int id, double[] a);
 
     // public static native int yices_val_get_rational32(model_t *mdl, const yval_t *v, int *num, uint *den);
     // public static native int yices_val_get_rational64(model_t *mdl, const yval_t *v, int64_t *num, uint64_t *den);
-    // public static native int yices_val_get_double(model_t *mdl, const yval_t *v, double *val);
+
+
     // public static native int yices_val_get_mpz(model_t *mdl, const yval_t *v, mpz_t val);
     // public static native int yices_val_get_mpq(model_t *mdl, const yval_t *v, mpq_t val);
     // public static native int yices_val_get_algebraic_number(model_t *mdl, const yval_t *v, lp_algebraic_number_t *a);
