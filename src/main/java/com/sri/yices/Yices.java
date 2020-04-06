@@ -613,10 +613,10 @@ public final class Yices {
      * Important: t must be true in mdl, otherwise, the returned data may be garbage.
      *
      */
-    public static native int[] generalizeModel(long model, int term, int[] elims, GeneralizationMode mode);
+    public static native int[] generalizeModel(long model, int term, int[] elims, int mode);
     // public static native int yices_generalize_model(model_t *mdl, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
-    public static native int[] generalizeModel(long model, int[] terms, int[] elims, GeneralizationMode mode);
+    public static native int[] generalizeModel(long model, int[] terms, int[] elims, int mode);
     // public static native int yices_generalize_model_array(model_t *mdl, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
     /*
@@ -680,11 +680,6 @@ public final class Yices {
     // public static native int yices_val_expand_function(model_t *mdl, const yval_t *f, yval_t *def, yval_vector_t *v);
     // public static native int yices_val_expand_mapping(model_t *mdl, const yval_t *m, yval_t tup[], yval_t *val);
     // public static native int yices_term_array_value(model_t *mdl, uint n, const int a[], int b[]);
-
-    // public static native int yices_implicant_for_formula(model_t *mdl, int t, term_vector_t *v);
-    // public static native int yices_implicant_for_formulas(model_t *mdl, uint n, const int a[], term_vector_t *v);
-    // public static native int yices_generalize_model(model_t *mdl, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
-    // public static native int yices_generalize_model_array(model_t *mdl, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
     // public static native int yices_pp_model_fd(int fd, model_t *mdl, uint width, uint height, uint offset);
 

@@ -3588,19 +3588,86 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormulas(JNIEnv
 /*
  * Class:     com_sri_yices_Yices
  * Method:    generalizeModel
- * Signature: (JI[ILcom/sri/yices/GeneralizationMode;)[I
-JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__JI_3ILcom_sri_yices_GeneralizationMode_2
-  (JNIEnv *, jclass, jlong, jint, jintArray, jobject);
+ * Signature: (JI[II)[I
  */
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__JI_3II(JNIEnv *env, jclass, jlong model, jint term, jintArray elims, jint mode){
+  jintArray retval = NULL;
+  int32_t code;
+  term_vector_t aux;
+  jsize n = env->GetArrayLength(elims);
+  if (n == 0) {
+    //BD: should we force a yices error here?
+    return retval;
+  }
+  assert(n > 0);
+  term_t *earr = env->GetIntArrayElements(elims, NULL);
+  if (earr == NULL) {
+    out_of_mem_exception(env);
+    return retval;
+  }
+  try {
+    yices_init_term_vector(&aux);
+    code = yices_generalize_model(reinterpret_cast<model_t*>(model), term, n, earr, static_cast<yices_gen_mode_t>(mode), &aux);
+    if (code >= 0) {
+      retval = convertToIntArray(env, aux.size, aux.data);
+    }
+    yices_delete_term_vector(&aux);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  env->ReleaseIntArrayElements(elims, earr, JNI_ABORT);
+  return retval;
+}
 
 /*
  * Class:     com_sri_yices_Yices
  * Method:    generalizeModel
- * Signature: (J[I[ILcom/sri/yices/GeneralizationMode;)[I
-JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3ILcom_sri_yices_GeneralizationMode_2
-  (JNIEnv *, jclass, jlong, jintArray, jintArray, jobject);
+ * Signature: (J[I[II)[I
  */
-
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3II(JNIEnv *env, jclass, jlong model, jintArray terms, jintArray elims, jint mode){
+  jintArray retval = NULL;
+  int32_t code;
+  term_vector_t aux;
+  jsize ne;
+  term_t *earr = NULL;
+  jsize nt;
+  term_t *tarr = NULL;
+  ne = env->GetArrayLength(elims);
+  if (ne == 0) {
+    return retval;
+  }
+  assert(ne > 0);
+  earr = env->GetIntArrayElements(elims, NULL);
+  if (earr == NULL) {
+    out_of_mem_exception(env);
+    return retval;
+  }
+  nt = env->GetArrayLength(terms);
+  if (nt == 0) {
+    env->ReleaseIntArrayElements(elims, earr, JNI_ABORT);
+    return retval;
+  }
+  assert(nt > 0);
+  tarr = env->GetIntArrayElements(terms, NULL);
+  if (tarr == NULL) {
+    out_of_mem_exception(env);
+    env->ReleaseIntArrayElements(elims, earr, JNI_ABORT);
+    return retval;
+  }
+  try {
+    yices_init_term_vector(&aux);
+    code = yices_generalize_model_array(reinterpret_cast<model_t*>(model), nt, tarr, ne, earr, static_cast<yices_gen_mode_t>(mode), &aux);
+    if (code >= 0) {
+      retval = convertToIntArray(env, aux.size, aux.data);
+    }
+    yices_delete_term_vector(&aux);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  env->ReleaseIntArrayElements(terms, tarr, JNI_ABORT);
+  env->ReleaseIntArrayElements(elims, earr, JNI_ABORT);
+  return retval;
+}
 
 /*
  * Class:     com_sri_yices_Yices
