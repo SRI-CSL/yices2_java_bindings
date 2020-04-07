@@ -142,4 +142,36 @@ public class Model implements AutoCloseable {
         return Yices.valIsInt(ptr, yval.tag.ordinal(), yval.id);
     }
 
+    public boolean isLong(YVal yval){
+        return Yices.valIsLong(ptr, yval.tag.ordinal(), yval.id);
+    }
+
+    public boolean isInteger(YVal yval){
+        return Yices.valIsLong(ptr, yval.tag.ordinal(), yval.id);
+    }
+
+    public int bitSize(YVal yval){
+        return Yices.valBitSize(ptr, yval.tag.ordinal(), yval.id);
+    }
+
+    public int tupleArity(YVal yval){
+        return Yices.valTupleArity(ptr, yval.tag.ordinal(), yval.id);
+    }
+
+    public int mappingArity(YVal yval){
+        return Yices.valMappingArity(ptr, yval.tag.ordinal(), yval.id);
+    }
+
+    public int functionArity(YVal yval){
+        return Yices.valFunctionArity(ptr, yval.tag.ordinal(), yval.id);
+    }
+
+
+    public boolean getBool(YVal yval) throws YicesException {
+        int code = Yices.valGetBool(ptr, yval.tag.ordinal(), yval.id);
+        if (code < 0) throw new YicesException();
+        return code == 1;
+    }
+
+
 }

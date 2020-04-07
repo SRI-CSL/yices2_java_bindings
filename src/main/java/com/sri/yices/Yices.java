@@ -670,6 +670,7 @@ public final class Yices {
     // public static native int yices_val_is_int64(model_t *model, const yval_t *v);
     public static native boolean valIsLong(long model, int tag, int id);
 
+    public static native boolean valIsInteger(long model, int tag, int id);
 
     // public static native int yices_val_bitsize(model_t *model, const yval_t *v);
     public static native int valBitSize(long model, int tag, int id);

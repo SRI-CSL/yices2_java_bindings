@@ -3801,6 +3801,22 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclas
   }
 }
 
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valIsInteger
+ * Signature: (JII)Z
+ */
+JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval)){
+    return 0;
+  } else {
+    code = yices_val_is_integer(reinterpret_cast<model_t*>(model), &yval);
+    return (jboolean)code;
+  }
+}
+
 
 /*
  * Class:     com_sri_yices_Yices
