@@ -684,6 +684,10 @@ public final class Yices {
     // public static native int yices_val_function_arity(model_t *model, const yval_t *v);
     public static native int valFunctionArity(long model, int tag, int id);
 
+    // new in 2.6.2
+    //__YICES_DLLSPEC__ extern type_t yices_val_function_type(model_t *mdl, const yval_t *v);
+    public static native int valFunctionType(long model, int tag, int id);
+
     // public static native int yices_val_get_bool(model_t *model, const yval_t *v, int *val);
     //
     // getBoolValue returns the value of yval { tag, id} in model.
@@ -755,8 +759,26 @@ public final class Yices {
 
 
     // public static native int yices_val_expand_tuple(model_t *model, const yval_t *v, yval_t child[]);
+    // returns 0 on success and stores the children in the "children: array
+    // returns a negative number if something is wrong:
+    // -1 the tag is no good.
+    // -2 the given yval is not a tuple
+    // -3 if the children array is not big enough
+    // -4 if getting the children goes pear shapped (the yices error struct should have the reason why)
+    public static native int valExpandTuple(long model, int tag, int id, YVal[] children);
+
+    // Returns the number of mappings a function has, a negative value indicates an error.
+    public static native int valFunctionCardinality(long model, int tag, int id);
+
     // public static native int yices_val_expand_function(model_t *model, const yval_t *f, yval_t *def, yval_vector_t *v);
+    public static native int valExpandFunction(long model, int tag, int id, YVal[] def, YVal[] mappings);
+
     // public static native int yices_val_expand_mapping(model_t *model, const yval_t *m, yval_t tup[], yval_t *val);
+    public static native int valExpandMapping(long model, int tag, int id, YVal[] args, YVal[] value);
+
+
+
+
 
 
     /* <TooHardBasket> */

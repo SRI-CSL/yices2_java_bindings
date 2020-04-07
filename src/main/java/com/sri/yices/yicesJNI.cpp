@@ -3825,7 +3825,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jc
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
-  int32_t code;
+  uint32_t code;
   if (!convertToYval(tag, id, &yval)){
     return 0;
   } else {
@@ -3842,8 +3842,8 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, 
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
-  int32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  uint32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE){
     return 0;
   } else {
     code = yices_val_tuple_arity(reinterpret_cast<model_t*>(model), &yval);
@@ -3859,8 +3859,8 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclas
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valMappingArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
-  int32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  uint32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_MAPPING){
     return 0;
   } else {
     code = yices_val_mapping_arity(reinterpret_cast<model_t*>(model), &yval);
@@ -3876,8 +3876,8 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valMappingArity(JNIEnv *env, jcl
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
-  int32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  uint32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
     return 0;
   } else {
     code = yices_val_function_arity(reinterpret_cast<model_t*>(model), &yval);
@@ -3888,6 +3888,23 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jc
 
 /*
  * Class:     com_sri_yices_Yices
+ * Method:    valFunctionType
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionType(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
+    return 0;
+  } else {
+    code = yices_val_function_type(reinterpret_cast<model_t*>(model), &yval);
+    return (jint)code;
+  }
+}
+
+
+/*
+ * Class:     com_sri_yices_Yices
  * Method:    valGetBool
  * Signature: (JII)I
  */
@@ -3895,7 +3912,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass,
   yval_t yval;
   int32_t val;
   int32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BOOL){
     return -1;
   } else {
     val = 0;
@@ -4036,7 +4053,7 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_valGetBV(JNIEnv *env, j
   jbooleanArray result;
   uint32_t n;
 
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BV){
     return NULL;
   }
 
@@ -4084,7 +4101,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetScalar(JNIEnv *env, jclass
   int32_t val;
   type_t tau;
   int32_t aux[2];
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_SCALAR){
     return result;
   }
   result = -2;
@@ -4186,6 +4203,170 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalDenAsBytes(J
   return result;
 
 
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valExpandTuple
+ * Signature: (JII[Lcom/sri/yices/YVal;)I
+ */
+//iam: can I really get away without checking the tye of the children array?
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandTuple(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jobjectArray children){
+  yval_t yval;
+  uint32_t arity;
+  jsize n;
+  yval_t *carr;
+  int32_t code;
+  model_t *model = reinterpret_cast<model_t *>(mdl);
+  uint32_t i;
+  yval_t ychild;
+  jobject child;
+
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE){
+    return -1;
+  }
+  arity = yices_val_tuple_arity(model, &yval);
+  if (arity == 0) {
+    return -2;
+  }
+  n = env->GetArrayLength(children);
+  if (n < arity) {
+    return -3;
+  }
+  carr = new yval_t[arity];
+  code = yices_val_expand_tuple(model, &yval, carr);
+  if (code < 0) {
+    delete carr;
+    return -4;
+  }
+  for (i = 0; i < arity; i++){
+    ychild = carr[i];
+    child = makeYVal(env, &ychild);
+    env->SetObjectArrayElement(children, i, child);
+  }
+  delete carr;
+  return 0;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valFunctionCardinality
+ * Signature: (JII)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionCardinality(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  yval_t def;
+  yval_vector_t mappings;
+  jint retval = -1;
+
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
+    return -1;
+  }
+  yices_init_yval_vector(&mappings);
+  code = yices_val_expand_function(reinterpret_cast<model_t *>(model), &yval, &def, &mappings);
+  if (code == 0) {
+    retval = mappings.size;
+  }
+  yices_delete_yval_vector(&mappings);
+  return retval;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valExpandFunction
+ * Signature: (JII[Lcom/sri/yices/YVal;[Lcom/sri/yices/YVal;)I
+*/
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, jclass cls, jlong mdl, jint tag, jint id,  jobjectArray def, jobjectArray mappings){
+  yval_t yval;
+  uint32_t cardinality;
+  jsize ndef;
+  jsize nmap;
+  int32_t code;
+  yval_t ydef;
+  yval_vector_t ymaps;
+  uint32_t i;
+
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
+    return -1;
+  }
+  cardinality = Java_com_sri_yices_Yices_valFunctionCardinality(env, cls, mdl, tag, id);
+  if (cardinality <= 0) {
+    return -2;
+  }
+  ndef = env->GetArrayLength(def);
+  if (ndef < 1) {
+    return -3;
+  }
+
+  nmap = env->GetArrayLength(mappings);
+  if (nmap < cardinality) {
+    return -4;
+  }
+  yices_init_yval_vector(&ymaps);
+  code = yices_val_expand_function(reinterpret_cast<model_t *>(mdl), &yval, &ydef, &ymaps);
+  if (code < 0) {
+    return -5;
+  }
+
+  assert(ymaps.size == cardinality);
+
+  env->SetObjectArrayElement(def, 0, makeYVal(env, &ydef));
+
+  for (i = 0; i < cardinality; i++){
+    env->SetObjectArrayElement(mappings, i, makeYVal(env, &(ymaps.data[i])));
+  }
+
+  yices_delete_yval_vector(&ymaps);
+  return 0;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    valExpandMapping
+ * Signature: (JII[Lcom/sri/yices/YVal;[Lcom/sri/yices/YVal;)I
+ */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandMapping(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jobjectArray args, jobjectArray value){
+  yval_t yval;
+  uint32_t arity;
+  model_t *model = reinterpret_cast<model_t *>(mdl);
+  yval_t yvalue;
+  yval_t *yargs;
+  jsize nargs;
+  jsize n;
+  int32_t code;
+  uint32_t i;
+
+  if (!convertToYval(tag, id, &yval)  || tag != YVAL_MAPPING){
+    return -1;
+  }
+  arity = yices_val_mapping_arity(model, &yval);
+  if (arity == 0) {
+    return -2;
+  }
+
+  nargs = env->GetArrayLength(args);
+  if (nargs < arity) {
+    return -3;
+  }
+
+  n = env->GetArrayLength(value);
+  if (n < 1) {
+    return -4;
+  }
+
+  yargs = new yval_t[arity];
+  code = yices_val_expand_mapping(model, &yval, yargs, &yvalue);
+
+  if (code == 0) {
+    env->SetObjectArrayElement(value, 0, makeYVal(env, &yvalue));
+
+    for (i = 0; i < arity; i++){
+      env->SetObjectArrayElement(args, i, makeYVal(env, &(yargs[i])));
+    }
+  }
+  delete yargs;
+  return 0;
 }
 
 
