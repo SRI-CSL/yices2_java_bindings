@@ -4071,7 +4071,7 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_valGetBV(JNIEnv *env, j
  * Method:    valGetScalar
  * Signature: (JII[I)I
  */
-// Value (i.e., index) of a scalar or uninterpreted term
+// Value (i.e., index) and type of a scalar or uninterpreted term
 // return 0 on success. -1 or -2 if there's an error.
 // -1 if the tag isn't kosher.
 // -2 if the array a isn't of length 2

@@ -166,11 +166,59 @@ public class Model implements AutoCloseable {
         return Yices.valFunctionArity(ptr, yval.tag.ordinal(), yval.id);
     }
 
-
-    public boolean getBool(YVal yval) throws YicesException {
+    public boolean boolValue(YVal yval) throws YicesException {
         int code = Yices.valGetBool(ptr, yval.tag.ordinal(), yval.id);
         if (code < 0) throw new YicesException();
         return code == 1;
+    }
+
+    public long integerValue(YVal yval) throws YicesException {
+        long[] aux = new long[1];
+        int code = Yices.valGetInteger(ptr, yval.tag.ordinal(), yval.id, aux);
+        if (code < 0) throw new YicesException();
+        return aux[0];
+    }
+
+    public double doubleValue(YVal yval) throws YicesException {
+        double[] aux = new double[1];
+        int code = Yices.valGetDouble(ptr, yval.tag.ordinal(), yval.id, aux);
+        if (code < 0) throw new YicesException();
+        return aux[0];
+    }
+
+    // the numerator is returned in a[0].
+    // the denominator is returned in a[1].
+    public void rationalValue(YVal yval, long[] a) throws YicesException {
+        if (a.length < 2) throw new IllegalArgumentException("array too small");
+        int code = Yices.valGetRational(ptr, yval.tag.ordinal(), yval.id, a);
+        if (code < 0) throw new YicesException();
+    }
+
+    public BigInteger bigIntegerValue(YVal yval) throws YicesException {
+        BigInteger v = Yices.valGetInteger(ptr, yval.tag.ordinal(), yval.id);
+        if (v == null) throw new YicesException();
+        return v;
+    }
+
+    public BigRational bigRationalValue(YVal yval) throws YicesException {
+        BigRational v = Yices.valGetRational(ptr, yval.tag.ordinal(), yval.id);
+        if (v == null) throw new YicesException();
+        return v;
+    }
+
+    public boolean[] bvValue(YVal yval) throws YicesException {
+        boolean[] b = Yices.valGetBV(ptr, yval.tag.ordinal(), yval.id);
+        if (b == null) throw new YicesException();
+        return b;
+    }
+
+    // If successful returns true, and stores the scalar value in a[0], and it's type in a[1]
+    // If unsuccessful, returns false and does nothin to a.
+    public boolean scalarValue(YVal yval, int[] a) throws YicesException {
+        if (a.length < 2) throw new IllegalArgumentException("array too small");
+        int v = Yices.valGetScalar(ptr, yval.tag.ordinal(), yval.id, a);
+        if (v < 0) return false;
+        return true;
     }
 
 
