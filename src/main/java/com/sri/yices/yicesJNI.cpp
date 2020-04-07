@@ -3777,7 +3777,7 @@ JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_getValue(JNIEnv *env, jclass,
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return 0;
   } else {
     code = yices_val_is_int32(reinterpret_cast<model_t*>(model), &yval);
@@ -3793,7 +3793,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return 0;
   } else {
     code = yices_val_is_int64(reinterpret_cast<model_t*>(model), &yval);
@@ -3809,7 +3809,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclas
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return 0;
   } else {
     code = yices_val_is_integer(reinterpret_cast<model_t*>(model), &yval);
@@ -3826,7 +3826,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jc
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BV){
     return 0;
   } else {
     code = yices_val_bitsize(reinterpret_cast<model_t*>(model), &yval);
@@ -3927,22 +3927,23 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass,
  * Signature: (JII[J)I
  */
 /*
- * Value of term t in model, stored in a[0]
+ * Value of yval in model, stored in a[0]
  * - returns 0 if this works, -1 for error.
  *
  * Possible errors:
+ * - yval isn't an integer
  * - a is an empty array
- * - t is not valid or doesn't have an integer value small enough to
+ * - yval is not valid or doesn't have an integer value small enough to
  *   fit in 64 bits
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetInteger(JNIEnv *env, jclass, jlong model, jint tag, jint id, jlongArray a){
   yval_t yval;
   jlong  aux;
   jint result;
-  if (!convertToYval(tag, id, &yval)){
-    return 0;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+    return -1;
   } else {
-    result = -1;
+    result = -2;
     if (env->GetArrayLength(a) > 0) {
       // ugly cast because int64_t is (long long) and jlong is long
       try {
@@ -3983,7 +3984,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetRational(JNIEnv *env, jcla
   uint64_t den;
   jlong aux[2];
   jint result;
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return -1;
   } else {
     result = -2;
@@ -4025,7 +4026,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetDouble(JNIEnv *env, jclass
   yval_t yval;
   double aux;
   jint result;
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return -1;
   } else {
     result = -2;
@@ -4132,7 +4133,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetIntegerAsBytes(JNIEn
   jbyteArray result = NULL;
   mpz_t z;
 
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return result;
   }
 
@@ -4158,7 +4159,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalNumAsBytes(J
   jbyteArray result = NULL;
   mpq_t q;
 
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return result;
   }
 
@@ -4187,7 +4188,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalDenAsBytes(J
   mpq_t q;
 
 
-  if (!convertToYval(tag, id, &yval)){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
     return result;
   }
   try {
