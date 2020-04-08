@@ -213,13 +213,47 @@ public class Model implements AutoCloseable {
     }
 
     // If successful returns true, and stores the scalar value in a[0], and it's type in a[1]
-    // If unsuccessful, returns false and does nothin to a.
+    // If unsuccessful, returns false and does nothing to a.
     public boolean scalarValue(YVal yval, int[] a) throws YicesException {
         if (a.length < 2) throw new IllegalArgumentException("array too small");
         int v = Yices.valGetScalar(ptr, yval.tag.ordinal(), yval.id, a);
         if (v < 0) return false;
         return true;
     }
+
+    public YVal[] expandTuple(YVal yval) throws YicesException {
+        YVal[] retval = null;
+        int n = this.tupleArity(yval);
+        if (n > 0) {
+            retval = new YVal[n];
+            int code = Yices.valExpandTuple(ptr, yval.tag.ordinal(), yval.id, retval);
+            if (code < 0) throw new YicesException();
+        } else {
+            throw new YicesException();
+        }
+        return retval;
+    }
+
+    // def should be of length 1.
+    public YVal[] expandFunction(YVal yval, YVal[] def) throws YicesException {
+        int n = Yices.valFunctionCardinality(ptr, yval.tag.ordinal(), yval.id);
+        if (n <= 0) throw new YicesException();
+        YVal[] retval =  new YVal[n];
+        int code = Yices.valExpandFunction(ptr, yval.tag.ordinal(), yval.id, def, retval);
+        if (code < 0) throw new YicesException();
+        return retval;
+    }
+
+    // value should be of length 1
+    public YVal[] expandMapping(YVal yval, YVal[] value) throws YicesException {
+        int n = this.mappingArity(yval);
+        if (n <= 0) throw new YicesException();
+        YVal[] retval =  new YVal[n];
+        int code = Yices.valExpandMapping(ptr, yval.tag.ordinal(), yval.id, value, retval);
+        if (code < 0) throw new YicesException();
+        return retval;
+    }
+
 
 
 }
