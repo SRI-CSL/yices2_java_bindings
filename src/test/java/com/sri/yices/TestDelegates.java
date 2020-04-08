@@ -8,7 +8,7 @@ import java.math.BigInteger;
 
 import static org.junit.Assume.assumeTrue;
 
-public class TestNewIn2_6_2 {
+public class TestDelegates {
     @Test
     public void testLoad() {
         assumeTrue(TestAssumptions.IS_YICES_INSTALLED);

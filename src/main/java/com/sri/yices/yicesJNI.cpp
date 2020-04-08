@@ -4214,7 +4214,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalDenAsBytes(J
 //iam: can I really get away without checking the tye of the children array?
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandTuple(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jobjectArray children){
   yval_t yval;
-  uint32_t arity;
+  int32_t arity;
   jsize n;
   yval_t *carr;
   int32_t code;
@@ -4280,7 +4280,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionCardinality(JNIEnv *e
 */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, jclass cls, jlong mdl, jint tag, jint id,  jobjectArray def, jobjectArray mappings){
   yval_t yval;
-  uint32_t cardinality;
+  int32_t cardinality;
   jsize ndef;
   jsize nmap;
   int32_t code;
@@ -4329,7 +4329,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, j
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandMapping(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jobjectArray args, jobjectArray value){
   yval_t yval;
-  uint32_t arity;
+  int32_t arity;
   model_t *model = reinterpret_cast<model_t *>(mdl);
   yval_t yvalue;
   yval_t *yargs;

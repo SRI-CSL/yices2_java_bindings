@@ -285,7 +285,8 @@
       <test name="com.sri.yices.TestStatus"/>
       <test name="com.sri.yices.TestTypes"/>
       <test name="com.sri.yices.TestYices"/>
-      <test name="com.sri.yices.TestNewIn2_6_2"/>
+      <test name="com.sri.yices.TestModels"/>
+      <test name="com.sri.yices.TestDelegates"/>
     </junit>
   </target>
 
@@ -341,7 +342,7 @@
         <pathelement location="${test_classes}"/>
       </classpath>
       <formatter type="brief" usefile="false" />
-      <test name="com.sri.yices.TestContext"/>
+      <test name="com.sri.yices.TestModels"/>
     </junit>
   </target>
 
