@@ -234,26 +234,36 @@ public class Model implements AutoCloseable {
         return retval;
     }
 
-    // def should be of length 1.
-    public YVal[] expandFunction(YVal yval, YVal[] def) throws YicesException {
+    public VectorValue expandFunction(YVal yval) throws YicesException {
         int n = Yices.valFunctionCardinality(ptr, yval.tag.ordinal(), yval.id);
         if (n <= 0) throw new YicesException();
-        YVal[] retval =  new YVal[n];
-        int code = Yices.valExpandFunction(ptr, yval.tag.ordinal(), yval.id, def, retval);
+        YVal[] vector =  new YVal[n];
+        YVal[] value = new YVal[1];
+        int code = Yices.valExpandFunction(ptr, yval.tag.ordinal(), yval.id, value, vector);
         if (code < 0) throw new YicesException();
-        return retval;
+        return new VectorValue(vector, value[0]);
     }
 
-    // value should be of length 1
-    public YVal[] expandMapping(YVal yval, YVal[] value) throws YicesException {
+    public VectorValue expandMapping(YVal yval) throws YicesException {
+        YVal[] value = new YVal[1];
         int n = this.mappingArity(yval);
         if (n <= 0) throw new YicesException();
-        YVal[] retval =  new YVal[n];
-        int code = Yices.valExpandMapping(ptr, yval.tag.ordinal(), yval.id, value, retval);
+        YVal[] vector =  new YVal[n];
+        int code = Yices.valExpandMapping(ptr, yval.tag.ordinal(), yval.id, value, vector);
         if (code < 0) throw new YicesException();
-        return retval;
+        return new VectorValue(vector, value[0]);
     }
 
+
+    static public class VectorValue {
+        public final YVal[] vector;
+        public final YVal value;
+
+        public VectorValue(YVal[] vector, YVal value){
+            this.vector = vector;
+            this.value = value;
+        }
+    }
 
 
 }
