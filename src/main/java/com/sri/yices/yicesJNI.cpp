@@ -3917,7 +3917,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass,
   } else {
     val = 0;
     code = yices_val_get_bool(reinterpret_cast<model_t*>(model), &yval, &val);
-    return code == 0 ? (jint)code : val;
+    return code == 0 ? val : (jint)code ;
   }
 }
 

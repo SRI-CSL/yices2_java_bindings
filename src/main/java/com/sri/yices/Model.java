@@ -249,7 +249,7 @@ public class Model implements AutoCloseable {
         int n = this.mappingArity(yval);
         if (n <= 0) throw new YicesException();
         YVal[] vector =  new YVal[n];
-        int code = Yices.valExpandMapping(ptr, yval.tag.ordinal(), yval.id, value, vector);
+        int code = Yices.valExpandMapping(ptr, yval.tag.ordinal(), yval.id, vector, value);
         if (code < 0) throw new YicesException();
         return new VectorValue(vector, value[0]);
     }
