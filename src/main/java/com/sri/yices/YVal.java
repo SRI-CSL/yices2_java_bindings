@@ -20,9 +20,13 @@ public class YVal {
 
     public final int id;
 
-    protected YVal(int tag, int id){
+    public YVal(int tag, int id){
         this.tag = YValTag.idToTag(tag);
         this.id = id;
+    }
+
+    public String toString(){
+        return String.format("<%s: %d>", tag, id);
     }
 
 }

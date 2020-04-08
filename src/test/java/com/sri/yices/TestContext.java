@@ -20,6 +20,18 @@ public class TestContext {
         Model m = c.getModel();
         System.out.println("Model for (x > y)");
         System.out.println(m);
+
+        try {
+            System.out.format("x = %s\n", m.integerValue(x));
+            System.out.format("y = %s\n", m.integerValue(y));
+            YVal yval = m.getValue(x);
+            System.out.println(yval);
+
+        } catch(YicesException e){
+            System.out.println(e);
+        }
+
+
         Terms.removeName("x");
         Terms.removeName("y");
         System.out.println();
@@ -36,6 +48,22 @@ public class TestContext {
         s += "]";
         return s;
     }
+
+    static boolean boolArrayEqual(boolean[] b0, boolean[] b1) {
+        if (b0.length != b1.length) return false;
+        for (int i = 0; i < b0.length; i++){
+            if (b0[i] != b1[i]) return false;
+        }
+        return true;
+    }
+
+
+    static void bv2ways(Model m, int t){
+        boolean[] tv = m.bvValue(t);              // direct
+        boolean[] ty = m.bvValue(m.getValue(t));  // via yvals
+        Assert.assertTrue(boolArrayEqual(tv, ty));
+    }
+
 
     static void bitvector_test(int n) {
         // JUnit runner treats tests with failing assumptions as ignored
@@ -59,11 +87,16 @@ public class TestContext {
             boolean[] zval = m.bvValue(z);
             boolean[] xval = m.bvValue(x);
             boolean[] yval = m.bvValue(y);
-            boolean[] sumval = m.bvValue(Terms.bvAdd(x,y));
+            int xy = Terms.bvAdd(x,y);
+            boolean[] sumval = m.bvValue(xy);
             System.out.println("Value of z: " + boolArray(zval));
             System.out.println("Value of x: " + boolArray(xval));
             System.out.println("Value of y: " + boolArray(yval));
             System.out.println("Value of x + y: " + boolArray(sumval));
+            int[] tarr = { x, y, z, xy };
+            for (int t : tarr) {
+                bv2ways(m, t);
+            }
         }
 
         Terms.removeName("x");

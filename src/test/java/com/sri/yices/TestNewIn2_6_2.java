@@ -18,24 +18,16 @@ public class TestNewIn2_6_2 {
         System.out.println("Build mode: " + Yices.buildMode());
         System.out.println("Build date: " + Yices.buildDate());
         System.out.println("MCSat supported: " + Yices.hasMcsat());
-	Yices.resetError();
+        Yices.resetError();
         System.out.println("Yices error: " + Yices.errorString());
 
         System.out.println("Has cadical as a delegate: " + Yices.hasDelegate("cadical"));
         System.out.println("Has cryptominisat as a delegate: " + Yices.hasDelegate("cryptominisat"));
         System.out.println("Has y2sat as a delegate: " + Yices.hasDelegate("y2sat"));
-	
-	
-        try {
-            Yices.testException();
-        } catch (OutOfMemory e) {
-            System.out.println("Caught exception Yices.OutOfMemory as expected");
-        }
-
         System.out.println();
     }
 
 
 
-    
+
 }

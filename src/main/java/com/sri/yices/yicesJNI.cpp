@@ -3739,7 +3739,7 @@ static jobject makeYVal(JNIEnv *env, yval_t *yval){
   yvalClass = env->FindClass("com/sri/yices/YVal");
   assert(yvalClass != NULL);
 
-  constructor = env->GetMethodID(yvalClass, "<init>", "II(V)");
+  constructor = env->GetMethodID(yvalClass, "<init>", "(II)V");
   assert(constructor != NULL);
   return env->NewObject(yvalClass, constructor, yval->node_tag, yval->node_id);
 }
