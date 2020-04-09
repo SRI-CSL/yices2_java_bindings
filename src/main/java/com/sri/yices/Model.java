@@ -132,6 +132,39 @@ public class Model implements AutoCloseable {
     }
 
     /*
+     * Implicants
+     */
+
+    /*
+     * Compute an implicant for t in model
+     * - t must be a Boolean term that's true in model
+     * - the implicant is a list of Boolean terms a[0] ... a[n-1] such that
+     *    1) a[i] is a literal (atom or negation of an atom)
+     *    2) a[i] is true in model
+     *    3) the conjunction a[0] /\ ... /\ a[n-1] implies t
+     *
+     * The implicant is returned in an int array, or null indicating an error.
+     */
+    public int[] implicant(int t){
+        return Yices.implicantForFormula(ptr, t);
+    }
+
+    /*
+     * Compute an implicant for an array of terms in model
+     * - t must be an array of Boolean terms, each being true in model
+     * - the implicant is a list of Boolean terms a[0] ... a[n-1] such that
+     *    1) a[i] is a literal (atom or negation of an atom)
+     *    2) a[i] is true in model
+     *    3) the conjunction a[0] /\ ... /\ a[n-1] implies (and terms[0] ... terms[m-1]).
+     *
+     * The implicant is returned in an int array, or null indicating an error.
+     */
+    public int[] implicant(int[] terms){
+        return Yices.implicantForFormulas(ptr, terms);
+    }
+
+
+    /*
      * Term exploration in a model
      */
     public YVal getValue(int t){

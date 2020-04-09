@@ -161,10 +161,28 @@ public class TestModels {
 
     @Test
     public void testImplicant() {
-
-
-
-
+        int i = Terms.newUninterpretedTerm("i", Types.INT);
+        try (Context c = new Context()){
+            String fmla = "(and (> i 2) (< i 8) (/= i 4))";
+            c.assertFormula(Terms.parse(fmla));
+            Status stat = c.check();
+            Assert.assertEquals(stat, Status.SAT);
+            Model m = c.getModel();
+            System.out.println("Model for " + fmla);
+            System.out.println(m);
+            Assert.assertEquals(m.toString(), "(= i 7)");
+            int p = Terms.parse("(>= i 3)");
+            int[] implicants = m.implicant(p);
+            Assert.assertEquals(implicants.length, 1);
+            //System.out.println(Terms.toString(Terms.and(implicants[0])));
+            Assert.assertEquals(Terms.toString(implicants[0]), "(>= (+ -3 i) 0)");
+            int q = Terms.parse("(<= i 9)");
+            int[] terms = { p, q };
+            int[] implicants2 = m.implicant(terms);
+            Assert.assertEquals(implicants2.length, 2);
+            //System.out.println(Terms.toString(Terms.and(implicants2)));
+            Assert.assertEquals(Terms.toString(Terms.and(implicants2)), "(and (>= (+ -3 i) 0) (>= (+ 9 (* -1 i)) 0))");
+        }
     }
 
     @Test
