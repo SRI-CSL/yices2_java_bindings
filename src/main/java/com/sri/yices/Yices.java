@@ -557,10 +557,11 @@ public final class Yices {
      *   STATUS_UNSAT if f is not satisifiable
      *   STATUS_ERROR if something goes wrong
      *
+     * Since 2.6.2.
      */
     //__YICES_DLLSPEC__ extern smt_status_t yices_check_formula(term_t f, const char *logic, model_t **model, const char *delegate);
-    public static native int checkFormula(int t, String logic, String delegate);
-    public static native long getModelForFormula(int t, String logic, String delegate);
+    // model array can be null, in which case no model is constructed, otherwise a "model" is placed in model[0]
+    public static native int checkFormula(int t, String logic, String delegate, long[] model);
 
     /*
      * Check whether n formulas are satisfiable.
@@ -569,10 +570,13 @@ public final class Yices {
      *
      * This is similar to yices_check_formula except that it checks whether
      * the conjunction of f[0] ... f[n-1] is satisfiable.
+     *
+     * Since 2.6.2.
      */
     // __YICES_DLLSPEC__ extern smt_status_t yices_check_formulas(const term_t f[], uint32_t n, const char *logic, model_t **model, const char *delegate);
-    public static native int checkFormulas(int[] terms, String logic, String delegate);
-    public static native long getModelForFormulas(int[] terms, String logic, String delegate);
+    // model array can be null, in which case no model is constructed, otherwise a "model" is placed in model[0]
+    public static native int checkFormulas(int[] terms, String logic, String delegate, long[] model);
+
 
     /*
      * Compute an implicant for t in model

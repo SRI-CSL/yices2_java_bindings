@@ -3403,131 +3403,112 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jcl
   return (jboolean) code;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    checkFormula
- * Signature: (ILjava/lang/String;Ljava/lang/String;)I
- */
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate){
-  jint retval = -1;
-  const char *ds = env->GetStringUTFChars(delegate, NULL);
-  if (ds == NULL) {
-    out_of_mem_exception(env);
-  } else {
-    const char *ls = env->GetStringUTFChars(logic, NULL);
-    if (ls == NULL) {
-      out_of_mem_exception(env);
-    } else {
-      retval = yices_check_formula(formula, ls, NULL, ds);
-      env->ReleaseStringUTFChars(logic, ls);
-    }
-    env->ReleaseStringUTFChars(delegate, ds);
-  }
-  return retval;
-}
 
 /*
  * Class:     com_sri_yices_Yices
- * Method:    getModelForFormula
- * Signature: (ILjava/lang/String;Ljava/lang/String;)J
+ * Method:    checkFormula
+ * Signature: (ILjava/lang/String;Ljava/lang/String;[J)I
  */
-JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_getModelForFormula(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate){
-  jlong retval = 0;
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula__ILjava_lang_String_2Ljava_lang_String_2_3J(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate, jlongArray marr){
   int32_t code;
-  const char *ds = env->GetStringUTFChars(delegate, NULL);
+  const char *ds;
+  const char *ls;
+  jsize n;
+  bool wantModel = false;
+  model_t *model = NULL;
+  jlong mdl;
+  if (marr != NULL) {
+    n = env->GetArrayLength(marr);
+    if (n == 0) {
+      return -1;
+    }
+    wantModel = true;
+  }
+  //delegate string
+  ds = env->GetStringUTFChars(delegate, NULL);
   if (ds == NULL) {
     out_of_mem_exception(env);
-  } else {
-    const char *ls = env->GetStringUTFChars(logic, NULL);
-    if (ls == NULL) {
-      out_of_mem_exception(env);
-    } else {
-      model_t *model = NULL;
-      code = yices_check_formula(formula, ls, &model, ds);
-      if (code == STATUS_SAT) {
-        retval = reinterpret_cast<jlong>(model);
-      }
-      env->ReleaseStringUTFChars(logic, ls);
-    }
-    env->ReleaseStringUTFChars(delegate, ds);
   }
-  return retval;
+  //logic string
+  ls = env->GetStringUTFChars(logic, NULL);
+  if (ls == NULL) {
+    env->ReleaseStringUTFChars(delegate, ds);
+    out_of_mem_exception(env);
+  }
+  if (wantModel) {
+    code = yices_check_formula(formula, ls, &model, ds);
+    if (code == STATUS_SAT) {
+      mdl = reinterpret_cast<jlong>(model);
+      env->SetLongArrayRegion(marr, 0, 1, &mdl);
+    }
+  } else {
+    code = yices_check_formula(formula, ls, NULL, ds);
+  }
+  env->ReleaseStringUTFChars(logic, ls);
+  env->ReleaseStringUTFChars(delegate, ds);
+  return code;
 }
 
 /*
  * Class:     com_sri_yices_Yices
  * Method:    checkFormulas
- * Signature: ([ILjava/lang/String;Ljava/lang/String;)I
+ * Signature: ([ILjava/lang/String;Ljava/lang/String;[J)I
  */
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate){
-  jint retval = -1;
-  const char *ds;
-  jsize n = env->GetArrayLength(formulas);
-  if (n == 0) {
-    return retval;
-  }
-  assert(n > 0);
-  term_t *tarr = env->GetIntArrayElements(formulas, NULL);
-  if (tarr == NULL) {
-    out_of_mem_exception(env);
-    return retval;
-  }
-  ds = env->GetStringUTFChars(delegate, NULL);
-  if (ds == NULL) {
-    out_of_mem_exception(env);
-  } else {
-    const char *ls = env->GetStringUTFChars(logic, NULL);
-    if (ls == NULL) {
-      out_of_mem_exception(env);
-    } else {
-      retval = yices_check_formulas(tarr, n, ls, NULL, ds);
-      env->ReleaseStringUTFChars(logic, ls);
-    }
-    env->ReleaseStringUTFChars(delegate, ds);
-  }
-  env->ReleaseIntArrayElements(formulas, tarr, JNI_ABORT);
-  return retval;
-}
-
-/*
- * Class:     com_sri_yices_Yices
- * Method:    getModelForFormulas
- * Signature: ([ILjava/lang/String;Ljava/lang/String;)J
- */
-JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_getModelForFormulas(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate){
-  jlong retval = 0;
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas___3ILjava_lang_String_2Ljava_lang_String_2_3J(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate, jlongArray marr){
   int32_t code;
   const char *ds;
-  jsize n = env->GetArrayLength(formulas);
+  const char *ls;
+  jsize n;
+  bool wantModel = false;
+  model_t *model = NULL;
+  jlong mdl;
+  term_t *tarr;
+  if (marr != NULL) {
+    n = env->GetArrayLength(marr);
+    if (n == 0) {
+      return -1;
+    }
+    wantModel = true;
+    assert(n > 0);
+  }
+
+  n = env->GetArrayLength(formulas);
   if (n == 0) {
-    return retval;
+    return -2;
   }
   assert(n > 0);
-  term_t *tarr = env->GetIntArrayElements(formulas, NULL);
+  // term array
+  tarr = env->GetIntArrayElements(formulas, NULL);
   if (tarr == NULL) {
     out_of_mem_exception(env);
-    return retval;
   }
+  //delegate string
   ds = env->GetStringUTFChars(delegate, NULL);
   if (ds == NULL) {
     out_of_mem_exception(env);
-  } else {
-    const char *ls = env->GetStringUTFChars(logic, NULL);
-    if (ls == NULL) {
-      out_of_mem_exception(env);
-    } else {
-      model_t *model = NULL;
-      code = yices_check_formulas(tarr, n, ls, &model, ds);
-      if (code == STATUS_SAT) {
-        retval = reinterpret_cast<jlong>(model);
-      }
-      env->ReleaseStringUTFChars(logic, ls);
-    }
-    env->ReleaseStringUTFChars(delegate, ds);
   }
+  //logic string
+  ls = env->GetStringUTFChars(logic, NULL);
+  if (ls == NULL) {
+    env->ReleaseStringUTFChars(delegate, ds);
+    out_of_mem_exception(env);
+  }
+  if (wantModel) {
+    code = yices_check_formulas(tarr, n, ls, &model, ds);
+    if (code == STATUS_SAT) {
+      mdl = reinterpret_cast<jlong>(model);
+      env->SetLongArrayRegion(marr, 0, 1, &mdl);
+    }
+  } else {
+    code = yices_check_formulas(tarr, n, ls, NULL, ds);
+  }
+  env->ReleaseStringUTFChars(logic, ls);
+  env->ReleaseStringUTFChars(delegate, ds);
   env->ReleaseIntArrayElements(formulas, tarr, JNI_ABORT);
-  return retval;
+  return code;
 }
+
+
 
 
 /*
@@ -4219,7 +4200,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandTuple(JNIEnv *env, jcla
   yval_t *carr;
   int32_t code;
   model_t *model = reinterpret_cast<model_t *>(mdl);
-  uint32_t i;
+  int32_t i;
   yval_t ychild;
   jobject child;
 
