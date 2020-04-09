@@ -159,5 +159,21 @@ public class TestModels {
     }
 
 
+    @Test
+    public void testImplicant() {
+
+
+
+
+    }
+
+    @Test
+    public void testModelFromMap() {
+
+
+
+
+    }
+
 
 }

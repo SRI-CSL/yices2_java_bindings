@@ -4286,7 +4286,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, j
   int32_t code;
   yval_t ydef;
   yval_vector_t ymaps;
-  uint32_t i;
+  int32_t i;
 
   if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
     return -1;
@@ -4310,7 +4310,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, j
     return -5;
   }
 
-  assert(ymaps.size == cardinality);
+  assert(static_cast<int32_t>(ymaps.size) == cardinality);
 
   env->SetObjectArrayElement(def, 0, makeYVal(env, &ydef));
 
@@ -4336,7 +4336,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandMapping(JNIEnv *env, jc
   jsize nargs;
   jsize n;
   int32_t code;
-  uint32_t i;
+  int32_t i;
 
   if (!convertToYval(tag, id, &yval)  || tag != YVAL_MAPPING){
     return -1;
