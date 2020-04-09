@@ -187,10 +187,17 @@ public class TestModels {
 
     @Test
     public void testModelFromMap() {
-
-
-
-
+        int tau = Types.bvType(8);
+        int i = Terms.newUninterpretedTerm("i", Types.INT);
+        int r = Terms.newUninterpretedTerm("r", Types.REAL);
+        int v = Terms.newUninterpretedTerm("v", tau);
+        int ic = Terms.intConst(42);
+        int rc = Terms.rationalConst(13, 131);
+        int vc = Terms.bvConst(8, 134);
+        int[] vars = {i, r, v};
+        int[] vals = {ic, rc, vc};
+        Model m = new Model(vars, vals);
+        Assert.assertEquals(m.toString(),"(= i 42)\n(= r 13/131)\n(= v 0b10000110)");
     }
 
 
