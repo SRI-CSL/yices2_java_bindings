@@ -200,5 +200,34 @@ public class TestModels {
         Assert.assertEquals(m.toString(),"(= i 42)\n(= r 13/131)\n(= v 0b10000110)");
     }
 
+    @Test
+    public void testModelSupport() {
+        int x = Terms.newUninterpretedTerm("x", Types.REAL);
+        int y = Terms.newUninterpretedTerm("y", Types.REAL);
+        int z = Terms.newUninterpretedTerm("z", Types.REAL);
+        try (Context c = new Context()){
+            String f = "(> x 0)";
+            int fmla = Terms.parse(f);
+            int t0 = Terms.parse("(ite (> x 0) (+ x z) y)");
+            int t1 = Terms.parse("(+ (* x z) y)");
+            int[] terms = {t0, t1};
+            c.assertFormula(fmla);
+            Status stat = c.check();
+            Assert.assertEquals(stat, Status.SAT);
+            Model m = c.getModel();
+            //System.out.println("Model for " + f);
+            //System.out.println(m);
+            int[] support = m.support(t0);
+            Assert.assertEquals(support.length, 2);
+            Assert.assertEquals(support[0], x);
+            Assert.assertEquals(support[1], z);
+            support = m.support(terms);
+            Assert.assertEquals(support.length, 3);
+            Assert.assertEquals(support[0], x);
+            Assert.assertEquals(support[1], y);
+            Assert.assertEquals(support[2], z);
+        }
+    }
+
 
 }

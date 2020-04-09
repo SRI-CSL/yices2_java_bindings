@@ -97,11 +97,11 @@ public class Terms {
         if (t < 0) throw new YicesException();
         return t;
     }
-    
+
     static public int bvConst(List<Integer> a) throws YicesException {
         return bvConst(a.stream().mapToInt(Integer::intValue).toArray());
     }
-    
+
     /*
      * Convert boolean array a to a bit-vector constant
      * - a[0] = low-order bit
@@ -115,7 +115,7 @@ public class Terms {
         }
         return bvConst(aux);
     }
-    
+
    /*
      * Parse s as a binary constant: i.e. a sequence of '0' and '1'
      * then return the corresponding bitvector constant
@@ -259,7 +259,7 @@ public class Terms {
         Yices.setTermName(t, name);
         return t;
     }
- 
+
     static public int newUninterpretedPredicate(String name, List<Integer> a) throws YicesException {
         return newUninterpretedPredicate(name, a.stream().mapToInt(Integer::intValue).toArray());
     }
@@ -343,7 +343,7 @@ public class Terms {
     static public int distinct(List<Integer> args) throws YicesException {
         return distinct(args.stream().mapToInt(Integer::intValue).toArray());
     }
-    
+
 
     static public int forall(int[] vars, int body) throws YicesException {
         int t = Yices.forall(vars, body);
@@ -421,7 +421,7 @@ public class Terms {
     static public int funApplication(int fun, List<Integer> arg) throws YicesException {
         return funApplication(fun, arg.stream().mapToInt(Integer::intValue).toArray());
     }
-       
+
     static public int functionUpdate(int fun, int[] arg, int newval) throws YicesException {
         int t = Yices.functionUpdate(fun, arg, newval);
         if (t < 0) throw new YicesException();
@@ -887,7 +887,7 @@ public class Terms {
     static public int bvAnd(List<Integer> arg) throws YicesException {
         return bvAnd(arg.stream().mapToInt(Integer::intValue).toArray());
     }
-    
+
     static public int bvOr(int... arg) throws YicesException {
         if (arg.length == 0) throw new IllegalArgumentException("empty input");
         int t = Yices.bvOr(arg);
@@ -1217,6 +1217,12 @@ public class Terms {
         return n;
     }
 
+    static public int[] children(int x) throws YicesException {
+        int[] children = Yices.termChildren(x);
+        if (children == null) throw new YicesException();
+        return children;
+    }
+
     static public int child(int x, int idx) throws YicesException {
         int t = Yices.termChild(x, idx);
         if (t < 0) throw new YicesException();
@@ -1365,7 +1371,7 @@ public class Terms {
      }
 
      static public int subst(int t, List<Integer> v, List<Integer> map) throws YicesException {
-        int[] av =  v.stream().mapToInt(Integer::intValue).toArray(); 
+        int[] av =  v.stream().mapToInt(Integer::intValue).toArray();
         int[] amap =  map.stream().mapToInt(Integer::intValue).toArray();
         return subst(t, av, amap);
      }
@@ -1378,7 +1384,7 @@ public class Terms {
 
     static public void substArray(List<Integer> a, List<Integer> v, List<Integer> map) throws YicesException {
         int[] aa =  a.stream().mapToInt(Integer::intValue).toArray();
-        int[] av =  v.stream().mapToInt(Integer::intValue).toArray(); 
+        int[] av =  v.stream().mapToInt(Integer::intValue).toArray();
         int[] amap =  map.stream().mapToInt(Integer::intValue).toArray();
         substArray(aa, av, amap);
         // copy the result back out  into the input.
@@ -1387,4 +1393,3 @@ public class Terms {
         }
     }
 }
-

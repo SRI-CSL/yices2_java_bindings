@@ -165,6 +165,27 @@ public class Model implements AutoCloseable {
 
 
     /*
+     * Term support in a model
+     *
+     * Given a term t and a model 'model', the support of t in model is a set of uninterpreted
+     * terms whose values are sufficient to fix the value of t in model. For example, if
+     * t is (if x>0 then x+z else y) and x has value 1 in model, then the value of t doesn't depend
+     * on the value of y in model. In this case, support(t) = [ x, z ].
+     */
+
+    public int[] support(int term) throws YicesException {
+        int[] retval = Yices.getSupport(ptr, term);
+        if (retval == null) throw new YicesException();
+        return retval;
+    }
+
+    public int[] support(int[] terms) throws YicesException {
+        int[] retval = Yices.getSupport(ptr, terms);
+        if (retval == null) throw new YicesException();
+        return retval;
+    }
+
+    /*
      * Term exploration in a model
      */
     public YVal getValue(int t){
