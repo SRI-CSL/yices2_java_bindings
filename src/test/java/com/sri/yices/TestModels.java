@@ -184,7 +184,8 @@ public class TestModels {
             int[] implicants2 = m.implicant(terms);
             Assert.assertEquals(implicants2.length, 2);
             //System.out.println(Terms.toString(Terms.and(implicants2)));
-            Assert.assertEquals(Terms.toString(Terms.and(implicants2)), "(and (>= (+ -3 i) 0) (>= (+ 9 (* -1 i)) 0))");
+            int conj = Terms.and(implicants2);
+            Assert.assertEquals(Terms.toString(conj), "(and (>= (+ -3 i) 0) (>= (+ 9 (* -1 i)) 0))");
         }
     }
 
@@ -231,6 +232,21 @@ public class TestModels {
             Assert.assertEquals(support[2], z);
         }
     }
+
+    @Test
+    public void testChildren() {
+        int x = Terms.newUninterpretedTerm("x", Types.REAL);
+        int y = Terms.newUninterpretedTerm("y", Types.REAL);
+        int z = Terms.newUninterpretedTerm("z", Types.REAL);
+        int d = Terms.distinct(x, y,z);
+        int[] children = Terms.children(d);
+        System.out.println("children " + children.length);
+        int[] offspring = {x, y, z};
+        for (int i = 0; i < offspring.length; i++){
+            Assert.assertEquals(children[i], offspring[i]);
+        }
+    }
+
 
 
 }
