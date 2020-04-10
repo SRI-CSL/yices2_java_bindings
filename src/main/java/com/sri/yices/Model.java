@@ -220,6 +220,10 @@ public class Model implements AutoCloseable {
         return Yices.valFunctionArity(ptr, yval.tag.ordinal(), yval.id);
     }
 
+    public int functionType(YVal yval){
+        return Yices.valFunctionType(ptr, yval.tag.ordinal(), yval.id);
+    }
+
     public boolean boolValue(YVal yval) throws YicesException {
         int code = Yices.valGetBool(ptr, yval.tag.ordinal(), yval.id);
         if (code < 0) throw new YicesException();

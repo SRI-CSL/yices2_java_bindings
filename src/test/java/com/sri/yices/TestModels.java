@@ -108,6 +108,9 @@ public class TestModels {
             System.out.println(m);
             YVal yval = m.getValue(f);
             Assert.assertEquals(yval.tag, YValTag.FUNCTION);
+
+            Assert.assertEquals(tau, m.functionType(yval));
+
             VectorValue yvv = m.expandFunction(yval);
 
             YVal[] mappings = yvv.vector;
