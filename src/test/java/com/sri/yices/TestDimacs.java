@@ -25,13 +25,23 @@ public class TestDimacs {
         formulas[1] = Terms.bvEq(Terms.bvMul(y, z), Terms.bvConst(20, 20031));
         formulas[2] = Terms.bvEq(Terms.bvMul(x, z), Terms.bvConst(20, 10227));
 
+        // first round, don't simplify the CNF
         for (int i = 0; i < fcount; i++ ){
+            boolean simplify = false;
             String filename = String.format("/tmp/basic%d.cnf", i);
             Status[] status = new Status[1];
-            boolean fileOK = Dimacs.export(formulas, filename, false, status);
-            System.out.println(String.format("Yices.exportToDimacs(%s) = %s status = %s", filename, fileOK, status[0]));
+            boolean fileOK = Dimacs.export(formulas, filename, simplify, status);
+            System.out.println(String.format("Yices.exportToDimacs(%s, simplify: %s) = %s status = %s", filename, simplify, fileOK, status[0]));
         }
 
+        // second round, simplify the CNF
+         for (int i = 0; i < fcount; i++ ){
+            boolean simplify = true;
+            String filename = String.format("/tmp/simplify%d.cnf", i);
+            Status[] status = new Status[1];
+            boolean fileOK = Dimacs.export(formulas, filename, simplify, status);
+            System.out.println(String.format("Yices.exportToDimacs(%s, simplify: %s) = %s status = %s", filename, simplify, fileOK, status[0]));
+         }
 
     }
 
