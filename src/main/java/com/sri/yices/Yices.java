@@ -628,10 +628,11 @@ public final class Yices {
      * - f = a Boolean formula (in the QF_BV theory)
      * - filename = name of the ouput file
      * - simplify_cnf = boolean flag
-     *  returns the formula's status, or -1 if there is an error.
+     * - status = an array to store the ordinal of the status.
+     *  returns the 0 if  successful, or a negative number if there is an error.
      */
     //int32_t yices_export_formula_to_dimacs(term_t f, const char *filename, int32_t simplify_cnf, smt_status_t *status);
-    public static native int exportToDimacs(int term, String filename, boolean simplify_cnf);
+    public static native int exportToDimacs(int term, String filename, boolean simplify_cnf, int[] status);
 
     /*
      * Bit-blast n formulas then export the CNF to a file
@@ -641,7 +642,7 @@ public final class Yices {
      *  returns the formula's status, or -1 if there is an error. FIXME: iam: this needs to be clarified, here and in  yices.h
      */
     //int32_t yices_export_formulas_to_dimacs(const term_t f[], uint32_t n, const char *filename, int32_t simplify_cnf, smt_status_t *status);
-    public static native int exportToDimacs(int[] terms, String filename, boolean simplify_cnf);
+    public static native int exportToDimacs(int[] terms, String filename, boolean simplify_cnf, int[] status);
 
     /*
      * Given a term t and a model 'model', the support of t in model is a set of uninterpreted

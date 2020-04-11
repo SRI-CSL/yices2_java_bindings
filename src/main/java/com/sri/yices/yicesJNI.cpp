@@ -3752,6 +3752,79 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3II(J
 
 /*
  * Class:     com_sri_yices_Yices
+ * Method:    exportToDimacs
+ * Signature: (ILjava/lang/String;Z[I)I
+ */
+// returns 1 if the file was written, 0 if the formula is solved, or a negative number indicating an error
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jint formula, jstring filename, jboolean simplify, jintArray status){
+  int32_t code = -1;
+  jsize n;
+  const char *file = NULL;
+  smt_status_t stat;
+
+  n = env->GetArrayLength(status);
+  if (n == 0) {
+    return -1;
+  }
+  //filename string
+  file = env->GetStringUTFChars(filename, NULL);
+  if (file == NULL) {
+    out_of_mem_exception(env);
+  }
+  code = yices_export_formula_to_dimacs(formula, file, simplify, &stat);
+  if ( code >=  0 ){
+    env->SetIntArrayRegion(status, 0, 1, reinterpret_cast<int32_t *>(&stat));
+  }
+
+  env->ReleaseStringUTFChars(filename, file);
+  return code;
+}
+
+/*
+ * Class:     com_sri_yices_Yices
+ * Method:    exportToDimacs
+ * Signature: ([ILjava/lang/String;Z[I)I
+ */
+// returns 0 on success, or a negative numer indicating an error
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs___3ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jintArray formulas, jstring filename, jboolean simplify, jintArray status){
+  int32_t code;
+  jsize n;
+  term_t *tarr;
+  const char *file = NULL;
+  smt_status_t stat;
+
+  n = env->GetArrayLength(status);
+  if (n == 0) {
+    return -1;
+  }
+
+  n = env->GetArrayLength(formulas);
+  if (n == 0) {
+    return -2;
+  }
+
+  tarr = array2terms(env, formulas, NULL);
+  if (tarr == NULL) {
+    out_of_mem_exception(env);
+  }
+
+  //filename string
+  file = env->GetStringUTFChars(filename, NULL);
+  if (file == NULL) {
+    out_of_mem_exception(env);
+  }
+  code = yices_export_formulas_to_dimacs(tarr, n, file, simplify, &stat);
+  if ( code >=  0 ){
+    env->SetIntArrayRegion(status, 0, 1, reinterpret_cast<int32_t *>(&stat));
+  }
+  env->ReleaseStringUTFChars(filename, file);
+  release_term_elems(env, formulas, tarr);
+  return code;
+}
+
+
+/*
+ * Class:     com_sri_yices_Yices
  * Method:    getSupport
  * Signature: (JI)[I
  */

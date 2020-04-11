@@ -287,6 +287,7 @@
       <test name="com.sri.yices.TestYices"/>
       <test name="com.sri.yices.TestModels"/>
       <test name="com.sri.yices.TestDelegates"/>
+      <test name="com.sri.yices.TestDimacs"/>
     </junit>
   </target>
 
