@@ -26,12 +26,10 @@ public class TestDimacs {
         formulas[2] = Terms.bvEq(Terms.bvMul(x, z), Terms.bvConst(20, 10227));
 
         for (int i = 0; i < fcount; i++ ){
-            int[] status = { 0 };
             String filename = String.format("/tmp/basic%d.cnf", i);
-            int code = Yices.export_formulas_to_dimacs(formulas, i, filename, false, status);
-            System.out.println(String.format("Yices.export_formulas_to_dimacs(%d) = %d status = %d", i, code, status[0]));
-
-
+            Status[] status = new Status[1];
+            boolean fileOK = Dimacs.export(formulas, filename, false, status);
+            System.out.println(String.format("Yices.exportToDimacs(%s) = %s status = %s", filename, fileOK, status[0]));
         }
 
 

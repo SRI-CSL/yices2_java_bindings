@@ -629,7 +629,10 @@ public final class Yices {
      * - filename = name of the ouput file
      * - simplify_cnf = boolean flag
      * - status = an array to store the ordinal of the status.
-     *  returns the 0 if  successful, or a negative number if there is an error.
+     *  returns:
+     *   1 if the DIMACS file was constructed
+     *   0 if the formula is solved without CNF or after simplifying
+     *  -1 if there's an error
      */
     //int32_t yices_export_formula_to_dimacs(term_t f, const char *filename, int32_t simplify_cnf, smt_status_t *status);
     public static native int exportToDimacs(int term, String filename, boolean simplify_cnf, int[] status);
@@ -639,7 +642,10 @@ public final class Yices {
      * - f = array of n Boolean formula (in the QF_BV theory)
      * - filename = name of the ouput file
      * - simplify_cnf = boolean flag
-     *  returns the formula's status, or -1 if there is an error. FIXME: iam: this needs to be clarified, here and in  yices.h
+     *  returns:
+     *   1 if the DIMACS file was constructed
+     *   0 if the formula is solved without CNF or after simplifying
+     *  -1 if there's an error
      */
     //int32_t yices_export_formulas_to_dimacs(const term_t f[], uint32_t n, const char *filename, int32_t simplify_cnf, smt_status_t *status);
     public static native int exportToDimacs(int[] terms, String filename, boolean simplify_cnf, int[] status);
