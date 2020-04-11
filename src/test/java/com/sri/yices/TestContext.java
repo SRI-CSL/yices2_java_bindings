@@ -13,25 +13,21 @@ public class TestContext {
 
         int x = Terms.newUninterpretedTerm("x", Types.REAL);
         int y = Terms.newUninterpretedTerm("y", Types.REAL);
-        Context c = new Context();
-        c.assertFormula(Terms.arithGt(x, y)); // x > y
-        Status stat = c.check();
-        Assert.assertEquals(stat, Status.SAT);
-        Model m = c.getModel();
-        System.out.println("Model for (x > y)");
-        System.out.println(m);
-
-        try {
-            System.out.format("x = %s\n", m.integerValue(x));
-            System.out.format("y = %s\n", m.integerValue(y));
-            YVal yval = m.getValue(x);
-            System.out.println(yval);
-
-        } catch(YicesException e){
-            System.out.println(e);
+        try (Context c = new Context()) {
+            c.assertFormula(Terms.arithGt(x, y)); // x > y
+            Status stat = c.check();
+            Assert.assertEquals(stat, Status.SAT);
+            try (Model m = c.getModel()) {
+                System.out.println("Model for (x > y)");
+                System.out.println(m);
+                System.out.format("x = %s\n", m.integerValue(x));
+                System.out.format("y = %s\n", m.integerValue(y));
+                YVal yval = m.getValue(x);
+                System.out.println(yval);
+            } catch(YicesException e){
+                System.out.println(e);
+            }
         }
-
-
         Terms.removeName("x");
         Terms.removeName("y");
         System.out.println();
@@ -51,7 +47,7 @@ public class TestContext {
 
     static boolean boolArrayEqual(boolean[] b0, boolean[] b1) {
         if (b0.length != b1.length) return false;
-        for (int i = 0; i < b0.length; i++){
+        for (int i = 0; i < b0.length; i++) {
             if (b0[i] != b1[i]) return false;
         }
         return true;
@@ -124,31 +120,31 @@ public class TestContext {
         int p = Terms.bvConst(nbits, product);
         System.out.println("Factoring " + product + ", nbits = " + nbits);
 
-        Context c = new Context("QF_BV");
-        Parameters param = new Parameters();
-        param.defaultsForContext(c);
+        try (Context c = new Context("QF_BV")) {
+            Parameters param = new Parameters();
+            param.defaultsForContext(c);
 
-        // constraints: a * b = p, 1 < a <= b < p.
-        c.assertFormula(Terms.bvEq(p, Terms.bvMul(a, b)));
-        c.assertFormula(Terms.bvGt(a, Terms.bvOne(nbits)));
-        c.assertFormula(Terms.bvGe(b, a));
-        c.assertFormula(Terms.bvLt(b, p));
+            // constraints: a * b = p, 1 < a <= b < p.
+            c.assertFormula(Terms.bvEq(p, Terms.bvMul(a, b)));
+            c.assertFormula(Terms.bvGt(a, Terms.bvOne(nbits)));
+            c.assertFormula(Terms.bvGe(b, a));
+            c.assertFormula(Terms.bvLt(b, p));
 
-        Status status;
-        do {
-            status = c.check(param);
-            System.out.println("Status: " + status);
-            if (status == Status.SAT) {
-                Model m = c.getModel();
-                int t1 = m.valueAsTerm(a);
-                int t2 = m.valueAsTerm(b);
-                System.out.println("solution: ");
-                System.out.println("a = " + Terms.toString(t1));
-                System.out.println("b = " + Terms.toString(t2));
-                c.assertBlockingClause();
-            }
-        } while (status == Status.SAT);
-
+            Status status;
+            do {
+                status = c.check(param);
+                System.out.println("Status: " + status);
+                if (status == Status.SAT) {
+                    Model m = c.getModel();
+                    int t1 = m.valueAsTerm(a);
+                    int t2 = m.valueAsTerm(b);
+                    System.out.println("solution: ");
+                    System.out.println("a = " + Terms.toString(t1));
+                    System.out.println("b = " + Terms.toString(t2));
+                    c.assertBlockingClause();
+                }
+            } while (status == Status.SAT);
+        }
         System.out.println();
     }
 
