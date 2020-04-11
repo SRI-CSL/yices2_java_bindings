@@ -3755,7 +3755,7 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3II(J
  * Method:    exportToDimacs
  * Signature: (ILjava/lang/String;Z[I)I
  */
-// returns 1 if the file was written, 0 if the formula is solved, or a negative number indicating an error
+// returns 1 if the file was written, 0 if the formula is solved, or a negative number indicating an error, the smt_status is stored in status
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jint formula, jstring filename, jboolean simplify, jintArray status){
   int32_t code = -1;
   jsize n;
