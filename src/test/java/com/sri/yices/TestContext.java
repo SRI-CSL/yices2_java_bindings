@@ -135,13 +135,14 @@ public class TestContext {
                 status = c.check(param);
                 System.out.println("Status: " + status);
                 if (status == Status.SAT) {
-                    Model m = c.getModel();
-                    int t1 = m.valueAsTerm(a);
-                    int t2 = m.valueAsTerm(b);
-                    System.out.println("solution: ");
-                    System.out.println("a = " + Terms.toString(t1));
-                    System.out.println("b = " + Terms.toString(t2));
-                    c.assertBlockingClause();
+                    try (Model m = c.getModel()) {
+                        int t1 = m.valueAsTerm(a);
+                        int t2 = m.valueAsTerm(b);
+                        System.out.println("solution: ");
+                        System.out.println("a = " + Terms.toString(t1));
+                        System.out.println("b = " + Terms.toString(t2));
+                        c.assertBlockingClause();
+                    }
                 }
             } while (status == Status.SAT);
         }
