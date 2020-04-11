@@ -76,29 +76,29 @@ public class TestContext {
         int f = Terms.parse("(and (bv-gt x z) (bv-gt y z) (bv-lt (bv-mul (bv-add x y) z) z))");
 
         System.out.println("Testing " + Terms.toString(f) + " nbits = " + n);
-        Context c = new Context("QF_BV");
-        c.assertFormula(f);
-        Status stat = c.check(10);
-        System.out.println("Status: " + stat);
-        if (stat == Status.SAT) {
-            Model m = c.getModel();
-            System.out.println("model: ");
-            System.out.println(m);
-            boolean[] zval = m.bvValue(z);
-            boolean[] xval = m.bvValue(x);
-            boolean[] yval = m.bvValue(y);
-            int xy = Terms.bvAdd(x,y);
-            boolean[] sumval = m.bvValue(xy);
-            System.out.println("Value of z: " + boolArray(zval));
-            System.out.println("Value of x: " + boolArray(xval));
-            System.out.println("Value of y: " + boolArray(yval));
-            System.out.println("Value of x + y: " + boolArray(sumval));
-            int[] tarr = { x, y, z, xy };
-            for (int t : tarr) {
-                bv2ways(m, t);
+        try (Context c = new Context("QF_BV")) {
+            c.assertFormula(f);
+            Status stat = c.check(10);
+            System.out.println("Status: " + stat);
+            if (stat == Status.SAT) {
+                Model m = c.getModel();
+                System.out.println("model: ");
+                System.out.println(m);
+                boolean[] zval = m.bvValue(z);
+                boolean[] xval = m.bvValue(x);
+                boolean[] yval = m.bvValue(y);
+                int xy = Terms.bvAdd(x,y);
+                boolean[] sumval = m.bvValue(xy);
+                System.out.println("Value of z: " + boolArray(zval));
+                System.out.println("Value of x: " + boolArray(xval));
+                System.out.println("Value of y: " + boolArray(yval));
+                System.out.println("Value of x + y: " + boolArray(sumval));
+                int[] tarr = { x, y, z, xy };
+                for (int t : tarr) {
+                    bv2ways(m, t);
+                }
             }
         }
-
         Terms.removeName("x");
         Terms.removeName("y");
         Terms.removeName("z");

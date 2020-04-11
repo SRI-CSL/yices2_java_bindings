@@ -3755,7 +3755,7 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3II(J
  * Method:    exportToDimacs
  * Signature: (ILjava/lang/String;Z[I)I
  */
-// returns 1 if the file was written, 0 if the formula is solved, or a negative number indicating an error
+// returns 1 if the file was written, 0 if the formula is solved, or a negative number indicating an error, the smt_status is stored in status
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jint formula, jstring filename, jboolean simplify, jintArray status){
   int32_t code = -1;
   jsize n;
@@ -3772,7 +3772,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_Stri
     out_of_mem_exception(env);
   }
   code = yices_export_formula_to_dimacs(formula, file, simplify, &stat);
-  if ( code >=  0 ){
+  if (code >=  0) {
     env->SetIntArrayRegion(status, 0, 1, reinterpret_cast<int32_t *>(&stat));
   }
 
@@ -3814,7 +3814,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs___3ILjava_lang_St
     out_of_mem_exception(env);
   }
   code = yices_export_formulas_to_dimacs(tarr, n, file, simplify, &stat);
-  if ( code >=  0 ){
+  if (code >=  0) {
     env->SetIntArrayRegion(status, 0, 1, reinterpret_cast<int32_t *>(&stat));
   }
   env->ReleaseStringUTFChars(filename, file);
@@ -3899,7 +3899,7 @@ static jobject makeYVal(JNIEnv *env, yval_t *yval){
 
 //returns true if tag is OK, and fills in the slots of yval, false otherwise.
 static bool convertToYval(jint tag, jint id, yval_t *yval){
-  if ((tag <  YVAL_UNKNOWN) || (tag > YVAL_MAPPING)){
+  if ((tag <  YVAL_UNKNOWN) || (tag > YVAL_MAPPING)) {
     return false;
   }
   yval->node_tag = static_cast<yval_tag_t>(tag);
@@ -3930,7 +3930,7 @@ JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_getValue(JNIEnv *env, jclass,
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return 0;
   } else {
     code = yices_val_is_int32(reinterpret_cast<model_t*>(model), &yval);
@@ -3946,7 +3946,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return 0;
   } else {
     code = yices_val_is_int64(reinterpret_cast<model_t*>(model), &yval);
@@ -3962,7 +3962,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclas
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return 0;
   } else {
     code = yices_val_is_integer(reinterpret_cast<model_t*>(model), &yval);
@@ -3979,7 +3979,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jc
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BV){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BV) {
     return 0;
   } else {
     code = yices_val_bitsize(reinterpret_cast<model_t*>(model), &yval);
@@ -3996,7 +3996,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, 
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE) {
     return 0;
   } else {
     code = yices_val_tuple_arity(reinterpret_cast<model_t*>(model), &yval);
@@ -4013,7 +4013,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclas
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valMappingArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_MAPPING){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_MAPPING) {
     return 0;
   } else {
     code = yices_val_mapping_arity(reinterpret_cast<model_t*>(model), &yval);
@@ -4030,7 +4030,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valMappingArity(JNIEnv *env, jcl
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION) {
     return 0;
   } else {
     code = yices_val_function_arity(reinterpret_cast<model_t*>(model), &yval);
@@ -4047,7 +4047,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jc
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionType(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION) {
     return 0;
   } else {
     code = yices_val_function_type(reinterpret_cast<model_t*>(model), &yval);
@@ -4065,7 +4065,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass,
   yval_t yval;
   int32_t val;
   int32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BOOL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BOOL) {
     return -1;
   } else {
     val = 0;
@@ -4093,7 +4093,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetInteger(JNIEnv *env, jclas
   yval_t yval;
   jlong  aux;
   jint result;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return -1;
   } else {
     result = -2;
@@ -4137,7 +4137,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetRational(JNIEnv *env, jcla
   uint64_t den;
   jlong aux[2];
   jint result;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return -1;
   } else {
     result = -2;
@@ -4179,7 +4179,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetDouble(JNIEnv *env, jclass
   yval_t yval;
   double aux;
   jint result;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return -1;
   } else {
     result = -2;
@@ -4207,7 +4207,7 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_valGetBV(JNIEnv *env, j
   jbooleanArray result;
   uint32_t n;
 
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BV){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BV) {
     return NULL;
   }
 
@@ -4255,7 +4255,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetScalar(JNIEnv *env, jclass
   int32_t val;
   type_t tau;
   int32_t aux[2];
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_SCALAR){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_SCALAR) {
     return result;
   }
   result = -2;
@@ -4264,7 +4264,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetScalar(JNIEnv *env, jclass
   }
   try {
     code = yices_val_get_scalar(reinterpret_cast<model_t*>(model), &yval, &val, &tau);
-    if (code < 0){
+    if (code < 0) {
       result = -3;
     }
     aux[0] = val;
@@ -4286,7 +4286,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetIntegerAsBytes(JNIEn
   jbyteArray result = NULL;
   mpz_t z;
 
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return result;
   }
 
@@ -4312,7 +4312,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalNumAsBytes(J
   jbyteArray result = NULL;
   mpq_t q;
 
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return result;
   }
 
@@ -4341,7 +4341,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalDenAsBytes(J
   mpq_t q;
 
 
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_RATIONAL) {
     return result;
   }
   try {
@@ -4376,7 +4376,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandTuple(JNIEnv *env, jcla
   yval_t ychild;
   jobject child;
 
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE) {
     return -1;
   }
   arity = yices_val_tuple_arity(model, &yval);
@@ -4393,7 +4393,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandTuple(JNIEnv *env, jcla
     delete carr;
     return -4;
   }
-  for (i = 0; i < arity; i++){
+  for (i = 0; i < arity; i++) {
     ychild = carr[i];
     child = makeYVal(env, &ychild);
     env->SetObjectArrayElement(children, i, child);
@@ -4414,7 +4414,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionCardinality(JNIEnv *e
   yval_vector_t mappings;
   jint retval = -1;
 
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION) {
     return -1;
   }
   yices_init_yval_vector(&mappings);
@@ -4441,7 +4441,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, j
   yval_vector_t ymaps;
   int32_t i;
 
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION){
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION) {
     return -1;
   }
   cardinality = Java_com_sri_yices_Yices_valFunctionCardinality(env, cls, mdl, tag, id);
@@ -4467,7 +4467,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, j
 
   env->SetObjectArrayElement(def, 0, makeYVal(env, &ydef));
 
-  for (i = 0; i < cardinality; i++){
+  for (i = 0; i < cardinality; i++) {
     env->SetObjectArrayElement(mappings, i, makeYVal(env, &(ymaps.data[i])));
   }
 
@@ -4491,7 +4491,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandMapping(JNIEnv *env, jc
   int32_t code;
   int32_t i;
 
-  if (!convertToYval(tag, id, &yval)  || tag != YVAL_MAPPING){
+  if (!convertToYval(tag, id, &yval)  || tag != YVAL_MAPPING) {
     return -1;
   }
   arity = yices_val_mapping_arity(model, &yval);
@@ -4515,7 +4515,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandMapping(JNIEnv *env, jc
   if (code == 0) {
     env->SetObjectArrayElement(value, 0, makeYVal(env, &yvalue));
 
-    for (i = 0; i < arity; i++){
+    for (i = 0; i < arity; i++) {
       env->SetObjectArrayElement(args, i, makeYVal(env, &(yargs[i])));
     }
   }
