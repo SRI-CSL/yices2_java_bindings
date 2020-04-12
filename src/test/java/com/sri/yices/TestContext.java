@@ -77,21 +77,22 @@ public class TestContext {
             Status stat = c.check(10);
             System.out.println("Status: " + stat);
             if (stat == Status.SAT) {
-                Model m = c.getModel();
-                System.out.println("model: ");
-                System.out.println(m);
-                boolean[] zval = m.bvValue(z);
-                boolean[] xval = m.bvValue(x);
-                boolean[] yval = m.bvValue(y);
-                int xy = Terms.bvAdd(x,y);
-                boolean[] sumval = m.bvValue(xy);
-                System.out.println("Value of z: " + boolArray(zval));
-                System.out.println("Value of x: " + boolArray(xval));
-                System.out.println("Value of y: " + boolArray(yval));
-                System.out.println("Value of x + y: " + boolArray(sumval));
-                int[] tarr = { x, y, z, xy };
-                for (int t : tarr) {
-                    bv2ways(m, t);
+                try (Model m = c.getModel()) {
+                    System.out.println("model: ");
+                    System.out.println(m);
+                    boolean[] zval = m.bvValue(z);
+                    boolean[] xval = m.bvValue(x);
+                    boolean[] yval = m.bvValue(y);
+                    int xy = Terms.bvAdd(x,y);
+                    boolean[] sumval = m.bvValue(xy);
+                    System.out.println("Value of z: " + boolArray(zval));
+                    System.out.println("Value of x: " + boolArray(xval));
+                    System.out.println("Value of y: " + boolArray(yval));
+                    System.out.println("Value of x + y: " + boolArray(sumval));
+                    int[] tarr = { x, y, z, xy };
+                    for (int t : tarr) {
+                        bv2ways(m, t);
+                    }
                 }
             }
         }

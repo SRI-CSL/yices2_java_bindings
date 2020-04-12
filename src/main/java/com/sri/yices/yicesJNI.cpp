@@ -3502,13 +3502,12 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jcl
   return (jboolean) code;
 }
 
-
 /*
  * Class:     com_sri_yices_Yices
  * Method:    checkFormula
  * Signature: (ILjava/lang/String;Ljava/lang/String;[J)I
  */
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula__ILjava_lang_String_2Ljava_lang_String_2_3J(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate, jlongArray marr){
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate, jlongArray marr){
   int32_t code;
   const char *ds;
   const char *ls;
@@ -3553,10 +3552,10 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula__ILjava_lang_String
  * Method:    checkFormulas
  * Signature: ([ILjava/lang/String;Ljava/lang/String;[J)I
  */
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas___3ILjava_lang_String_2Ljava_lang_String_2_3J(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate, jlongArray marr){
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate, jlongArray marr){
   int32_t code;
-  const char *ds;
-  const char *ls;
+  const char *ds = NULL;
+  const char *ls = NULL;
   jsize n;
   bool wantModel = false;
   model_t *model = NULL;

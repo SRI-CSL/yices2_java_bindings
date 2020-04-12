@@ -17,7 +17,10 @@ public class  Delegate {
         long[] larr = marr == null ? null : new long[1];
         int status = Yices.checkFormula(term, logic, delegate, larr);
         Status retval = Status.idToStatus(status);
-        if (retval == Status.SAT && marr != null){
+        if ( retval == Status.ERROR) {
+            System.err.println(String.format("checkFormula ERROR: code = %d string = %s", Yices.errorCode(), Yices.errorString()));
+        }
+        if (retval == Status.SAT && marr != null) {
             marr[0] = new Model(larr[0]);
         }
         return retval;
@@ -30,7 +33,10 @@ public class  Delegate {
         long[] larr = marr == null ? null : new long[1];
         int status = Yices.checkFormulas(terms, logic, delegate, larr);
         Status retval = Status.idToStatus(status);
-        if (retval == Status.SAT && marr != null){
+        if (retval == Status.ERROR) {
+            System.err.println(String.format("checkFormula ERROR: code = %d string = %s", Yices.errorCode(), Yices.errorString()));
+        }
+        if (retval == Status.SAT && marr != null) {
             marr[0] = new Model(larr[0]);
         }
         return retval;

@@ -332,7 +332,7 @@
   </target>
 
   <!-- junk targets -->
-  <target name="testdimacs" depends="dist,test-compile,install">
+  <target name="testdelegates" depends="dist,test-compile,install">
     <echo> Running tests </echo>
     <echo> test_classes:  ${test_classes} </echo>
     <echo> java.library.path:  ${java.library.path} </echo>
@@ -343,7 +343,7 @@
         <pathelement location="${test_classes}"/>
       </classpath>
       <formatter type="brief" usefile="false" />
-      <test name="com.sri.yices.TestDimacs"/>
+      <test name="com.sri.yices.TestDelegates"/>
     </junit>
   </target>
 
