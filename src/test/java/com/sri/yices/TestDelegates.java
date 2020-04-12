@@ -43,6 +43,10 @@ public class TestDelegates {
         return retval;
     }
 
+    static int conjoin(int[] formulas, int n) {
+        return Terms.and(truncate(formulas, n));
+    }
+
     static void delgado(String delegate){
         System.out.println(String.format("%s test", delegate));
 
@@ -61,6 +65,14 @@ public class TestDelegates {
             Model[] model = { null };
             int[] terms = truncate(formulas, i);
             Status status = Delegate.checkFormulas(terms, "QF_BV", delegate, model);
+            System.out.println(String.format("Delegate %s status %d: %s", delegate, i, status));
+        }
+
+
+        for (int i = 1; i <= FCOUNT; i++ ){
+            Model[] model = { null };
+            int term = conjoin(formulas, i);
+            Status status = Delegate.checkFormula(term, "QF_BV", delegate, model);
             System.out.println(String.format("Delegate %s status %d: %s", delegate, i, status));
         }
 
