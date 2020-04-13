@@ -9,6 +9,17 @@
 
 #include "com_sri_yices_Yices.h"
 
+//iam: FIXME change the patch level to > 1 after debugging.
+#if __YICES_VERSION > 2 || \
+    (__YICES_VERSION == 2 && (__YICES_VERSION_MAJOR > 6 || \
+                       (__YICES_VERSION_MAJOR == 6 && \
+                        __YICES_VERSION_PATCHLEVEL > 2)))  
+#define YICES_AT_LEAST_2_6_2 
+#endif
+
+#define YICES_ERROR_REQUIRES_AT_LEAST_2_6_2  -262
+
+
 /*
  * On Windows, jint and int32_t are not the same type:
  * int32_t is the same int
@@ -30,69 +41,47 @@
 
 static inline int32_t *array2int32(JNIEnv *env, jintArray a, jboolean *copy){
 #ifdef MINGW
-  return (int32_t *)env->GetIntArrayElements(a, copy);
+  return reinterpret_cast<int32_t *>(env->GetIntArrayElements(a, copy));
 #else
   return env->GetIntArrayElements(a, copy);
 #endif
 }
 
-//iam: not really necessary, could get away with using array2int32
 static inline term_t *array2terms(JNIEnv *env, jintArray a, jboolean *copy){
-#ifdef MINGW
-  return (term_t *)env->GetIntArrayElements(a, copy);
-#else
-  return env->GetIntArrayElements(a, copy);
-#endif
+  return array2int32(env, a, copy);
 }
 
-//iam: not really necessary, could get away with using array2int32
-static inline term_t *array2types(JNIEnv *env, jintArray a, jboolean *copy){
-#ifdef MINGW
-  return (types_t *)env->GetIntArrayElements(a, copy);
-#else
-  return env->GetIntArrayElements(a, copy);
-#endif
+static inline type_t *array2types(JNIEnv *env, jintArray a, jboolean *copy){
+  return array2int32(env, a, copy);
 }
 
-static inline void release_int32_elems(JNIEnv *env, jintArray a, int32_t *ptr){
+static inline void release_int32_elems(JNIEnv *env, jintArray a, int32_t *ptr, jint mode){
 #ifdef MINGW
-  env->ReleaseIntArrayElements(a, (jint*)ptr, JNI_ABORT);
-#else
-  env->ReleaseIntArrayElements(a, ptr, JNI_ABORT);
-#endif
-}
-
-//iam: not really necessary, could get away with using release_int32_elems
-static inline void release_term_elems(JNIEnv *env, jintArray a, term_t *ptr){
-#ifdef MINGW
-  env->ReleaseIntArrayElements(a, (jint*)ptr, JNI_ABORT);
-#else
-  env->ReleaseIntArrayElements(a, ptr, JNI_ABORT);
-#endif
-}
-
-//iam: not really necessary, could get away with using release_int32_elems
-static inline void release_term_elems(JNIEnv *env, jintArray a, term_t *ptr, jint mode){
-#ifdef MINGW
-  env->ReleaseIntArrayElements(a, (jint*)ptr, mode);
+  env->ReleaseIntArrayElements(a, reinterpret_cast<jint*>(ptr), mode);
 #else
   env->ReleaseIntArrayElements(a, ptr, mode);
 #endif
 }
 
+static inline void release_int32_elems(JNIEnv *env, jintArray a, int32_t *ptr){
+  release_int32_elems(env, a, ptr, JNI_ABORT);
+}
 
-//iam: not really necessary, could get away with using release_int32_elems
+static inline void release_term_elems(JNIEnv *env, jintArray a, term_t *ptr){
+  release_int32_elems(env, a, ptr, JNI_ABORT);
+}
+
+static inline void release_term_elems(JNIEnv *env, jintArray a, term_t *ptr, jint mode){
+  release_int32_elems(env, a, ptr, mode);
+}
+
 static inline void release_type_elems(JNIEnv *env, jintArray a, type_t *ptr){
-#ifdef MINGW
-  env->ReleaseIntArrayElements(a, (jint*)ptr, JNI_ABORT);
-#else
-  env->ReleaseIntArrayElements(a, ptr, JNI_ABORT);
-#endif
+  release_int32_elems(env, a, ptr, JNI_ABORT);
 }
 
 static inline void array2int_region(JNIEnv *env, jintArray a, jsize start, jsize end, int32_t *ptr){
 #ifdef MINGW
-  env->GetIntArrayRegions(a, start, end, (jint*)ptr);
+  env->GetIntArrayRegions(a, start, end, reinterpret_cast<jint*>(ptr));
 #else
   env->GetIntArrayRegion(a, start, end, ptr);
 #endif
@@ -100,13 +89,11 @@ static inline void array2int_region(JNIEnv *env, jintArray a, jsize start, jsize
 
 static inline void set_int_region(JNIEnv *env, jintArray a, jsize start, jsize end, const int32_t *ptr){
 #ifdef MINGW
-  env->SetIntArrayRegions(a, start, end, (jint*)ptr);
+  env->SetIntArrayRegions(a, start, end, reinterpret_cast<jint*>(ptr));
 #else
   env->SetIntArrayRegion(a, start, end, ptr);
 #endif
 }
-
-
 
 
 /*
@@ -2574,6 +2561,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_termChild(JNIEnv *env, jclass, j
  * return NULL is t is not a valid term
  */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_termChildren(JNIEnv *env, jclass, jint t) {
+#ifdef YICES_AT_LEAST_2_6_2
   term_vector_t aux;
   jintArray result = NULL;
   int32_t code;
@@ -2591,6 +2579,9 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_termChildren(JNIEnv *env, j
     out_of_mem_exception(env);
   }
   return result;
+#else
+  return NULL;
+#endif
 }
 
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_termProjIndex(JNIEnv *env, jclass, jint x) {
@@ -3486,6 +3477,7 @@ JNIEXPORT jstring JNICALL Java_com_sri_yices_Yices_modelToString__J(JNIEnv *env,
 
 
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jclass, jstring delegate){
+#ifdef YICES_AT_LEAST_2_6_2
   jint code = 0;
   const char *s = env->GetStringUTFChars(delegate, NULL);
   if (s == NULL) {
@@ -3498,8 +3490,10 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jcl
     }
     env->ReleaseStringUTFChars(delegate, s);
   }
-
   return (jboolean) code;
+#else
+return (jboolean) YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
+#endif
 }
 
 /*
@@ -3508,6 +3502,7 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jcl
  * Signature: (ILjava/lang/String;Ljava/lang/String;[J)I
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate, jlongArray marr){
+#ifdef YICES_AT_LEAST_2_6_2
   int32_t code;
   const char *ds;
   const char *ls;
@@ -3545,6 +3540,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass
   env->ReleaseStringUTFChars(logic, ls);
   env->ReleaseStringUTFChars(delegate, ds);
   return code;
+#else
+  return YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
+#endif
 }
 
 /*
@@ -3553,6 +3551,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass
  * Signature: ([ILjava/lang/String;Ljava/lang/String;[J)I
  */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate, jlongArray marr){
+#ifdef YICES_AT_LEAST_2_6_2
   int32_t code;
   const char *ds = NULL;
   const char *ls = NULL;
@@ -3569,7 +3568,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclas
     wantModel = true;
     assert(n > 0);
   }
-
   n = env->GetArrayLength(formulas);
   if (n == 0) {
     return -2;
@@ -3604,6 +3602,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclas
   env->ReleaseStringUTFChars(delegate, ds);
   release_term_elems(env, formulas, tarr);
   return code;
+#else
+  return YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
+#endif
 }
 
 
@@ -3756,11 +3757,11 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3II(J
  */
 // returns 1 if the file was written, 0 if the formula is solved, or a negative number indicating an error, the smt_status is stored in status
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jint formula, jstring filename, jboolean simplify, jintArray status){
+#ifdef YICES_AT_LEAST_2_6_2
   int32_t code = -1;
   jsize n;
   const char *file = NULL;
   smt_status_t stat;
-
   n = env->GetArrayLength(status);
   if (n == 0) {
     return -1;
@@ -3774,9 +3775,11 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_Stri
   if (code >=  0) {
     env->SetIntArrayRegion(status, 0, 1, reinterpret_cast<int32_t *>(&stat));
   }
-
   env->ReleaseStringUTFChars(filename, file);
   return code;
+#else
+  return YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
+#endif
 }
 
 /*
@@ -3786,27 +3789,24 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_Stri
  */
 // returns 0 on success, or a negative numer indicating an error
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs___3ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jintArray formulas, jstring filename, jboolean simplify, jintArray status){
+#ifdef YICES_AT_LEAST_2_6_2
   int32_t code;
   jsize n;
   term_t *tarr;
   const char *file = NULL;
   smt_status_t stat;
-
   n = env->GetArrayLength(status);
   if (n == 0) {
     return -1;
   }
-
   n = env->GetArrayLength(formulas);
   if (n == 0) {
     return -2;
   }
-
   tarr = array2terms(env, formulas, NULL);
   if (tarr == NULL) {
     out_of_mem_exception(env);
   }
-
   //filename string
   file = env->GetStringUTFChars(filename, NULL);
   if (file == NULL) {
@@ -3819,6 +3819,9 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs___3ILjava_lang_St
   env->ReleaseStringUTFChars(filename, file);
   release_term_elems(env, formulas, tarr);
   return code;
+#else
+  return YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
+#endif
 }
 
 
@@ -3828,10 +3831,10 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs___3ILjava_lang_St
  * Signature: (JI)[I
  */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__JI(JNIEnv *env, jclass, jlong model, jint term){
+#ifdef YICES_AT_LEAST_2_6_2
   term_vector_t aux;
   jintArray result = NULL;
   int32_t code;
-
   try {
     yices_init_term_vector(&aux);
 
@@ -3844,6 +3847,9 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__JI(JNIEnv *env,
     out_of_mem_exception(env);
   }
   return result;
+#else
+  return NULL;
+#endif
 }
 
 /*
@@ -3852,10 +3858,10 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__JI(JNIEnv *env,
  * Signature: (J[I)[I
  */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *env, jclass, jlong model, jintArray terms){
+#ifdef YICES_AT_LEAST_2_6_2
   term_vector_t aux;
   jintArray result = NULL;
   int32_t code;
-
   jsize n = env->GetArrayLength(terms);
   if (n == 0) {
     //BD: shuld we force a yices error here?
@@ -3867,10 +3873,8 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *en
     out_of_mem_exception(env);
     return result;
   }
-
   try {
     yices_init_term_vector(&aux);
-
     code = yices_model_term_array_support(reinterpret_cast<model_t*>(model), n, tarr, &aux);
     if (code >= 0) {
       result = convertToIntArray(env, aux.size, aux.data);
@@ -3881,6 +3885,9 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *en
   }
   release_term_elems(env, terms, tarr);
   return result;
+#else
+  return NULL;
+#endif
 }
 
 
