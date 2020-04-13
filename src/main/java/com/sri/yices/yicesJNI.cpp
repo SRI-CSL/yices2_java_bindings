@@ -13,7 +13,7 @@
 #if __YICES_VERSION > 2 || \
     (__YICES_VERSION == 2 && (__YICES_VERSION_MAJOR > 6 || \
                        (__YICES_VERSION_MAJOR == 6 && \
-                        __YICES_VERSION_PATCHLEVEL > 2)))  
+                        __YICES_VERSION_PATCHLEVEL > 1)))  
 #define YICES_AT_LEAST_2_6_2 
 #endif
 
