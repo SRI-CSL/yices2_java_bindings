@@ -9,7 +9,6 @@
 
 #include "com_sri_yices_Yices.h"
 
-//iam: FIXME change the patch level to > 1 after debugging.
 #if __YICES_VERSION > 2 || \
     (__YICES_VERSION == 2 && (__YICES_VERSION_MAJOR > 6 || \
                        (__YICES_VERSION_MAJOR == 6 && \
