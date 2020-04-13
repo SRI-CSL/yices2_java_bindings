@@ -131,6 +131,17 @@ public class Model implements AutoCloseable {
         return v;
     }
 
+    public int[] valuesAsTerms(int[] terms) throws YicesException {
+        if (terms == null) {
+            throw new IllegalArgumentException();
+        }
+        int[] output = new int[terms.length];
+        int v = Yices.valuesAsTerms(ptr, terms, output);
+        if (v < 0) throw new YicesException();
+        return output;
+    }
+
+
     /*
      * Implicants
      */
