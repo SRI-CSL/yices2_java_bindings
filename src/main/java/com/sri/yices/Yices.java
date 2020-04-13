@@ -518,6 +518,24 @@ public final class Yices {
      */
     public static native int valueAsTerm(long model, int t);
 
+
+    //public static native int yices_term_array_value(model_t *model, uint n, const int a[], int b[]);
+    /*
+     * Get the values of terms a[0 .. n-1] in mdl and convert the values to terms.
+     * - a must be an array of n terms
+     * - b must be large enough to store n terms
+     *
+     * This function has the same behavior and limitations as yices_get_value_as_term.
+     * If there's no error, the function returns 0 and store the values in array b:
+     * - b[i] = value of a[i] in mdl, converted to a term
+     *
+     * Otherwise, the function returns -1 and sets the error report.
+     * The error codes are the same as for yices_get_value_as_term. 
+     * FIXME: shouldn't there be an additional error code for when b isn't long enough?
+     * Here and in the API!
+     */
+    public static native int valuesAsTerms(long model, int[] in, int[] out);
+
     /*
      * Export the model as a String (pretty printing).
      *
@@ -794,7 +812,6 @@ public final class Yices {
 
     /* <TooHardBasket> */
     // public static native int yices_val_get_algebraic_number(model_t *model, const yval_t *v, lp_algebraic_number_t *a);
-    // public static native int yices_term_array_value(model_t *model, uint n, const int a[], int b[]);
     // public static native int yices_pp_model_fd(int fd, model_t *model, uint width, uint height, uint offset);
     /* </TooHardBasket> */
 

@@ -3441,6 +3441,34 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valueAsTerm(JNIEnv *env, jclass,
   return result;
 }
 
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valuesAsTerms(JNIEnv *env, jclass, jlong model, jintArray input, jintArray output){
+  jsize in;
+  jsize on;
+  term_t *itarr = NULL;
+  term_t *otarr = NULL;
+  int32_t code;
+  in = env->GetArrayLength(input);
+  if (in == 0) {
+      return -1;
+  }
+  on = env->GetArrayLength(output);
+  if (on < in) {
+      return -2;
+  }
+  itarr = array2terms(env, input, NULL);
+  otarr = new int[in];
+  try {
+	code = yices_term_array_value(reinterpret_cast<model_t*>(model), in, itarr, otarr);
+	if (code == 0){
+	  env->SetIntArrayRegion(output, 0, in, otarr);
+	}
+  } catch (std::bad_alloc &ba) {
+	out_of_mem_exception(env);
+  }
+  delete otarr;
+  release_term_elems(env, input, itarr);
+  return code;
+}
 
 JNIEXPORT jstring JNICALL Java_com_sri_yices_Yices_modelToString__JII(JNIEnv *env, jclass, jlong model, jint columns, jint lines) {
   char *s;
@@ -3640,13 +3668,14 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormulas(JNIEnv
   jintArray retval = NULL;
   int32_t code;
   term_vector_t aux;
+  term_t *tarr;
   jsize n = env->GetArrayLength(terms);
   if (n == 0) {
     //BD: should we force a yices error here?
     return retval;
   }
   assert(n > 0);
-  term_t *tarr = array2terms(env, terms, NULL);
+  tarr = array2terms(env, terms, NULL);
   if (tarr == NULL) {
     out_of_mem_exception(env);
     return retval;
