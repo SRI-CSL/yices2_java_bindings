@@ -3873,8 +3873,6 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *en
 #endif
 }
 
-
-
 static jobject makeYVal(JNIEnv *env, yval_t *yval){
   jclass yvalClass;
   jmethodID constructor;
@@ -3964,19 +3962,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jc
   }
 }
 
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass, jlong model, jint tag, jint id){
-  yval_t yval;
-  int32_t val;
-  int32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BOOL) {
-    return -1;
-  } else {
-    val = 0;
-    code = yices_val_get_bool(reinterpret_cast<model_t*>(model), &yval, &val);
-    return code == 0 ? val : (jint)code ;
-  }
-}
-
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
@@ -4012,6 +3997,20 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionType(JNIEnv *env, jcl
   }
 }
 
+
+
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t val;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_BOOL) {
+    return -1;
+  } else {
+    val = 0;
+    code = yices_val_get_bool(reinterpret_cast<model_t*>(model), &yval, &val);
+    return code == 0 ? val : (jint)code ;
+  }
+}
 
 /*
  * Value of yval in model, stored in a[0]
