@@ -150,7 +150,7 @@ public final class Yices {
     public static native int select(int idx, int tuple);
     public static native int tupleUpdate(int tuple, int idx, int newval);
     public static native int functionUpdate(int fun, int[] arg, int newval);
-    // Update1 is the common case where arg[] is a single argument
+    // Update1 is the common case where arg[] is a single argument. FIXME: iam says why the 1 on the end? this isn't C.
     public static native int functionUpdate1(int fun, int arg, int newval);
     public static native int distinct(int... arg);
     public static native int forall(int[] vars, int body);
@@ -519,7 +519,6 @@ public final class Yices {
     public static native int valueAsTerm(long model, int t);
 
 
-    //public static native int yices_term_array_value(model_t *model, uint n, const int a[], int b[]);
     /*
      * Get the values of terms a[0 .. n-1] in mdl and convert the values to terms.
      * - a must be an array of n terms
@@ -530,7 +529,7 @@ public final class Yices {
      * - b[i] = value of a[i] in mdl, converted to a term
      *
      * Otherwise, the function returns -1 and sets the error report.
-     * The error codes are the same as for yices_get_value_as_term. 
+     * The error codes are the same as for yices_get_value_as_term.
      * FIXME: shouldn't there be an additional error code for when b isn't long enough?
      * Here and in the API!
      */
@@ -577,7 +576,6 @@ public final class Yices {
      *
      * Since 2.6.2.
      */
-    //__YICES_DLLSPEC__ extern smt_status_t yices_check_formula(term_t f, const char *logic, model_t **model, const char *delegate);
     // model array can be null, in which case no model is constructed, otherwise a "model" is placed in model[0]
     public static native int checkFormula(int t, String logic, String delegate, long[] model);
 
@@ -591,7 +589,6 @@ public final class Yices {
      *
      * Since 2.6.2.
      */
-    // __YICES_DLLSPEC__ extern smt_status_t yices_check_formulas(const term_t f[], uint32_t n, const char *logic, model_t **model, const char *delegate);
     // model array can be null, in which case no model is constructed, otherwise a "model" is placed in model[0]
     public static native int checkFormulas(int[] terms, String logic, String delegate, long[] model);
 
@@ -636,10 +633,7 @@ public final class Yices {
      *
      */
     public static native int[] generalizeModel(long model, int term, int[] elims, int mode);
-    // public static native int yices_generalize_model(model_t *model, int t, uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
-
     public static native int[] generalizeModel(long model, int[] terms, int[] elims, int mode);
-    // public static native int yices_generalize_model_array(model_t *model, uint n, const int a[], uint nelims, const int elim[], yices_gen_mode_t mode, term_vector_t *v);
 
     /*
      * Bit-blast then export the CNF to a file
@@ -652,7 +646,6 @@ public final class Yices {
      *   0 if the formula is solved without CNF or after simplifying
      *  -1 if there's an error
      */
-    //int32_t yices_export_formula_to_dimacs(term_t f, const char *filename, int32_t simplify_cnf, smt_status_t *status);
     public static native int exportToDimacs(int term, String filename, boolean simplify_cnf, int[] status);
 
     /*
@@ -665,7 +658,6 @@ public final class Yices {
      *   0 if the formula is solved without CNF or after simplifying
      *  -1 if there's an error
      */
-    //int32_t yices_export_formulas_to_dimacs(const term_t f[], uint32_t n, const char *filename, int32_t simplify_cnf, smt_status_t *status);
     public static native int exportToDimacs(int[] terms, String filename, boolean simplify_cnf, int[] status);
 
     /*
@@ -675,59 +667,29 @@ public final class Yices {
      * on the value of y in model. In this case, support(t) = [ x, z ].
      */
     public static native int[] getSupport(long model, int term);
-    //int32_t yices_model_term_support(model_t *model, term_t t, term_vector_t *v);
-
-    //__YICES_DLLSPEC__ extern int32_t yices_model_term_array_support(model_t *model, uint32_t n, const term_t a[], term_vector_t *v);
     public static native int[] getSupport(long model, int[] terms);
 
-    // public static native int yices_get_algebraic_number_value(model_t *model, int t, lp_algebraic_number_t *a);
-
-    // public static native void yices_init_yval_vector(yval_vector_t *v);
-    // public static native void yices_delete_yval_vector(yval_vector_t *v);
-    // public static native void yices_reset_yval_vector(yval_vector_t *v);
-
-    // public static native int yices_get_value(model_t *model, int t, yval_t *val);
     public static native YVal getValue(long model, int term);
 
-    // public static native int yices_val_is_rational32(model_t *model, const yval_t *v);
-    // public static native int yices_val_is_rational64(model_t *model, const yval_t *v);
-    // public static native int yices_val_is_integer(model_t *model, const yval_t *v);
-    // public static native int yices_val_is_int32(model_t *model, const yval_t *v);
-    //
     public static native boolean valIsInt(long model, int tag, int id);
-    //
-    // public static native int yices_val_is_int64(model_t *model, const yval_t *v);
     public static native boolean valIsLong(long model, int tag, int id);
-
     public static native boolean valIsInteger(long model, int tag, int id);
 
-    // public static native int yices_val_bitsize(model_t *model, const yval_t *v);
     public static native int valBitSize(long model, int tag, int id);
 
-    // public static native int yices_val_tuple_arity(model_t *model, const yval_t *v);
     public static native int valTupleArity(long model, int tag, int id);
 
-    // public static native int yices_val_mapping_arity(model_t *model, const yval_t *v);
     public static native int valMappingArity(long model, int tag, int id);
 
-    // public static native int yices_val_function_arity(model_t *model, const yval_t *v);
     public static native int valFunctionArity(long model, int tag, int id);
 
     // new in 2.6.2
-    //__YICES_DLLSPEC__ extern type_t yices_val_function_type(model_t *mdl, const yval_t *v);
     public static native int valFunctionType(long model, int tag, int id);
 
-    // public static native int yices_val_get_bool(model_t *model, const yval_t *v, int *val);
-    //
     // getBoolValue returns the value of yval { tag, id} in model.
     // It returns -1 for error, 0 for false, +1 for true
     public static native int valGetBool(long model, int tag, int id);
 
-
-    // public static native int yices_val_get_int32(model_t *model, const yval_t *v, int *val);
-    // public static native int yices_val_get_int64(model_t *model, const yval_t *v, int64_t *val);
-    // public static native int yices_val_get_double(model_t *model, const yval_t *v, double *val);
-    //
     // These three methods return -1 for error and 0 otherwise.
     // The value of term t in model 'model' is returned in array a.
     //
@@ -743,16 +705,8 @@ public final class Yices {
     public static native int valGetRational(long model, int tag, int id, long[] a);
     public static native int valGetDouble(long model, int tag, int id, double[] a);
 
-    // public static native int yices_val_get_rational32(model_t *model, const yval_t *v, int *num, uint *den);
-    // public static native int yices_val_get_rational64(model_t *model, const yval_t *v, int64_t *num, uint64_t *den);
-
-
-    // public static native int yices_val_get_bv(model_t *model, const yval_t *v, int val[]);
     public static native boolean[] valGetBV(long model, int tag, int id);
 
-
-    // public static native int yices_val_get_mpz(model_t *model, const yval_t *v, mpz_t val);
-    // public static native int yices_val_get_mpq(model_t *model, const yval_t *v, mpq_t val);
 
     // These return arrays of bytes suitable for conversion to BigInteger.
     // They return null if there's an error.
@@ -776,7 +730,6 @@ public final class Yices {
     }
 
 
-    // public static native int yices_val_get_scalar(model_t *model, const yval_t *v, int *val, type_t *tau);
     // Value (i.e., index) of a scalar or uninterpreted term
     // return 0 on success. -1 or -2 if there's an error.
     // -1 if the tag isn't kosher.
@@ -804,10 +757,6 @@ public final class Yices {
 
     // public static native int yices_val_expand_mapping(model_t *model, const yval_t *m, yval_t tup[], yval_t *val);
     public static native int valExpandMapping(long model, int tag, int id, YVal[] args, YVal[] value);
-
-
-
-
 
 
     /* <TooHardBasket> */

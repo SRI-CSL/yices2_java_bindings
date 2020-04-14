@@ -9,11 +9,16 @@
 
 #include "com_sri_yices_Yices.h"
 
+/*
+ *  Version control
+ *
+ */
+
 #if __YICES_VERSION > 2 || \
     (__YICES_VERSION == 2 && (__YICES_VERSION_MAJOR > 6 || \
                        (__YICES_VERSION_MAJOR == 6 && \
-                        __YICES_VERSION_PATCHLEVEL > 1)))  
-#define YICES_AT_LEAST_2_6_2 
+                        __YICES_VERSION_PATCHLEVEL > 1)))
+#define YICES_AT_LEAST_2_6_2
 #endif
 
 #define YICES_ERROR_REQUIRES_AT_LEAST_2_6_2  -262
@@ -3523,11 +3528,6 @@ return (jboolean) YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
 #endif
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    checkFormula
- * Signature: (ILjava/lang/String;Ljava/lang/String;[J)I
- */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass, jint formula, jstring logic, jstring delegate, jlongArray marr){
 #ifdef YICES_AT_LEAST_2_6_2
   int32_t code;
@@ -3572,11 +3572,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass
 #endif
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    checkFormulas
- * Signature: ([ILjava/lang/String;Ljava/lang/String;[J)I
- */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclass, jintArray formulas, jstring logic, jstring delegate, jlongArray marr){
 #ifdef YICES_AT_LEAST_2_6_2
   int32_t code;
@@ -3637,11 +3632,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclas
 
 
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    implicantForFormula
- * Signature: (JI)[I
- */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormula(JNIEnv *env, jclass, jlong model, jint term){
   jintArray retval = NULL;
   int32_t code;
@@ -3659,11 +3649,6 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormula(JNIEnv 
   return retval;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    implicantForFormulas
- * Signature: (J[I)[I
- */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormulas(JNIEnv *env, jclass, jlong model, jintArray terms){
   jintArray retval = NULL;
   int32_t code;
@@ -3694,11 +3679,6 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_implicantForFormulas(JNIEnv
   return retval;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    generalizeModel
- * Signature: (JI[II)[I
- */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__JI_3II(JNIEnv *env, jclass, jlong model, jint term, jintArray elims, jint mode){
   jintArray retval = NULL;
   int32_t code;
@@ -3728,11 +3708,6 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__JI_3II(JNI
   return retval;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    generalizeModel
- * Signature: (J[I[II)[I
- */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3II(JNIEnv *env, jclass, jlong model, jintArray terms, jintArray elims, jint mode){
   jintArray retval = NULL;
   int32_t code;
@@ -3778,11 +3753,6 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_generalizeModel__J_3I_3II(J
   return retval;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    exportToDimacs
- * Signature: (ILjava/lang/String;Z[I)I
- */
 // returns 1 if the file was written, 0 if the formula is solved, or a negative number indicating an error, the smt_status is stored in status
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jint formula, jstring filename, jboolean simplify, jintArray status){
 #ifdef YICES_AT_LEAST_2_6_2
@@ -3810,11 +3780,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs__ILjava_lang_Stri
 #endif
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    exportToDimacs
- * Signature: ([ILjava/lang/String;Z[I)I
- */
 // returns 0 on success, or a negative numer indicating an error
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs___3ILjava_lang_String_2Z_3I(JNIEnv *env, jclass, jintArray formulas, jstring filename, jboolean simplify, jintArray status){
 #ifdef YICES_AT_LEAST_2_6_2
@@ -3853,11 +3818,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_exportToDimacs___3ILjava_lang_St
 }
 
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    getSupport
- * Signature: (JI)[I
- */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__JI(JNIEnv *env, jclass, jlong model, jint term){
 #ifdef YICES_AT_LEAST_2_6_2
   term_vector_t aux;
@@ -3880,11 +3840,6 @@ JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__JI(JNIEnv *env,
 #endif
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    getSupport
- * Signature: (J[I)[I
- */
 JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getSupport__J_3I(JNIEnv *env, jclass, jlong model, jintArray terms){
 #ifdef YICES_AT_LEAST_2_6_2
   term_vector_t aux;
@@ -3941,11 +3896,6 @@ static bool convertToYval(jint tag, jint id, yval_t *yval){
   return true;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    getValue
- * Signature: (JI)Lcom/sri/yices/YVal;
- */
 JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_getValue(JNIEnv *env, jclass, jlong model, jint term){
   yval_t yval;
   int32_t code;
@@ -3956,11 +3906,6 @@ JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_getValue(JNIEnv *env, jclass,
   return NULL;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valIsInt
- * Signature: (JII)Z
- */
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
@@ -3972,11 +3917,6 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInt(JNIEnv *env, jclass
   }
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valIsLong
- * Signature: (JII)Z
- */
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
@@ -3988,11 +3928,6 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsLong(JNIEnv *env, jclas
   }
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valIsInteger
- * Signature: (JII)Z
- */
 JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
@@ -4005,11 +3940,6 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_valIsInteger(JNIEnv *env, jc
 }
 
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valBitSize
- * Signature: (JII)I
- */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
@@ -4022,45 +3952,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valBitSize(JNIEnv *env, jclass, 
   }
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valTupleArity
- * Signature: (JII)I
- */
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
-  yval_t yval;
-  uint32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE) {
-    return 0;
-  } else {
-    code = yices_val_tuple_arity(reinterpret_cast<model_t*>(model), &yval);
-    // code is not going to be truncated because of yices' hard coded limits.
-    return (jint)code;
-  }
-}
-
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valMappingArity
- * Signature: (JII)I
- */
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valMappingArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
-  yval_t yval;
-  uint32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_MAPPING) {
-    return 0;
-  } else {
-    code = yices_val_mapping_arity(reinterpret_cast<model_t*>(model), &yval);
-    // code is not going to be truncated because of yices' hard coded limits.
-    return (jint)code;
-  }
-}
-
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valFunctionArity
- * Signature: (JII)I
- */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   uint32_t code;
@@ -4073,28 +3964,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionArity(JNIEnv *env, jc
   }
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valFunctionType
- * Signature: (JII)I
- */
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionType(JNIEnv *env, jclass, jlong model, jint tag, jint id){
-  yval_t yval;
-  int32_t code;
-  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION) {
-    return 0;
-  } else {
-    code = yices_val_function_type(reinterpret_cast<model_t*>(model), &yval);
-    return (jint)code;
-  }
-}
-
-
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valGetBool
- * Signature: (JII)I
- */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t val;
@@ -4108,11 +3977,42 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetBool(JNIEnv * env, jclass,
   }
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valGetInteger
- * Signature: (JII[J)I
- */
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valTupleArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  uint32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_TUPLE) {
+    return 0;
+  } else {
+    code = yices_val_tuple_arity(reinterpret_cast<model_t*>(model), &yval);
+    // code is not going to be truncated because of yices' hard coded limits.
+    return (jint)code;
+  }
+}
+
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valMappingArity(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  uint32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_MAPPING) {
+    return 0;
+  } else {
+    code = yices_val_mapping_arity(reinterpret_cast<model_t*>(model), &yval);
+    // code is not going to be truncated because of yices' hard coded limits.
+    return (jint)code;
+  }
+}
+
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionType(JNIEnv *env, jclass, jlong model, jint tag, jint id){
+  yval_t yval;
+  int32_t code;
+  if (!convertToYval(tag, id, &yval) ||  tag != YVAL_FUNCTION) {
+    return 0;
+  } else {
+    code = yices_val_function_type(reinterpret_cast<model_t*>(model), &yval);
+    return (jint)code;
+  }
+}
+
+
 /*
  * Value of yval in model, stored in a[0]
  * - returns 0 if this works, -1 for error.
@@ -4147,13 +4047,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetInteger(JNIEnv *env, jclas
   }
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valGetRational
- * Signature: (JII[J)I
-JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetRational
-  (JNIEnv *, jclass, jlong, jint, jint, jlongArray);
- */
 /*
  * Value of yval in model, returned as a rational a[0]/a[1]
  * - returns 0 if this works, -1, -2, -3 for error
@@ -4197,11 +4090,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetRational(JNIEnv *env, jcla
 
 
 /*
- * Class:     com_sri_yices_Yices
- * Method:    valGetDouble
- * Signature: (JII[D)I
- */
-/*
  * Value returned as a double
  * - returns 0 if this works, -1, or -2 for error.
  *
@@ -4231,11 +4119,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetDouble(JNIEnv *env, jclass
   }
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valGetBV
- * Signature: (JII)[Z
- */
 JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_valGetBV(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   jbooleanArray result;
@@ -4272,16 +4155,13 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_valGetBV(JNIEnv *env, j
 }
 
 /*
- * Class:     com_sri_yices_Yices
- * Method:    valGetScalar
- * Signature: (JII[I)I
+ * Value (i.e., index) and type of a scalar or uninterpreted term
+ * return 0 on success. -1 or -2 if there's an error.
+ * -1 if the tag isn't kosher.
+ * -2 if the array a isn't of length 2
+ * -3 if the yval isn't of a scalar
+ * stores the scalar val in a[0] and the type in a[1]
  */
-// Value (i.e., index) and type of a scalar or uninterpreted term
-// return 0 on success. -1 or -2 if there's an error.
-// -1 if the tag isn't kosher.
-// -2 if the array a isn't of length 2
-// -3 if the yval isn't of a scalar
-// stores the scalar val in a[0] and the type in a[1]
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetScalar(JNIEnv *env, jclass, jlong model, jint tag, jint id, jintArray a){
   yval_t yval;
   int32_t result = -1;
@@ -4310,11 +4190,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valGetScalar(JNIEnv *env, jclass
   return val;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valGetIntegerAsBytes
- * Signature: (JII)[B
- */
 JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetIntegerAsBytes(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   jbyteArray result = NULL;
@@ -4336,11 +4211,6 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetIntegerAsBytes(JNIEn
   return result;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valGetRationalNumAsBytes
- * Signature: (JII)[B
- */
 JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalNumAsBytes(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   jbyteArray result = NULL;
@@ -4364,11 +4234,6 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalNumAsBytes(J
 
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valGetRationalDenAsBytes
- * Signature: (JII)[B
- */
 JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalDenAsBytes(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   jbyteArray result = NULL;
@@ -4393,11 +4258,6 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_valGetRationalDenAsBytes(J
 
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valExpandTuple
- * Signature: (JII[Lcom/sri/yices/YVal;)I
- */
 //iam: can I really get away without checking the tye of the children array?
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandTuple(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jobjectArray children){
   yval_t yval;
@@ -4436,11 +4296,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandTuple(JNIEnv *env, jcla
   return 0;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valFunctionCardinality
- * Signature: (JII)I
- */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionCardinality(JNIEnv *env, jclass, jlong model, jint tag, jint id){
   yval_t yval;
   int32_t code;
@@ -4460,11 +4315,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionCardinality(JNIEnv *e
   return retval;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valExpandFunction
- * Signature: (JII[Lcom/sri/yices/YVal;[Lcom/sri/yices/YVal;)I
-*/
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, jclass cls, jlong mdl, jint tag, jint id,  jobjectArray def, jobjectArray mappings){
   yval_t yval;
   int32_t cardinality;
@@ -4509,11 +4359,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, j
   return 0;
 }
 
-/*
- * Class:     com_sri_yices_Yices
- * Method:    valExpandMapping
- * Signature: (JII[Lcom/sri/yices/YVal;[Lcom/sri/yices/YVal;)I
- */
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandMapping(JNIEnv *env, jclass, jlong mdl, jint tag, jint id, jobjectArray args, jobjectArray value){
   yval_t yval;
   int32_t arity;
