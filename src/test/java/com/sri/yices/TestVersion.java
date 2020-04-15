@@ -20,5 +20,8 @@ public class TestVersion {
         System.out.println("Build date: " + Yices.buildDate());
         System.out.println("MCSat supported: " + Yices.hasMcsat());
         System.out.println();
+
+        Assert.assertTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 1));
+
     }
 }
