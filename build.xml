@@ -331,4 +331,19 @@
     <echo message="Clean rebuild: ${YICES_JAVA_BINDINGS_VERSION} and date: ${TODAY}"/>
   </target>
 
+  <target name="versiontest" depends="dist,test-compile,install">
+    <echo> Verion test </echo>
+    <echo> test_classes:  ${test_classes} </echo>
+    <echo> java.library.path:  ${java.library.path} </echo>
+    <junit printsummary="on" haltonfailure="yes" fork="true">
+      <sysproperty key="java.library.path" path="${jnilib}"/>
+      <classpath>
+        <path refid="classpath.test"/>
+        <pathelement location="${test_classes}"/>
+      </classpath>
+      <formatter type="brief" usefile="false" />
+      <test name="com.sri.yices.TestVersion"/>
+    </junit>
+  </target>
+
 </project>

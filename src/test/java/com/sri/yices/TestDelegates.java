@@ -102,18 +102,21 @@ public class TestDelegates {
 
     @Test
    public void testCadical() {
+        assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         assumeTrue(HAS_CADICAL);
         delgado("cadical");
     }
 
     @Test
     public void testCryptominisat() {
+        assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         assumeTrue(HAS_CRYPTOMINISAT);
         delgado("cadical");
     }
 
     @Test
    public void testY2sat() {
+        assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         assumeTrue(HAS_Y2SAT);
         delgado("y2sat");
     }

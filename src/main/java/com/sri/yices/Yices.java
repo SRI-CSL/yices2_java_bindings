@@ -31,6 +31,20 @@ public final class Yices {
         return is_ready;
     }
 
+    /* Version as an ordinal. For library compatability checks */
+    public static native long versionOrdinal();
+
+    /**
+     * For comparisons (this is how the no argument version is computed, using the constants in yices.h)
+     * @param  version  (a number between 0 and less than 100).
+     * @param  major    (a number between 0 and less than 100).
+     * @param  patch    (a number between 0 and less than 100).
+     *
+     */
+    public static final long versionOrdinal(int version, int major, int patch){
+        return (1000 * 100 * version) + (100 * major) + patch;
+    }
+
     /*
      * Generic functions in yices.h
      */
@@ -38,6 +52,8 @@ public final class Yices {
     public static native String buildArch();
     public static native String buildMode();
     public static native String buildDate();
+
+
 
     // check support for mcsat
     public static native boolean hasMcsat();

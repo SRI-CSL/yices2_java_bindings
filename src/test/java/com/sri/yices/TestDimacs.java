@@ -22,6 +22,7 @@ public class TestDimacs {
     public void testDimacs() {
         // JUnit runner treats tests with failing assumptions as ignored
         assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
 
         int fcount = 3;
 

@@ -210,6 +210,7 @@ public class TestModels {
 
     @Test
     public void testModelSupport() {
+        assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         int x = Terms.newUninterpretedTerm("x", Types.REAL);
         int y = Terms.newUninterpretedTerm("y", Types.REAL);
         int z = Terms.newUninterpretedTerm("z", Types.REAL);
@@ -240,6 +241,7 @@ public class TestModels {
 
     @Test
     public void testChildren() {
+        assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         int x = Terms.newUninterpretedTerm("x", Types.REAL);
         int y = Terms.newUninterpretedTerm("y", Types.REAL);
         int z = Terms.newUninterpretedTerm("z", Types.REAL);

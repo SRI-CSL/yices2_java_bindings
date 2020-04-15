@@ -23,6 +23,14 @@
 
 #define YICES_ERROR_REQUIRES_AT_LEAST_2_6_2  -262
 
+/**
+ *  Assumes that for each __YICES_VERSION __YICES_VERSION_MAJOR and __YICES_VERSION_PATCHLEVEL
+ * are between 0 and less than 100.
+ */
+JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_versionOrdinal(JNIEnv *env, jclass){
+  return (1000 * 100 * __YICES_VERSION) + (100 * __YICES_VERSION_MAJOR) + __YICES_VERSION_PATCHLEVEL;
+}
+
 
 /*
  * On Windows, jint and int32_t are not the same type:
