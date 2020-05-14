@@ -413,7 +413,15 @@ public class Terms {
      * Uninterpreted functions/arrays
      */
     static public int funApplication(int fun, int... arg) throws YicesException {
-        int t = Yices.funApplication(fun, arg);
+        int t;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            t = Yices.funApplication(fun, arg);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.funApplication", start, finish);
+        } else {
+            t = Yices.funApplication(fun, arg);
+        }
         if (t < 0) throw new YicesException();
         return t;
     }
@@ -1149,7 +1157,16 @@ public class Terms {
     }
 
     static public boolean isBitvector(int x) {
-        return Yices.termIsBitvector(x);
+        boolean retval;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            retval = Yices.termIsBitvector(x);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.termIsBitvector", start, finish);
+        } else {
+            retval = Yices.termIsBitvector(x);
+        }
+        return retval;
     }
 
     // does x have type (tuple ...)

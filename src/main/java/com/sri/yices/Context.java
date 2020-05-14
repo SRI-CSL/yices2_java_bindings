@@ -1,6 +1,7 @@
 package com.sri.yices;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,10 +13,10 @@ public class Context implements AutoCloseable {
      */
     private long ptr;
 
-    //<PROFILING>
+    /**
+     * A counter used to prevent memory leaks.
+     */
     static private long population = 0;
-    static private long cost = 0;
-
 
     /**
      * Returns the count of Context objects that have an unfreed
@@ -24,31 +25,6 @@ public class Context implements AutoCloseable {
     public static long getCensus(){
         return population;
     }
-
-    /**
-     * Returns the accumulated time spent in the Yices solver in nanoseconds.
-     */
-    public static final long getCost(boolean reset){
-        long retval = cost;
-        resetCost();
-        return retval;
-    }
-
-    /**
-     * Resets the cost accumulation counter to zero.
-     */
-    public static final void resetCost(){
-        cost = 0;
-    }
-
-    private int checkContextTimed(long ctx, long params){
-        long start = System.nanoTime();
-        int code = Yices.checkContext(ctx, params);
-        long finish = System.nanoTime();
-        cost += (finish - start);
-        return code;
-    }
-    //</PROFILING>
 
     static private final int ERROR_STATUS;
 
@@ -132,7 +108,14 @@ public class Context implements AutoCloseable {
      */
     public void close() {
 	    if (ptr != 0) {
-	        Yices.freeContext(ptr);
+            if (Profiler.enabled) {
+                long start = System.nanoTime();
+                Yices.freeContext(ptr);
+                long finish = System.nanoTime();
+                Profiler.delta("Yices.freeContext", start, finish);
+            } else {
+                Yices.freeContext(ptr);
+            }
 	        ptr = 0;
             population--;
 	    }
@@ -187,7 +170,15 @@ public class Context implements AutoCloseable {
      * Get a model
      */
     public Model getModel() throws YicesException {
-        long model = Yices.getModel(ptr, 1);
+        long model = 0;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            model = Yices.getModel(ptr, 1);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.getModel", start, finish);
+        } else {
+            model = Yices.getModel(ptr, 1);
+        }
         if (model == 0) throw new YicesException();
         return new Model(model);
     }
@@ -196,7 +187,15 @@ public class Context implements AutoCloseable {
      * Assert a formula f
      */
     public void assertFormula(int f) throws YicesException {
-        int code = Yices.assertFormula(ptr, f);
+        int code;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            code = Yices.assertFormula(ptr, f);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.assertFormula", start, finish, true);
+        } else {
+            code = Yices.assertFormula(ptr, f);
+        }
         if (code < 0) {
             throw new YicesException();
         }
@@ -206,15 +205,35 @@ public class Context implements AutoCloseable {
      * Assert an array of formulas a[]
      */
     public void assertFormulas(int[] a) throws YicesException {
-        int code = Yices.assertFormulas(ptr, a);
-        if (code < 0) throw new YicesException();
+        int code;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            code = Yices.assertFormulas(ptr, a);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.assertFormulas", start, finish, true);
+        } else {
+            code = Yices.assertFormulas(ptr, a);
+        }
+        if (code < 0) {
+            throw new YicesException();
+        }
     }
+
 
     /*
      * Assert a list of formulas
      */
+    public void assertFormulas(List<Integer> list) throws YicesException {
+        int[] a = list.stream().mapToInt(Integer::intValue).toArray();
+        assertFormulas(a);
+    }
+
+    /*
+     * Assert a collection of formulas
+     */
     public void assertFormulas(Collection<Integer> list) throws YicesException {
-        list.forEach(this::assertFormula);
+        int[] a = list.stream().mapToInt(Integer::intValue).toArray();
+        assertFormulas(a);
     }
 
     /*
@@ -228,24 +247,38 @@ public class Context implements AutoCloseable {
     /*
      * Call the solver, use parameter pointer p
      */
-    private Status doCheck(long p) throws YicesException {
-        int code = checkContextTimed(ptr, p);
+    private static int doCheck(long ptr, long p) throws YicesException {
+        int code;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            code = Yices.checkContext(ptr, p);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.checkContext", start, finish);
+        } else {
+            code = Yices.checkContext(ptr, p);
+        }
+        return code;
+    }
+
+    private int doCheck(long p) throws YicesException {
+        int code = doCheck(ptr, p);
         if (code == ERROR_STATUS) throw new YicesException();
-        return Status.idToStatus(code);
+        return code;
     }
 
     /*
      * Call the solver with default parameters
      */
     public Status check() throws YicesException {
-        return doCheck(0); // null pointer
+        return check(null);
     }
 
     /*
      * Call the solver, use the given parameter set.
      */
     public Status check(Parameters p) throws YicesException {
-        return doCheck(p.getPtr());
+        int code = doCheck(p == null ? 0 : p.getPtr());
+        return Status.idToStatus(code);
     }
 
     /*
@@ -298,7 +331,7 @@ public class Context implements AutoCloseable {
     private Status doCheckWithTimeout(long p, int timeout) throws YicesException {
         WatchDog watchDog = new WatchDog(ptr, timeout);
         watchDog.start();
-        int code = checkContextTimed(ptr, p);
+        int code = doCheck(ptr, p);
         watchDog.stop();
         if (code < 0) throw new YicesException();
         return Status.idToStatus(code);

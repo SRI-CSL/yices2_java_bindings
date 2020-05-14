@@ -195,9 +195,9 @@ public final class Yices {
     }
 
     public static int mkRationalConstant(BigInteger num, BigInteger den) {
-	    BigRational r = new BigRational(num, den);
-	    r.normalize();
-	    return mkRationalConstant(r);
+        BigRational r = new BigRational(num, den);
+        r.normalize();
+        return mkRationalConstant(r);
     }
 
     public static native int parseRational(String s);
@@ -440,11 +440,11 @@ public final class Yices {
     public static native void yicesGarbageCollect(int[] rootTerms, int[] rootTypes, boolean keepNamed);
 
     public static void yicesGarbageCollect(boolean keepNamed) {
-	yicesGarbageCollect(null, null, keepNamed);
+    yicesGarbageCollect(null, null, keepNamed);
     }
 
     public static void yicesGarbageCollect() {
-	    yicesGarbageCollect(null, null, false);
+        yicesGarbageCollect(null, null, false);
     }
 
     /*
@@ -506,8 +506,8 @@ public final class Yices {
     private static native byte[] getRationalValueDenAsBytes(long model, int t);
 
     public static BigInteger getIntegerValue(long model, int t) {
-	    byte[] val = getIntegerValueAsBytes(model, t);
-	    return val != null ? new BigInteger(val) : null;
+        byte[] val = getIntegerValueAsBytes(model, t);
+        return val != null ? new BigInteger(val) : null;
     }
 
     public static BigRational getRationalValue(long model, int t) {
@@ -731,8 +731,8 @@ public final class Yices {
     private static native byte[] valGetRationalDenAsBytes(long model, int tag, int id);
 
     public static BigInteger valGetInteger(long model, int tag, int id) {
-	    byte[] val = valGetIntegerAsBytes(model, tag, id);
-	    return val != null ? new BigInteger(val) : null;
+        byte[] val = valGetIntegerAsBytes(model, tag, id);
+        return val != null ? new BigInteger(val) : null;
     }
 
     public static BigRational valGetRational(long model, int tag, int id) {
