@@ -1,4 +1,4 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blueviolet.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.com/SRI-CSL/yices2_java_bindings.svg?token=77vj4Wxx3rNcgSb3dqRC&branch=master)](https://travis-ci.com/SRI-CSL/yices2_java_bindings)
 
 #  Java Bindings for Yices 2
@@ -59,4 +59,3 @@ As an example we include [ant.sh](https://github.com/SRI-CSL/yices2_java_binding
 which mimics the functionality of the `ant` build via the `build.sh` script, and the `jar` utility.
 
 ## Examples
-
