@@ -66,6 +66,11 @@ public class TestDelegates {
             int[] terms = truncate(formulas, i);
             Status status = Delegate.checkFormulas(terms, "QF_BV", delegate, model);
             System.out.println(String.format("Delegate %s status %d: %s", delegate, i, status));
+            if (status == Status.SAT) {
+                System.out.println(String.format("Delegate %s model: %s", delegate, model[0]));
+            } else {
+                Assert.assertEquals(model[0], null);
+            }
         }
 
 
