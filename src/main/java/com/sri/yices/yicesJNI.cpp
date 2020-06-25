@@ -3133,6 +3133,24 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContext(JNIEnv *env, jclass
   return result;
 }
 
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContextWithAssumptions(JNIEnv *env, jclass, jlong ctx, jlong params, jintArray t){
+  jsize n = env->GetArrayLength(t);
+  term_t *a = array2terms(env, t, NULL);
+  jint result = -1;
+  if (a == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    try {
+      result = yices_check_context_with_assumptions(reinterpret_cast<context_t*>(ctx), reinterpret_cast<param_t*>(params), n, a);
+    } catch (std::bad_alloc &ba) {
+      out_of_mem_exception(env);
+    }
+    release_term_elems(env, t, a);
+  }
+  return result;
+}
+
+
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_assertBlockingClause(JNIEnv *env, jclass, jlong ctx) {
   jint result = -1;
 
@@ -3532,7 +3550,10 @@ JNIEXPORT jboolean JNICALL Java_com_sri_yices_Yices_hasDelegate(JNIEnv *env, jcl
   }
   return (jboolean) code;
 #else
-return (jboolean) YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
+//iam: either return a jint, or ignore the version mismatch.
+// in this case false seems a reasonable response.
+//return (jboolean) YICES_ERROR_REQUIRES_AT_LEAST_2_6_2;
+return (jboolean) 0;
 #endif
 }
 

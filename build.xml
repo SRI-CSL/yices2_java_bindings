@@ -43,7 +43,7 @@
 
       > ant install
 
-      To run the junit tests (located in junit):
+      To run the junit tests (located in src/test/java/com/sri/yices):
 
       > ant test
 
@@ -359,6 +359,21 @@
       <formatter type="brief" usefile="false" />
       <test name="com.sri.yices.TestDelegates"/>
       <!-- <test name="com.sri.yices.TestDimacs"/> -->
+    </junit>
+  </target>
+
+  <target name="threads" depends="dist,test-compile,install">
+    <echo> Running new stuff </echo>
+    <echo> test_classes:  ${test_classes} </echo>
+    <echo> java.library.path:  ${java.library.path} </echo>
+    <junit printsummary="on" haltonfailure="yes" fork="true">
+      <sysproperty key="java.library.path" path="${jnilib}"/>
+      <classpath>
+        <path refid="classpath.test"/>
+        <pathelement location="${test_classes}"/>
+      </classpath>
+      <formatter type="brief" usefile="false" />
+      <test name="com.sri.yices.TestThreads"/>
     </junit>
   </target>
 
