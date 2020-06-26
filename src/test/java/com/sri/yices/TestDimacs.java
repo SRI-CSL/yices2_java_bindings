@@ -20,6 +20,8 @@ public class TestDimacs {
 
     @Test
     public void testDimacs() {
+        System.err.println("testDimacs");
+
         // JUnit runner treats tests with failing assumptions as ignored
         assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
         assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
@@ -41,6 +43,7 @@ public class TestDimacs {
 
 
         // first round, don't simplify the CNF
+        System.err.println("Round one");
         for (int i = 1; i <= fcount; i++ ){
             boolean simplify = false;
             String filename = String.format("/tmp/basic%d.cnf", i);
@@ -51,7 +54,8 @@ public class TestDimacs {
         }
 
         // second round, simplify the CNF
-         for (int i = 1; i <= fcount; i++ ){
+        System.err.println("Round two");
+        for (int i = 1; i <= fcount; i++ ){
             boolean simplify = true;
             String filename = String.format("/tmp/simplify%d.cnf", i);
             int[] terms = truncate(formulas, i);
@@ -62,7 +66,8 @@ public class TestDimacs {
          }
 
 
-         for (int i = 1; i <= fcount; i++ ){
+        System.err.println("Round three");
+        for (int i = 1; i <= fcount; i++ ){
              try (Context ctx = new Context("QF_BV")) {
                  int[] terms = truncate(formulas, i);
                  ctx.assertFormulas(terms);

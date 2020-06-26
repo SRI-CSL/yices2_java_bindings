@@ -286,8 +286,9 @@
       <test name="com.sri.yices.TestTypes"/>
       <test name="com.sri.yices.TestYices"/>
       <test name="com.sri.yices.TestModels"/>
-      <test name="com.sri.yices.TestDelegates"/>
-      <test name="com.sri.yices.TestDimacs"/>
+      <!-- <test name="com.sri.yices.TestDelegates"/> -->
+      <!-- <test name="com.sri.yices.TestDimacs"/> -->
+      <test name="com.sri.yices.TestThreads"/>
     </junit>
   </target>
 
@@ -346,7 +347,7 @@
     </junit>
   </target>
 
-  <target name="testnew" depends="dist,test-compile,install">
+  <target name="dimacs" depends="dist,test-compile,install">
     <echo> Running new stuff </echo>
     <echo> test_classes:  ${test_classes} </echo>
     <echo> java.library.path:  ${java.library.path} </echo>
@@ -357,8 +358,8 @@
         <pathelement location="${test_classes}"/>
       </classpath>
       <formatter type="brief" usefile="false" />
-      <test name="com.sri.yices.TestDelegates"/>
-      <!-- <test name="com.sri.yices.TestDimacs"/> -->
+      <!-- <test name="com.sri.yices.TestDelegates"/> -->
+      <test name="com.sri.yices.TestDimacs"/>
     </junit>
   </target>
 

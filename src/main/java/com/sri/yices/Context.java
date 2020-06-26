@@ -282,6 +282,22 @@ public class Context implements AutoCloseable {
     }
 
     /*
+     * Call the solver with the given assumptions.
+     */
+    public Status checkWithAssumptions(Parameters p, int[] assumptions){
+        int code;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            code = Yices.checkContextWithAssumptions(ptr, p == null ? 0 : p.getPtr(), assumptions);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.checkWithAssumptions", start, finish);
+        } else {
+            code = Yices.checkContextWithAssumptions(ptr, p == null ? 0 : p.getPtr(), assumptions);
+        }
+        return Status.idToStatus(code);
+    }
+
+    /*
      * Simple watchdog to stop the search after a timeout
      */
     private static class WatchDog implements Runnable {

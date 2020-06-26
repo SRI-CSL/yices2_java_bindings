@@ -13,7 +13,7 @@ public final class Version {
 
 
     public static final String versionString = "1.0.1";
-    public static final String buildDate = "June 24 2020";
+    public static final String buildDate = "June 26 2020";
     
     
     public static void main(String[] args){

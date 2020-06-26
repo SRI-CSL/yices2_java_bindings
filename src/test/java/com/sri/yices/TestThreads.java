@@ -7,7 +7,7 @@ import static org.junit.Assume.assumeTrue;
 
 public class TestThreads {
 
-    public static final int THREAD_COUNT = 10;
+    public static final int THREAD_COUNT = 50;
 
     public static final String COUNTER_PREFIX  = "c@";
     public static final String CHOICE_PREFIX = "i@";
@@ -41,7 +41,7 @@ public class TestThreads {
         return Terms.and(selector, Terms.eq(t1, Terms.add(t2, Terms.intConst(increment))));
     }
 
-    private void threadMain(){
+    private void threadMain(int index, Status[] answers){
          try (Config cfg = new Config()) {
              cfg.set("solver-type", "dpllt");
              cfg.set("mode", "push-pop");
@@ -64,19 +64,16 @@ public class TestThreads {
                  expected += 5;
                  int form5 = Terms.arithGt(namedVariable(Types.INT, COUNTER_PREFIX, lastIndex), Terms.intConst(expected));
                  int[] allConstraints = { base, form1, form2, form3, form4, form5 };
-                 //Status status =
-
-
-
-
+                 answers[index]  = context.checkWithAssumptions(null, allConstraints);
+                 System.out.println(String.format("context.checkWithAssumptions[%d] = %s", index, answers[index]));
              }
          }
     }
 
-    private Thread makeThread(){
+    private Thread makeThread(final int index, final Status[] answers){
         Runnable runnable = new Runnable(){
                 public void run(){
-                    threadMain();
+                    threadMain(index, answers);
                 }
             };
             return new Thread(runnable);
@@ -89,9 +86,10 @@ public class TestThreads {
         assumeTrue(Yices.isThreadSafe());
 
         Thread[] threads = new Thread[THREAD_COUNT];
+        Status[] answers = new Status[THREAD_COUNT];
 
         for(int i = 0; i < THREAD_COUNT; i++){
-            threads[i] = makeThread();
+            threads[i] = makeThread(i, answers);
         }
 
         for(int i = 0; i < THREAD_COUNT; i++){
@@ -105,6 +103,12 @@ public class TestThreads {
         } catch (InterruptedException error){
             System.out.println(error.getMessage());
         }
+
+        for (int i = 0; i < THREAD_COUNT; i++){
+            Assert.assertEquals(answers[i], Status.SAT);
+        }
+
+
     }
 
 
