@@ -69,6 +69,11 @@ public class Model implements AutoCloseable {
         return Yices.modelToString(ptr, numColumns, numLines);
     }
 
+
+    public int[] collectDefinedTerms(){
+        return Yices.collectDefinedTerms(ptr);
+    }
+
     /*
      * Value of a term t in the model
      */

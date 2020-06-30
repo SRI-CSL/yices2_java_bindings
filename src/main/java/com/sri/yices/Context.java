@@ -302,6 +302,19 @@ public class Context implements AutoCloseable {
         return Status.idToStatus(code);
     }
 
+    public int[] getUnsatCore(){
+        int[] retval;
+        if (Profiler.enabled) {
+            long start = System.nanoTime();
+            retval = Yices.getUnsatCore(ptr);
+            long finish = System.nanoTime();
+            Profiler.delta("Yices.getUnsatCore", start, finish);
+        } else {
+            retval = Yices.getUnsatCore(ptr);
+        }
+        return retval;
+    }
+
     /*
      * Simple watchdog to stop the search after a timeout
      */
