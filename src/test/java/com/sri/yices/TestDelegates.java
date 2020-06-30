@@ -89,6 +89,7 @@ public class TestDelegates {
     @Test
     public void testLoad() {
         assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
+        System.err.println("testDimacs");
 
         System.out.println("Loaded Yices version " + Yices.version());
         System.out.println("Built for " + Yices.buildArch());
@@ -109,6 +110,7 @@ public class TestDelegates {
    public void testCadical() {
         assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         assumeTrue(HAS_CADICAL);
+        System.err.println("testDimacs");
         delgado("cadical");
     }
 
@@ -116,6 +118,7 @@ public class TestDelegates {
     public void testCryptominisat() {
         assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         assumeTrue(HAS_CRYPTOMINISAT);
+        System.err.println("testDimacs");
         delgado("cadical");
     }
 
@@ -123,6 +126,7 @@ public class TestDelegates {
    public void testY2sat() {
         assumeTrue(Yices.versionOrdinal() >= Yices.versionOrdinal(2, 6, 2));
         assumeTrue(HAS_Y2SAT);
+        System.err.println("testDimacs");
         delgado("y2sat");
     }
 

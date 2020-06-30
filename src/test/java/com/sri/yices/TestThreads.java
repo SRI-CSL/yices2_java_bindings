@@ -7,11 +7,13 @@ import static org.junit.Assume.assumeTrue;
 
 public class TestThreads {
 
-    public static final int THREAD_COUNT = 50;
+    public static final int THREAD_COUNT = 200;
 
     public static final String COUNTER_PREFIX  = "c@";
     public static final String CHOICE_PREFIX = "i@";
 
+    private static final Object lock = new Object();
+    private static int waiting = 0;
 
     @Test
     public void testVersion() {
@@ -42,7 +44,17 @@ public class TestThreads {
     }
 
     private void threadMain(int index, Status[] answers){
-         try (Config cfg = new Config()) {
+
+        synchronized(lock){
+            waiting++;
+            try {
+                lock.wait();
+            } catch(InterruptedException e){
+                System.err.println(e.getMessage());
+            }
+        }
+
+        try (Config cfg = new Config()) {
              cfg.set("solver-type", "dpllt");
              cfg.set("mode", "push-pop");
              try (Context context = new Context(cfg)) {
@@ -95,6 +107,18 @@ public class TestThreads {
         for(int i = 0; i < THREAD_COUNT; i++){
             threads[i].start();
         }
+
+        Thread self = Thread.currentThread();
+
+        while(true){
+            synchronized(lock){
+                if (waiting == THREAD_COUNT){
+                    lock.notifyAll();
+                    break;
+                }
+            }
+        }
+
 
         try {
             for(int i = 0; i < THREAD_COUNT; i++){
