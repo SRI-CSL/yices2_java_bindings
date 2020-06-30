@@ -3151,6 +3151,26 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContextWithAssumptions(JNIE
 }
 
 
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getUnsatCore(JNIEnv *env, jclass, jlong ctx){
+  term_vector_t aux;
+  jintArray result = NULL;
+  int32_t code;
+  try {
+    yices_init_term_vector(&aux);
+
+    code = yices_get_unsat_core(reinterpret_cast<context_t*>(ctx), &aux);
+    if (code >= 0) {
+      result = convertToIntArray(env, aux.size, aux.data);
+    }
+    yices_delete_term_vector(&aux);
+
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+}
+
+
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_assertBlockingClause(JNIEnv *env, jclass, jlong ctx) {
   jint result = -1;
 

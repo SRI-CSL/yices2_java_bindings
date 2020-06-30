@@ -467,6 +467,7 @@ public final class Yices {
     public static native int assertFormulas(long ctx, int[] t);
     public static native int checkContext(long ctx, long params);
     public static native int checkContextWithAssumptions(long ctx, long params, int[] t);
+    public static native int[] getUnsatCore(long ctx);
     public static native int assertBlockingClause(long ctx);
     public static native void stopSearch(long ctx);
     public static native long newParamRecord();
