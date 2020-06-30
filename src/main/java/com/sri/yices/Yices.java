@@ -481,6 +481,8 @@ public final class Yices {
     public static native long getModel(long ctx, int keep_subst);
     public static native void freeModel(long model);
     public static native long modelFromMap(int [] var, int [] map);
+    public static native int[] collectDefinedTerms(long model);
+
 
     // getBoolValue returns the value of term t in model.
     // It returns -1 for error, 0 for false, +1 for true

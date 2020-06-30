@@ -3265,6 +3265,24 @@ JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_modelFromMap(JNIEnv *env, jclas
   return result;
 }
 
+
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_collectDefinedTerms(JNIEnv *env, jclass, jlong model){
+  term_vector_t aux;
+  jintArray result = NULL;
+  try {
+    yices_init_term_vector(&aux);
+
+    yices_model_collect_defined_terms(reinterpret_cast<model_t*>(model), &aux);
+    result = convertToIntArray(env, aux.size, aux.data);
+    yices_delete_term_vector(&aux);
+
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+}
+
+
 // returns -1 for error, 0 for false, +1 for true
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_getBoolValue(JNIEnv *env, jclass, jlong model, jint t) {
   int32_t val = -1;
