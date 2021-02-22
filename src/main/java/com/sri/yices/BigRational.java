@@ -145,11 +145,11 @@ public class BigRational {
      * Convert to a string
      */
     public String toString() {
-	    String s = numerator.toString();
-	    if (! denominator.equals(BigInteger.ONE)) {
-	        s = s + "/" + denominator.toString();
-	    }
-	    return s;
+	String s = numerator.toString();
+	if (! denominator.equals(BigInteger.ONE)) {
+	    s = s + "/" + denominator.toString();
+	}
+	return s;
     }
 
     /**

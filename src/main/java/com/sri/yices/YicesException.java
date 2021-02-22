@@ -2,8 +2,6 @@ package com.sri.yices;
 
 /**
  * Catch all exception thrown by the Yices wrapper when something goes wrong.
- * We make this a RuntimeException to be consistent with the Galois AST visitors.
- * The visitors don't allow checked Exceptions.
  */
 public class YicesException extends RuntimeException {
 

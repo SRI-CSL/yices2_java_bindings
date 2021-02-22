@@ -3,26 +3,26 @@ package com.sri.yices;
 public class LoadYices {
 
     private static void testTypes() {
-		int boolType = Yices.boolType();
-		int intType = Yices.intType();
-		int realType = Yices.realType();
-		int bv1 = Yices.bvType(1);
-		int bv2 = Yices.bvType(2);
-		int bv32 = Yices.bvType(32);
-		int scalar = Yices.newScalarType(4);
-		int t = Yices.newUninterpretedType();
-		int u = Yices.newUninterpretedType();
+	int boolType = Yices.boolType();
+	int intType = Yices.intType();
+	int realType = Yices.realType();
+	int bv1 = Yices.bvType(1);
+	int bv2 = Yices.bvType(2);
+	int bv32 = Yices.bvType(32);
+	int scalar = Yices.newScalarType(4);
+	int t = Yices.newUninterpretedType();
+	int u = Yices.newUninterpretedType();
 
-		System.out.println("Created basic types");
-		System.out.println("bool: " + boolType);
-		System.out.println("int:  " + intType);
-		System.out.println("real: " + realType);
-		System.out.println("bv1:  " + bv1);
-		System.out.println("bv2:  " + bv2);
-		System.out.println("bv32: " + bv32);
-		System.out.println("scalar: " + scalar);
-		System.out.println("t:    " + t);
-		System.out.println("u:    " + u);
+	System.out.println("Created basic types");
+	System.out.println("bool: " + boolType);
+	System.out.println("int:  " + intType);
+	System.out.println("real: " + realType);
+	System.out.println("bv1:  " + bv1);
+	System.out.println("bv2:  " + bv2);
+	System.out.println("bv32: " + bv32);
+	System.out.println("scalar: " + scalar);
+	System.out.println("t:    " + t);
+	System.out.println("u:    " + u);
 
 	// Tests of incorrect types
 	int bv0 = Yices.bvType(0);

@@ -107,7 +107,7 @@ public class Context implements AutoCloseable {
      * Close: free the Yices data structure
      */
     public void close() {
-	    if (ptr != 0) {
+	if (ptr != 0) {
             if (Profiler.enabled) {
                 long start = System.nanoTime();
                 Yices.freeContext(ptr);
@@ -116,9 +116,9 @@ public class Context implements AutoCloseable {
             } else {
                 Yices.freeContext(ptr);
             }
-	        ptr = 0;
+	    ptr = 0;
             population--;
-	    }
+	}
     }
 
     /*
