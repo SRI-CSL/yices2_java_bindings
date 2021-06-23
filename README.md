@@ -58,4 +58,3 @@ provided you set two environment variables
 As an example we include [ant.sh](https://github.com/SRI-CSL/yices2_java_bindings/blob/master/ant.sh)
 which mimics the functionality of the `ant` build via the `build.sh` script, and the `jar` utility.
 
-## Examples
