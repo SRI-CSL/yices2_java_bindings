@@ -39,6 +39,7 @@ jobs:
             configure.ac
             config.guess
             config.sub
+            gmaketest
             install-sh
             make.include.in
             autoconf
@@ -98,6 +99,7 @@ jobs:
             configure.ac
             config.guess
             config.sub
+            gmaketest
             install-sh
             make.include.in
             autoconf
