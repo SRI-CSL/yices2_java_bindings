@@ -331,7 +331,7 @@ public class Context implements AutoCloseable {
 
     // Since 2.6.4
     public Status checkWithAssumptions(Parameters params, int[] assumptions) {
-        int code = Yices.checkContextWithAssumptions(ptr, params.getPtr(), assumptions);
+        int code = Yices.checkContextWithAssumptions(ptr, params == null ? 0 : params.getPtr(), assumptions);
         if (code < 0) {
             throw new YicesException();
         }
@@ -340,7 +340,7 @@ public class Context implements AutoCloseable {
 
     // Since 2.6.4
     public Status checkWithModel(Parameters params, Model model, int[] assumptions) {
-        int code = Yices.checkContextWithModel(ptr, params.getPtr(), model.getPtr(), assumptions);
+        int code = Yices.checkContextWithModel(ptr, params == null ? 0 : params.getPtr(), model.getPtr(), assumptions);
         if (code < 0) {
             YicesException error = YicesException.checkVersion(2, 6, 4);
             if (error == null) {
