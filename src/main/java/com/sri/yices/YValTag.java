@@ -13,6 +13,7 @@ public enum YValTag {
     BOOL,
     RATIONAL,
     ALGEBRAIC,
+    FINITEFIELD,
     BV,
     SCALAR,
     TUPLE,
