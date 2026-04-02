@@ -2674,7 +2674,7 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_bvConstValue(JNIEnv *en
         assert(code >= 0);
         result = convertToBoolArray(env, n, tmp);
         delete [] tmp;
-      } catch (std::bad_alloc) {
+      } catch (std::bad_alloc&) {
         out_of_mem_exception(env);
       }
     }
@@ -3215,10 +3215,10 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContextWithInterpolation(JN
   ctx.model = NULL;
   try {
 	result = yices_check_context_with_interpolation(&ctx, reinterpret_cast<param_t*>(params), build_model);
-	if (result == STATUS_UNSAT) {
+	if (result == YICES_STATUS_UNSAT) {
 	  // set the interpolant array
 	  env->SetIntArrayRegion(interpolant, 0, 1, &ctx.interpolant);
-	} else if(build_model && result == STATUS_SAT ) {
+	} else if(build_model && result == YICES_STATUS_SAT ) {
 	  model_t *model = ctx.model;
 	  jlong mdl = reinterpret_cast<jlong>(model);
 	  // set the model array
@@ -3817,7 +3817,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass
   }
   if (wantModel) {
     code = yices_check_formula(formula, ls, &model, ds);
-    if (code == STATUS_SAT) {
+    if (code == YICES_STATUS_SAT) {
       mdl = reinterpret_cast<jlong>(model);
       env->SetLongArrayRegion(marr, 0, 1, &mdl);
     }
@@ -3873,7 +3873,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclas
   }
   if (wantModel) {
     code = yices_check_formulas(tarr, n, ls, &model, ds);
-    if (code == STATUS_SAT) {
+    if (code == YICES_STATUS_SAT) {
       mdl = reinterpret_cast<jlong>(model);
       env->SetLongArrayRegion(marr, 0, 1, &mdl);
     }
