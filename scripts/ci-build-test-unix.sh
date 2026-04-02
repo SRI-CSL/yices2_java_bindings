@@ -29,7 +29,7 @@ build_yices() {
   mkdir -p "${YICES_PREFIX}"
   pushd "${YICES_SRC}" >/dev/null
   autoconf
-  ./configure --prefix="${YICES_PREFIX}" --enable-thread-safety
+  ./configure --prefix="${YICES_PREFIX}" --enable-thread-safety --disable-mcsat
   make MODE=release
   make MODE=release install
   popd >/dev/null

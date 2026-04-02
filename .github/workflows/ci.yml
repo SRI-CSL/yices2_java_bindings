@@ -8,7 +8,8 @@ permissions:
   contents: read
 
 env:
-  YICES_REF: 016a6243de768046f4fba6f88a8659ce1a18d261
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  YICES_REF: yices-2.7.0
 
 jobs:
   unix:
@@ -22,17 +23,33 @@ jobs:
           - macos-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Checkout Yices
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: SRI-CSL/yices2
           ref: ${{ env.YICES_REF }}
-          path: yices2
+          path: y2
+          fetch-depth: 1
+          sparse-checkout: |
+            Makefile
+            Makefile.build
+            configure
+            configure.ac
+            config.guess
+            config.sub
+            install-sh
+            make.include.in
+            autoconf
+            configs
+            scripts
+            src
+            utils
+          sparse-checkout-cone-mode: false
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -52,7 +69,7 @@ jobs:
 
       - name: Build and test
         env:
-          YICES_SRC: ${{ github.workspace }}/yices2
+          YICES_SRC: ${{ github.workspace }}/y2
           YICES_PREFIX: ${{ runner.temp }}/yices-install
         run: bash scripts/ci-build-test-unix.sh
 
@@ -61,19 +78,37 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - run: git config --system core.longpaths true
+
       - run: git config --global core.autocrlf false && git config --global core.eol lf
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Checkout Yices
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: SRI-CSL/yices2
           ref: ${{ env.YICES_REF }}
-          path: yices2
+          path: y2
+          fetch-depth: 1
+          sparse-checkout: |
+            Makefile
+            Makefile.build
+            configure
+            configure.ac
+            config.guess
+            config.sub
+            install-sh
+            make.include.in
+            autoconf
+            configs
+            scripts
+            src
+            utils
+          sparse-checkout-cone-mode: false
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -104,6 +139,6 @@ jobs:
         shell: bash
         env:
           CYGWIN: winsymlinks:native binmode
-          YICES_SRC: ${{ github.workspace }}/yices2
+          YICES_SRC: ${{ github.workspace }}/y2
           YICES_PREFIX: /tmp/yices-install
         run: bash scripts/ci-build-test-windows.sh
