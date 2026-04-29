@@ -21,7 +21,15 @@
 #define YICES_AT_LEAST_2_6_2
 #endif
 
+#if __YICES_VERSION > 2 || \
+    (__YICES_VERSION == 2 && (__YICES_VERSION_MAJOR > 6 || \
+                       (__YICES_VERSION_MAJOR == 6 && \
+                        __YICES_VERSION_PATCHLEVEL > 3)))
+#define YICES_AT_LEAST_2_6_4
+#endif
+
 #define YICES_ERROR_REQUIRES_AT_LEAST_2_6_2  -262
+#define YICES_ERROR_REQUIRES_AT_LEAST_2_6_4  -264
 
 /**
  *  Assumes that for each __YICES_VERSION __YICES_VERSION_MAJOR and __YICES_VERSION_PATCHLEVEL
