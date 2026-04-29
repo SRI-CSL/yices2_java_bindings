@@ -3133,6 +3133,78 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContext(JNIEnv *env, jclass
   return result;
 }
 
+//Since 2.?.?  (new in the 2.6.4 bindings)
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContextWithAssumptions(JNIEnv *env, jclass, jlong ctx, jlong params, jintArray t) {
+  jsize n = env->GetArrayLength(t);
+  term_t *a = array2terms(env, t, NULL);
+  jint result = -1;
+  if (a == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    try {
+      result = yices_check_context_with_assumptions(reinterpret_cast<context_t*>(ctx), reinterpret_cast<param_t*>(params), n, a);
+    } catch (std::bad_alloc &ba) {
+      out_of_mem_exception(env);
+    }
+  }
+  return result;
+}
+
+// since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContextWithModel(JNIEnv *env, jclass, jlong ctx, jlong params, jlong model, jintArray t){
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  jsize n = env->GetArrayLength(t);
+  term_t *a = array2terms(env, t, NULL);
+  if (a == NULL) {
+    out_of_mem_exception(env);
+  } else {
+    try {
+      result = yices_check_context_with_model(reinterpret_cast<context_t*>(ctx), reinterpret_cast<param_t*>(params), reinterpret_cast<model_t*>(model), n, a);
+    } catch (std::bad_alloc &ba) {
+      out_of_mem_exception(env);
+    }
+  }
+  return result;
+#else
+  return -1;
+#endif
+}
+
+// since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkContextWithInterpolation(JNIEnv *env, jclass, jlong ctxA, jlong ctxB, jlong params, jlongArray marr, jintArray interpolant){
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  jsize i = (interpolant == 0 ? 0 : env->GetArrayLength(interpolant));
+  if (i < 1) {
+    return result;
+  }
+
+  jsize n = (marr == 0 ? 0 : env->GetArrayLength(marr));
+  int32_t build_model = (n > 0);
+  interpolation_context_t ctx;
+  ctx.ctx_A = reinterpret_cast<context_t*>(ctxA);
+  ctx.ctx_B = reinterpret_cast<context_t*>(ctxB);
+  ctx.interpolant = 0;
+  ctx.model = NULL;
+  try {
+    result = yices_check_context_with_interpolation(&ctx, reinterpret_cast<param_t*>(params), build_model);
+    if (result == YICES_STATUS_UNSAT) {
+      env->SetIntArrayRegion(interpolant, 0, 1, &ctx.interpolant);
+    } else if(build_model && result == YICES_STATUS_SAT ) {
+      model_t *model = ctx.model;
+      jlong mdl = reinterpret_cast<jlong>(model);
+      env->SetLongArrayRegion(marr, 0, 1, &mdl);
+    }
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+#else
+  return -1;
+#endif
+}
+
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_assertBlockingClause(JNIEnv *env, jclass, jlong ctx) {
   jint result = -1;
 
