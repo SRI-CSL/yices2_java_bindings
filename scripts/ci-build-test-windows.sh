@@ -63,7 +63,7 @@ build_yices() {
   make OPTION=mingw64 MODE=release dist
 
   local dist_dir
-  dist_dir="$(find build -type d -path '*/release/dist' | head -n 1)"
+  dist_dir="$(find build -type d -name dist | head -n 1)"
   if [[ -z "${dist_dir}" ]]; then
     echo "failed to locate Yices dist directory" >&2
     exit 1
