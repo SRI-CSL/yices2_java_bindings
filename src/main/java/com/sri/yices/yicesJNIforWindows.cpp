@@ -2640,8 +2640,8 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_bvConstValue(JNIEnv *en
 	assert(code >= 0);
 	result = convertToBoolArray(env, n, tmp);
 	delete [] tmp;
-      } catch (std::bad_alloc) {
-	out_of_mem_exception(env);
+      } catch (std::bad_alloc&) {
+        out_of_mem_exception(env);
       }
     }
   }
@@ -3557,7 +3557,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormula(JNIEnv *env, jclass
   }
   if (wantModel) {
     code = yices_check_formula(formula, ls, &model, ds);
-    if (code == STATUS_SAT) {
+    if (code == YICES_STATUS_SAT) {
       mdl = reinterpret_cast<jlong>(model);
       env->SetLongArrayRegion(marr, 0, 1, &mdl);
     }
@@ -3613,7 +3613,7 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_checkFormulas(JNIEnv *env, jclas
   }
   if (wantModel) {
     code = yices_check_formulas(tarr, n, ls, &model, ds);
-    if (code == STATUS_SAT) {
+    if (code == YICES_STATUS_SAT) {
       mdl = reinterpret_cast<jlong>(model);
       env->SetLongArrayRegion(marr, 0, 1, &mdl);
     }
