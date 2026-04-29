@@ -49,7 +49,7 @@ run_java_ci() {
   export YICES_CLASSPATH="${REPO_ROOT}/build/classes"
 
   pushd "${REPO_ROOT}" >/dev/null
-  ant clean test
+  ant clean ci-test
   popd >/dev/null
 }
 

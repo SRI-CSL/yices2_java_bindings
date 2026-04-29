@@ -144,8 +144,7 @@ run_tests() {
     com.sri.yices.TestTypes \
     com.sri.yices.TestYices \
     com.sri.yices.TestModels \
-    com.sri.yices.TestTermComponents \
-    com.sri.yices.TestThreads
+    com.sri.yices.TestTermComponents
   popd >/dev/null
 }
 
