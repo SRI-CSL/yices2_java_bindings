@@ -653,6 +653,24 @@ JNIEXPORT void JNICALL Java_com_sri_yices_Yices_resetError(JNIEnv *, jclass) {
   yices_clear_error();
 }
 
+JNIEXPORT jobject JNICALL Java_com_sri_yices_Yices_errorReport(JNIEnv *env, jclass) {
+  try {
+    error_report_t* report = yices_error_report();
+    // now construct new ErrorReport(report->code, report->line, report->column, report->term1, report->type1, report->term2, report->type2, report->badval);
+    jclass cls = env->FindClass("com/sri/yices/ErrorReport");
+    if (cls != NULL) {
+      jmethodID constructor = env->GetMethodID(cls, "<init>", "(IIIIIIIJ)V");
+      if (constructor != NULL) {
+        jobject object = env->NewObject(cls, constructor, report->code, report->line, report->column, report->term1, report->type1, report->term2, report->type2, report->badval);
+        return object;
+      }
+    }
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return 0;
+}
+
 
 // to test the throw exception code
 JNIEXPORT void JNICALL Java_com_sri_yices_Yices_testException(JNIEnv *env, jclass) {
@@ -3255,6 +3273,39 @@ JNIEXPORT void JNICALL Java_com_sri_yices_Yices_freeParamRecord(JNIEnv *env, jcl
   yices_free_param_record(reinterpret_cast<param_t*>(param));
 }
 
+// since 2.?.?  (new in the 2.6.4 bindings)
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_getUnsatCore(JNIEnv *env, jclass, jlong ctx) {
+  jintArray retval = NULL;
+  int32_t code;
+  term_vector_t aux;
+  try {
+    yices_init_term_vector(&aux);
+    code = yices_get_unsat_core(reinterpret_cast<context_t*>(ctx), &aux);
+    if (code >= 0) {
+      retval = convertToIntArray(env, aux.size, aux.data);
+    }
+    yices_delete_term_vector(&aux);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return retval;
+}
+
+// since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_getModelInterpolant(JNIEnv *env, jclass, jlong ctx) {
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  try {
+    result = yices_get_model_interpolant(reinterpret_cast<context_t*>(ctx));
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+#else
+  return -1;
+#endif
+}
+
 
 /*
  * MODELS
@@ -3268,6 +3319,21 @@ JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_getModel(JNIEnv *env, jclass, j
     out_of_mem_exception(env);
   }
   return result;
+}
+
+// since 2.6.4
+JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_newModel(JNIEnv *env, jclass){
+#ifdef YICES_AT_LEAST_2_6_4
+  jlong result = 0; // NULL pointer
+  try {
+    result = reinterpret_cast<jlong>(yices_new_model());
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+#else
+  return NULL;
+#endif
 }
 
 JNIEXPORT void JNICALL Java_com_sri_yices_Yices_freeModel(JNIEnv *env, jclass, jlong model) {
@@ -3296,6 +3362,103 @@ JNIEXPORT jlong JNICALL Java_com_sri_yices_Yices_modelFromMap(JNIEnv *env, jclas
     if (m != NULL) release_term_elems(env, map, m);
   }
 
+  return result;
+}
+
+// Since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_modelSetBool(JNIEnv *env, jclass, jlong model, jint var, jint val) {
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  try {
+    result = yices_model_set_bool(reinterpret_cast<model_t*>(model), reinterpret_cast<term_t>(var), reinterpret_cast<int32_t>(val));
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+#else
+  return -1;
+#endif
+}
+
+// Since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_modelSetInteger(JNIEnv *env, jclass, jlong model, jint var, jlong val){
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  try {
+    result = yices_model_set_int64(reinterpret_cast<model_t*>(model), reinterpret_cast<term_t>(var), val);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+#else
+  return -1;
+#endif
+}
+
+// Since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_modelSetRational(JNIEnv *env, jclass, jlong model, jint var, jlong num, jlong den) {
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  try {
+    result = yices_model_set_rational64(reinterpret_cast<model_t*>(model), reinterpret_cast<term_t>(var), num, den);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+#else
+  return -1;
+#endif
+}
+
+// Since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_modelSetBVInteger(JNIEnv *env, jclass, jlong model, jint var, jlong val) {
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  try {
+    result = yices_model_set_bv_uint64(reinterpret_cast<model_t*>(model), reinterpret_cast<term_t>(var), val);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  return result;
+#else
+  return -1;
+#endif
+}
+
+// Since 2.6.4
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_modelSetBVFromArray(JNIEnv *env, jclass, jlong model, jint var, jintArray arr) {
+#ifdef YICES_AT_LEAST_2_6_4
+  jint result = -1;
+  jsize n = env->GetArrayLength(arr);
+  if (n == 0) {
+    return result;
+  }
+  assert(n > 0);
+  int32_t *vals = array2int32(env, arr, NULL);
+  try {
+    result = yices_model_set_bv_from_array(reinterpret_cast<model_t*>(model), reinterpret_cast<term_t>(var), n, vals);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
+  release_int32_elems(env, arr, vals);
+  return result;
+#else
+  return -1;
+#endif
+}
+
+// since 2.?.? (new in 2.6.4 bindings)
+JNIEXPORT jintArray JNICALL Java_com_sri_yices_Yices_modelCollectDefinedTerms(JNIEnv *env, jclass, jlong model) {
+  term_vector_t aux;
+  jintArray result = NULL;
+  try {
+    yices_init_term_vector(&aux);
+    yices_model_collect_defined_terms(reinterpret_cast<model_t*>(model), &aux);
+    result = convertToIntArray(env, aux.size, aux.data);
+    yices_delete_term_vector(&aux);
+  } catch (std::bad_alloc &ba) {
+    out_of_mem_exception(env);
+  }
   return result;
 }
 
