@@ -56,9 +56,15 @@ libyices2java_install_name := $(YICES_JNI)/libyices2java.dylib
 # we ignore versions and soname for now
 
 # default include directories for jni.h and jni_md.h
-CPPFLAGS := -I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/$(OS)
-CXXFLAGS := -g -fPIC
-LIBS := -lyices -lgmp
+GMP_CPPFLAGS ?= $(shell pkg-config --cflags gmp 2>/dev/null)
+GMP_LIBS ?= $(shell pkg-config --libs gmp 2>/dev/null)
+
+CPPFLAGS += -I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/$(OS) $(GMP_CPPFLAGS)
+CXXFLAGS += -g -fPIC
+ifeq ($(strip $(GMP_LIBS)),)
+GMP_LIBS := -lgmp
+endif
+LIBS += -lyices $(GMP_LIBS)
 
 CXX ?= g++
 
@@ -77,16 +83,16 @@ $(YICES_CLASSPATH)/com/sri/yices/%.class: %.java
 	$(JAVAC) -d $(YICES_CLASSPATH) *.java
 
 com_sri_yices_Yices.h: $(YICES_CLASSPATH)/com/sri/yices/Yices.class
-	$(JAVAC) -h . *.java
+	$(JAVAC) -d $(YICES_CLASSPATH) -h . *.java
 
 yicesJNI.o: yicesJNI.cpp com_sri_yices_Yices.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -Wall -c yicesJNI.cpp
 
 libyices2java.dylib: yicesJNI.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -dynamiclib -o $@ yicesJNI.o $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -dynamiclib -o $@ yicesJNI.o $(LIBS)
 
 libyices2java.so: yicesJNI.o
-	$(CXX) $(CFLAGS) $(LDFLAGS) -shared -o $@ yicesJNI.o $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -shared -o $@ yicesJNI.o $(LIBS)
 
 LIBDIR := $(YICES_JNI)
 

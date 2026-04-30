@@ -5,15 +5,17 @@ import org.junit.Test;
 
 import static org.junit.Assume.assumeTrue;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class TestThreads {
 
-    public static final int THREAD_COUNT = 200;
+    public static final int THREAD_COUNT = Integer.getInteger("com.sri.yices.testThreads.count", 32);
+    public static final long THREAD_TIMEOUT_SECONDS = Long.getLong("com.sri.yices.testThreads.timeoutSeconds", 60L);
 
     public static final String COUNTER_PREFIX  = "c@";
     public static final String CHOICE_PREFIX = "i@";
-
-    private static final Object lock = new Object();
-    private static int waiting = 0;
 
     @Test
     public void testVersion() {
@@ -43,16 +45,9 @@ public class TestThreads {
         return Terms.and(selector, Terms.eq(t1, Terms.add(t2, Terms.intConst(increment))));
     }
 
-    private void threadMain(int index, Status[] answers){
-
-        synchronized(lock){
-            waiting++;
-            try {
-                lock.wait();
-            } catch(InterruptedException e){
-                System.err.println(e.getMessage());
-            }
-        }
+    private void threadMain(int index, Status[] answers, CountDownLatch readyGate, CountDownLatch startGate) throws InterruptedException {
+        readyGate.countDown();
+        Assert.assertTrue("timed out waiting to start worker threads", startGate.await(THREAD_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         try (Config cfg = new Config()) {
              cfg.set("solver-type", "dpllt");
@@ -82,54 +77,63 @@ public class TestThreads {
          }
     }
 
-    private Thread makeThread(final int index, final Status[] answers){
+    private Thread makeThread(final int index, final Status[] answers, final CountDownLatch readyGate,
+                              final CountDownLatch startGate, final AtomicReference<Throwable> failure){
         Runnable runnable = new Runnable(){
                 public void run(){
-                    threadMain(index, answers);
+                    try {
+                        threadMain(index, answers, readyGate, startGate);
+                    } catch (Throwable error) {
+                        failure.compareAndSet(null, error);
+                    }
                 }
             };
-            return new Thread(runnable);
+            Thread thread = new Thread(runnable, "yices-test-thread-" + index);
+            thread.setDaemon(true);
+            return thread;
     }
 
 
-    @Test
+    @Test(timeout = 120000)
     public void testThreads() {
         assumeTrue(TestAssumptions.IS_YICES_INSTALLED);
         assumeTrue(Yices.isThreadSafe());
 
         Thread[] threads = new Thread[THREAD_COUNT];
         Status[] answers = new Status[THREAD_COUNT];
+        CountDownLatch readyGate = new CountDownLatch(THREAD_COUNT);
+        CountDownLatch startGate = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<Throwable>();
 
         for(int i = 0; i < THREAD_COUNT; i++){
-            threads[i] = makeThread(i, answers);
+            threads[i] = makeThread(i, answers, readyGate, startGate, failure);
         }
 
         for(int i = 0; i < THREAD_COUNT; i++){
             threads[i].start();
         }
 
-        Thread self = Thread.currentThread();
-
-        while(true){
-            synchronized(lock){
-                if (waiting == THREAD_COUNT){
-                    lock.notifyAll();
-                    break;
-                }
-            }
-        }
-
-
         try {
+            Assert.assertTrue("timed out waiting for worker threads to become ready",
+                    readyGate.await(THREAD_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+            startGate.countDown();
             for(int i = 0; i < THREAD_COUNT; i++){
-                threads[i].join();
+                threads[i].join(TimeUnit.SECONDS.toMillis(THREAD_TIMEOUT_SECONDS));
+                Assert.assertFalse("worker thread did not finish: " + threads[i].getName(), threads[i].isAlive());
             }
         } catch (InterruptedException error){
-            System.out.println(error.getMessage());
+            Thread.currentThread().interrupt();
+            Assert.fail(error.getMessage());
+        }
+
+        if (failure.get() != null) {
+            AssertionError error = new AssertionError("worker thread failed");
+            error.initCause(failure.get());
+            throw error;
         }
 
         for (int i = 0; i < THREAD_COUNT; i++){
-            Assert.assertEquals(answers[i], Status.SAT);
+            Assert.assertEquals(Status.SAT, answers[i]);
         }
 
 

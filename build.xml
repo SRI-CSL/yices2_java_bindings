@@ -223,7 +223,7 @@
     <echo> Executing "make ${library}" in ${code} </echo>
     <exec executable="make"
           dir="${code}"
-          failifexecutionfails="true">
+          failonerror="true">
       <arg line="${library}"/>
     </exec>
 
@@ -233,7 +233,7 @@
 
     <exec executable="make"
           dir="${code}"
-          failifexecutionfails="true">
+          failonerror="true">
       <arg line="install"/>
     </exec>
 
@@ -250,7 +250,7 @@
 
     <exec executable="make"
           dir="${code}"
-          failifexecutionfails="true">
+          failonerror="true">
       <arg line="clean"/>
     </exec>
   </target>
@@ -286,9 +286,32 @@
       <test name="com.sri.yices.TestTypes"/>
       <test name="com.sri.yices.TestYices"/>
       <test name="com.sri.yices.TestModels"/>
+      <test name="com.sri.yices.TestTermComponents"/>
       <!-- <test name="com.sri.yices.TestDelegates"/> -->
       <!-- <test name="com.sri.yices.TestDimacs"/> -->
       <test name="com.sri.yices.TestThreads"/>
+    </junit>
+  </target>
+
+  <target name="ci-test" depends="dist,test-compile,install">
+    <echo> Running CI tests </echo>
+    <echo> test_classes:  ${test_classes} </echo>
+    <echo> java.library.path:  ${java.library.path} </echo>
+    <junit printsummary="on" haltonfailure="yes" fork="true">
+      <sysproperty key="java.library.path" path="${jnilib}"/>
+      <classpath>
+        <path refid="classpath.test"/>
+        <pathelement location="${test_classes}"/>
+      </classpath>
+      <formatter type="brief" usefile="false" />
+      <test name="com.sri.yices.TestBigRationals"/>
+      <test name="com.sri.yices.TestConstructor"/>
+      <test name="com.sri.yices.TestContext"/>
+      <test name="com.sri.yices.TestStatus"/>
+      <test name="com.sri.yices.TestTypes"/>
+      <test name="com.sri.yices.TestYices"/>
+      <test name="com.sri.yices.TestModels"/>
+      <test name="com.sri.yices.TestTermComponents"/>
     </junit>
   </target>
 
