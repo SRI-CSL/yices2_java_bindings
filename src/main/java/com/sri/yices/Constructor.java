@@ -21,7 +21,7 @@ public enum Constructor {
     ITE_TERM(7),             // if-then-else
     APP_TERM(8),             // application of an uninterpreted function
     UPDATE_TERM(9),          // function update
-    TUPLE_TERM(10),           // tuple constructor
+    TUPLE_TERM(10),          // tuple constructor
     EQ_TERM(11),             // equality
     DISTINCT_TERM(12),       // distinct t_1 ... t_n
     FORALL_TERM(13),         // quantifier

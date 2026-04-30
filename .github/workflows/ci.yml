@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  YICES_REF: yices-2.7.0
+
+jobs:
+  unix:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Checkout Yices
+        uses: actions/checkout@v5
+        with:
+          repository: SRI-CSL/yices2
+          ref: ${{ env.YICES_REF }}
+          path: y2
+          fetch-depth: 1
+          sparse-checkout: |
+            Makefile
+            Makefile.build
+            configure
+            configure.ac
+            config.guess
+            config.sub
+            gmaketest
+            install-sh
+            make.include.in
+            autoconf
+            configs
+            scripts
+            src
+            utils
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ant autoconf automake g++ gcc gperf libgmp-dev libtool m4 make pkg-config
+
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+        run: |
+          brew install ant autoconf automake gmp gperf libtool make pkg-config
+
+      - name: Build and test
+        env:
+          YICES_SRC: ${{ github.workspace }}/y2
+          YICES_PREFIX: ${{ runner.temp }}/yices-install
+        run: bash scripts/ci-build-test-unix.sh
+
+  windows:
+    name: windows-latest
+    runs-on: windows-latest
+
+    steps:
+      - run: git config --system core.longpaths true
+
+      - run: git config --global core.autocrlf false && git config --global core.eol lf
+
+      - uses: actions/checkout@v5
+
+      - name: Checkout Yices
+        uses: actions/checkout@v5
+        with:
+          repository: SRI-CSL/yices2
+          ref: ${{ env.YICES_REF }}
+          path: y2
+          fetch-depth: 1
+          sparse-checkout: |
+            Makefile
+            Makefile.build
+            configure
+            configure.ac
+            config.guess
+            config.sub
+            gmaketest
+            install-sh
+            make.include.in
+            autoconf
+            configs
+            scripts
+            src
+            utils
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Ant
+        shell: powershell
+        run: choco install ant -y
+
+      - name: Install Cygwin dependencies
+        uses: cygwin/cygwin-install-action@v4
+        with:
+          packages: |
+            autoconf,
+            automake,
+            cmake,
+            coreutils,
+            curl,
+            gperf,
+            libtool,
+            m4,
+            make,
+            mingw64-x86_64-gcc-core,
+            mingw64-x86_64-gcc-g++,
+            moreutils,
+            wget
+
+      - name: Build and test
+        shell: bash
+        env:
+          CYGWIN: winsymlinks:native binmode
+          YICES_SRC: ${{ github.workspace }}/y2
+          YICES_PREFIX: /tmp/yices-install
+        run: bash scripts/ci-build-test-windows.sh
