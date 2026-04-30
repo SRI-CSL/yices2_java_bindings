@@ -398,7 +398,7 @@ public class Model implements AutoCloseable {
 
     public VectorValue expandFunction(YVal yval) throws YicesException {
         int n = Yices.valFunctionCardinality(ptr, yval.tag.ordinal(), yval.id);
-        if (n <= 0) throw new YicesException();
+        if (n < 0) throw new YicesException();
         YVal[] vector =  new YVal[n];
         YVal[] value = new YVal[1];
         int code = Yices.valExpandFunction(ptr, yval.tag.ordinal(), yval.id, value, vector);

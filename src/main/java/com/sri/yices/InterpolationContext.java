@@ -35,7 +35,7 @@ public class InterpolationContext {
         int[] tarr = { 0 };
         long[] marr = { 0 };
         if (!buildModel) { marr = null; }
-        int code = Yices.checkContextWithInterpolation(this.ctxA.getPtr(), this.ctxB.getPtr(), params.getPtr(), marr, tarr);
+        int code = Yices.checkContextWithInterpolation(this.ctxA.getPtr(), this.ctxB.getPtr(), params == null ? 0 : params.getPtr(), marr, tarr);
         Status status = Status.idToStatus(code);
         if (status == Status.ERROR) {
             throw new YicesException();

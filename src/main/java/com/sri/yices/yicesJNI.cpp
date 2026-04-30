@@ -2630,6 +2630,120 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_termProjArg(JNIEnv *env, jclass,
   return yices_proj_arg(x);
 }
 
+JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_sumComponentNumAsBytes(JNIEnv *env, jclass, jint x, jint idx) {
+  jbyteArray result = NULL;
+  mpq_t q;
+  jint t = -1;
+
+  mpq_init(q);
+  if (yices_sum_component(x, idx, q, &t) >= 0) {
+    result = mpz_to_byte_array(env, mpq_numref(q));
+  }
+  mpq_clear(q);
+
+  return result;
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_sumComponentDenAsBytes(JNIEnv *env, jclass, jint x, jint idx) {
+  jbyteArray result = NULL;
+  mpq_t q;
+  jint t = -1;
+
+  mpq_init(q);
+  if (yices_sum_component(x, idx, q, &t) >= 0) {
+    result = mpz_to_byte_array(env, mpq_denref(q));
+  }
+  mpq_clear(q);
+
+  return result;
+}
+
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_sumComponentTerm(JNIEnv *env, jclass, jint x, jint idx) {
+  jint result = -1;
+  mpq_t q;
+
+  mpq_init(q);
+  yices_sum_component(x, idx, q, &result);
+  mpq_clear(q);
+
+  return result;
+}
+
+JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_bvSumComponentFactor(JNIEnv *env, jclass, jint x, jint idx) {
+  jbooleanArray result = NULL;
+  jint t = -1;
+
+  int32_t n = yices_term_bitsize(x);
+  if (n < 0) {
+    return NULL;
+  }
+
+  if (n <= 64) {
+    // this should be the common case
+    int32_t a[64];
+    int32_t code = yices_bvsum_component(x, idx, a, &t);
+    if (code >= 0) {
+      result = convertToBoolArray(env, n, a);
+    }
+
+  } else {
+    try {
+      int32_t *tmp =  new int32_t[n];
+      int32_t code = yices_bvsum_component(x, idx, tmp, &t);
+      if (code >= 0) {
+        result = convertToBoolArray(env, n, tmp);
+      }
+      delete [] tmp;
+    } catch (std::bad_alloc&) {
+      out_of_mem_exception(env);
+    }
+  }
+
+  return result;
+}
+
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvSumComponentTerm(JNIEnv *env, jclass, jint x, jint idx) {
+  jint result = -1;
+
+  int32_t n = yices_term_bitsize(x);
+  if (n < 0) {
+    return result;
+  }
+
+  if (n <= 64) {
+    // this should be the common case
+    int32_t a[64];
+    yices_bvsum_component(x, idx, a, &result);
+
+  } else {
+    try {
+      int32_t *tmp =  new int32_t[n];
+      yices_bvsum_component(x, idx, tmp, &result);
+      delete [] tmp;
+    } catch (std::bad_alloc&) {
+      out_of_mem_exception(env);
+    }
+  }
+
+  return result;
+}
+
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_productComponentTerm(JNIEnv *env, jclass, jint x, jint idx) {
+  uint32_t p = 0;
+  jint t = -1;
+
+  yices_product_component(x, idx, &t, &p);
+  return t;
+}
+
+JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_productComponentPower(JNIEnv *env, jclass, jint x, jint idx) {
+  uint32_t p = 0;
+  jint t = -1;
+
+  yices_product_component(x, idx, &t, &p);
+  return p;
+}
+
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_boolConstValue(JNIEnv *env, jclass, jint x) {
   int32_t val;
   jint result;
@@ -4577,7 +4691,6 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valFunctionCardinality(JNIEnv *e
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, jclass cls, jlong mdl, jint tag, jint id,  jobjectArray def, jobjectArray mappings){
   yval_t yval;
   int32_t cardinality;
-  jsize ndef;
   jsize nmap;
   int32_t code;
   yval_t ydef;
@@ -4588,22 +4701,18 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_valExpandFunction(JNIEnv *env, j
     return -1;
   }
   cardinality = Java_com_sri_yices_Yices_valFunctionCardinality(env, cls, mdl, tag, id);
-  if (cardinality <= 0) {
-    return -2;
-  }
-  ndef = env->GetArrayLength(def);
-  if (ndef < 1) {
-    return -3;
+  if (cardinality < 0) {
+    return -1;
   }
 
   nmap = env->GetArrayLength(mappings);
   if (nmap < cardinality) {
-    return -4;
+    return -1;
   }
   yices_init_yval_vector(&ymaps);
   code = yices_val_expand_function(reinterpret_cast<model_t *>(mdl), &yval, &ydef, &ymaps);
   if (code < 0) {
-    return -5;
+    return -1;
   }
 
   assert(static_cast<int32_t>(ymaps.size) == cardinality);

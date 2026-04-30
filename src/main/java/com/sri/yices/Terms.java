@@ -1258,6 +1258,17 @@ public class Terms {
         return t;
     }
 
+    static public SumComponent<?> projSum(int x, int idx) throws YicesException {
+      SumComponent<?> c = Yices.sumComponent(x, idx);
+      if (c == null) throw new YicesException();
+      return c;
+    }
+
+    static public ProductComponent projProduct(int x, int idx) throws YicesException {
+      ProductComponent c = Yices.productComponent(x, idx);
+      if (c == null) throw new YicesException();
+      return c;
+    }
 
     /*
      * Check whether term x is a constant

@@ -13,7 +13,10 @@ public final class Yices {
      */
     static {
         try {
-            System.loadLibrary("yices2java");
+            String skip = System.getProperty("yices.skipAutoloader", "false");
+            if (!Boolean.parseBoolean(skip)) {
+              System.loadLibrary("yices2java");
+            }
             init();
             is_ready = true;
         } catch (LinkageError e) {
@@ -383,6 +386,49 @@ public final class Yices {
     public static native int[] termChildren(int x);
     public static native int termProjIndex(int x);
     public static native int termProjArg(int x);
+
+    public static native byte[] sumComponentNumAsBytes(int x, int idx);
+    public static native byte[] sumComponentDenAsBytes(int x, int idx);
+    public static native int sumComponentTerm(int x, int idx);
+
+    public static native boolean[] bvSumComponentFactor(int x, int idx);
+    public static native int bvSumComponentTerm(int x, int idx);
+
+    public static SumComponent<?> sumComponent(int x, int idx) {
+        SumComponent<?> result = null;
+        if (Yices.termIsSum(x)) {
+          byte[] num = sumComponentNumAsBytes(x, idx);
+          byte[] den = sumComponentDenAsBytes(x, idx);
+          int term = sumComponentTerm(x, idx);
+
+          if (num != null && den != null) {
+            result = new SumComponent<>(new BigRational(num, den), term);
+          }
+        }
+        if (Yices.termIsBvSum(x)) {
+          boolean[] factor = bvSumComponentFactor(x, idx);
+          int term = bvSumComponentTerm(x, idx);
+
+          if (factor != null) {
+            result = new SumComponent<>(factor, term);
+          }
+        }
+        return result;
+    }
+
+    public static native int productComponentTerm(int x, int idx);
+    public static native int productComponentPower(int x, int idx);
+
+    public static ProductComponent productComponent(int x, int idx) {
+        int power = productComponentPower(x, idx);
+        int term = productComponentTerm(x, idx);
+
+        if (term >= 0) {
+            return new ProductComponent(term, power);
+        } else {
+            return null;
+        }
+    }
 
     /*
      * Values of constant terms
