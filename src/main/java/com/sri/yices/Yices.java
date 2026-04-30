@@ -396,7 +396,7 @@ public final class Yices {
 
     public static SumComponent<?> sumComponent(int x, int idx) {
         SumComponent<?> result = null;
-        if (Yices.termIsArithmetic(x)) {
+        if (Yices.termIsSum(x)) {
           byte[] num = sumComponentNumAsBytes(x, idx);
           byte[] den = sumComponentDenAsBytes(x, idx);
           int term = sumComponentTerm(x, idx);
@@ -405,7 +405,7 @@ public final class Yices {
             result = new SumComponent<>(new BigRational(num, den), term);
           }
         }
-        if (Yices.termIsBitvector(x)) {
+        if (Yices.termIsBvSum(x)) {
           boolean[] factor = bvSumComponentFactor(x, idx);
           int term = bvSumComponentTerm(x, idx);
 

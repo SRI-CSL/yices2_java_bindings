@@ -2659,7 +2659,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sri_yices_Yices_sumComponentDenAsBytes(JNI
 }
 
 JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_sumComponentTerm(JNIEnv *env, jclass, jint x, jint idx) {
-  jint result;
+  jint result = -1;
   mpq_t q;
 
   mpq_init(q);
@@ -2674,21 +2674,25 @@ JNIEXPORT jbooleanArray JNICALL Java_com_sri_yices_Yices_bvSumComponentFactor(JN
   jint t = -1;
 
   int32_t n = yices_term_bitsize(x);
-  assert(n >= 0);
+  if (n < 0) {
+    return NULL;
+  }
 
   if (n <= 64) {
     // this should be the common case
     int32_t a[64];
     int32_t code = yices_bvsum_component(x, idx, a, &t);
-    assert(code >= 0);
-    result = convertToBoolArray(env, n, a);
+    if (code >= 0) {
+      result = convertToBoolArray(env, n, a);
+    }
 
   } else {
     try {
       int32_t *tmp =  new int32_t[n];
       int32_t code = yices_bvsum_component(x, idx, tmp, &t);
-      assert(code >= 0);
-      result = convertToBoolArray(env, n, tmp);
+      if (code >= 0) {
+        result = convertToBoolArray(env, n, tmp);
+      }
       delete [] tmp;
     } catch (std::bad_alloc&) {
       out_of_mem_exception(env);
@@ -2702,19 +2706,19 @@ JNIEXPORT jint JNICALL Java_com_sri_yices_Yices_bvSumComponentTerm(JNIEnv *env, 
   jint result = -1;
 
   int32_t n = yices_term_bitsize(x);
-  assert(n >= 0);
+  if (n < 0) {
+    return result;
+  }
 
   if (n <= 64) {
     // this should be the common case
     int32_t a[64];
-    int32_t code = yices_bvsum_component(x, idx, a, &result);
-    assert(code >= 0);
+    yices_bvsum_component(x, idx, a, &result);
 
   } else {
     try {
       int32_t *tmp =  new int32_t[n];
-      int32_t code = yices_bvsum_component(x, idx, tmp, &result);
-      assert(code >= 0);
+      yices_bvsum_component(x, idx, tmp, &result);
       delete [] tmp;
     } catch (std::bad_alloc&) {
       out_of_mem_exception(env);
